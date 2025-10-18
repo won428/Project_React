@@ -1,8 +1,10 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 
 
 export default function Layout({ children }) {
+    const navigate = useNavigate();
     return (
 
         <Row className="pt-0 mt-0 min-vh-100">
@@ -12,9 +14,16 @@ export default function Layout({ children }) {
 
                 <Container>
                     <Nav className="flex-column">
-                        <Nav.Link className="text-white">강의 홈</Nav.Link>
-                        <Nav.Link className="text-white">강의실 </Nav.Link>
-                        <Nav.Link className="text-white">TodoList</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/LHome`)}
+                            className="text-white">강의 홈</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/LRoom`)}
+                            className="text-white"
+                        >강의실 </Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/ToDoList`)}
+                            className="text-white">TodoList</Nav.Link>
 
                     </Nav>
                 </Container>

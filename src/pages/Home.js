@@ -6,7 +6,7 @@ function App() {
         <Container className="mt-4">
             <Row>
                 <Col>
-                    123
+                    Home
 
                 </Col>
             </Row>

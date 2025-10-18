@@ -15,7 +15,7 @@ function App() {
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
                             </Nav.Link>
-                            <Nav.Link onClick={() => navigate(`/Lectures`)}>
+                            <Nav.Link onClick={() => navigate(`/LHome`)}>
                                 사이버 캠퍼스
                             </Nav.Link>
                             <Nav.Link onClick={() => navigate(`/acsche`)}>

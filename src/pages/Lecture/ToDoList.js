@@ -1,8 +1,10 @@
+import Layout from "../../ui/Layout_lec";
+
 function App() {
     return (
-        <>
-            Menu Item
-        </>
+        <Layout>
+            ToDoList
+        </Layout>
     )
 }
 export default App;
