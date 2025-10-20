@@ -28,6 +28,10 @@ export default function Layout({ children }) {
                             onClick={() => navigate(`/Entire_Credit`)}
                             className="text-white"
                         >전체 성적</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/user/insert_user`)}
+                            className="text-white"
+                        >사용자 등록</Nav.Link>
                     </Nav>
                 </Container>
             </Col>
