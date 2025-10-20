@@ -7,6 +7,7 @@ import This_Credit from '../pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
+import LectureRegister from '../pages/Lecture/LecRegister';
 
 
 function App() {
@@ -29,10 +30,9 @@ function App() {
 
                 {/* Lecture Tab */}
                 <Route path='/LHome' element={<Lecture_Home />} ></Route>
-
                 <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
                 <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                <Route path='/LecRegister' element={<LectureRegister />} ></Route>
 
 
 
