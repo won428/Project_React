@@ -1,69 +1,100 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/config";
 import axios from "axios";
-import { UserContext } from "../UserContext";
+import { useAuth, UserContext } from "../context/UserContext";
+import API, { setToken } from "../config/api"
 
 function App() {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [error, setError] = useState();
-    const { setUser } = useContext(UserContext);
+
+
+
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const { loadUserFromToken, roles, user } = useAuth();
+
+    useEffect(() => {
+        console.log("Context 마운트 시점 실행");
+        loadUserFromToken();
+    }, []);
+
+
+
+
 
     const LoginAction = async (evt) => {
+
+
         evt.preventDefault();
         try {
-            const url = `${API_BASE_URL}/login`
-            const parameters = new URLSearchParams();
+            const url = `${API_BASE_URL}/auth/login`
+            console.log(url);
 
-            parameters.append('email', email)
-            parameters.append('password', password)
-
-
-            console.log(parameters);
-            console.log(email);
-            console.log(password);
-
-
+            const parameters = {
+                email,
+                password
+            }
+            // check
             const respone = await axios.post(
-                url, parameters, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            }
+                url, parameters
             )
-            console.log(respone);
 
-            const { msg, user, token } = respone.data;
-            console.log(token);
 
-            if (msg === 'success') {
-                localStorage.setItem("accessToken", token);
-                setUser(user);//전역 변수 설정으로 관리
-                navigate(`/`)
-            } else {
-                setError(msg)
+
+            const { accessToken, refreshToken } = respone.data;
+            setToken(accessToken, refreshToken);
+
+            sessionStorage.setItem("email", email);
+
+            loadUserFromToken();
+
+            alert("로그인 성공");
+
+
+            if (loading) {
+                if (user.length === 0) {
+                    setLoading(false);
+                }
             }
+            if (roles?.includes("ADMIN")) return navigate("/");
+            if (roles?.includes("PROFESSOR")) return navigate("/LHome");
+            if (roles?.includes("STUDENT")) return navigate("/");
+            navigate("/Unauthorizedpage");
+
+
+
+
         } catch (error) {
-            if (error.response) {
+            alert("로그인 실패 " + error.response?.data || error.message);
+            console.log(setToken.newAccess);
 
-
-                setError(error.response.data.message || 'Failed to login');
-                console.log(error);
-            } else {
-                setError('Sever Error');
-            }
         }
 
 
     }
 
-
+    const logout = async () => {
+        try {
+            const url = `${API_BASE_URL}/logout`
+            await axios.post(url, {
+                email: sessionStorage.getItem("email")
+            });
+        }
+        finally {
+            sessionStorage.clear();
+            navigate("/login")
+        }
+    }
 
     return (
         <>
             <Container className="d-flex justify-content-center align-items-center">
-                <Row className="w-100 justify-content-center">
+                <Row className="w-100 justify-content-center mt-5">
                     <Col md={6} >
                         <Card  >
                             <CardBody onSubmit={LoginAction}>
