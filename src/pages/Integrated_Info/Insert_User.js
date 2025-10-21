@@ -58,9 +58,10 @@ import axios from "axios";
         },[college])
 
         
-        const signup = async() =>{
+        const signup = async(e) =>{
             
             try {
+            e.preventDefault();
             const url = `${API_BASE_URL}/user/signup`;
             const response = await axios.post(url,user);
 
@@ -68,7 +69,8 @@ import axios from "axios";
 			    alert('등록 성공');			
 		}
             } catch (error) {
-                console.log(error)
+                alert('등록실패');
+                console.log(error.response.data)
             }
             
             
