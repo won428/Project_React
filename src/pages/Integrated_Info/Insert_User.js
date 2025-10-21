@@ -1,8 +1,9 @@
-    import { Button, Form } from "react-bootstrap";
-    import Layout_Info from "../../ui/Layout_Info";
-import { use, useEffect, useRef, useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import Layout_Info from "../../ui/Layout_Info";
+import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
     function App() {
@@ -21,7 +22,7 @@ import axios from "axios";
         const[majorList,setMajorList] = useState([]);
         const[college,setCollege] = useState('');
         
-        
+        const navigate = useNavigate();
             
         
         const getCollegeList = () => {
@@ -66,7 +67,8 @@ import axios from "axios";
             const response = await axios.post(url,user);
 
             if(response.status === 200){
-			    alert('등록 성공');			
+			    alert('등록 성공');
+                navigate('/user/UserList')			
 		}
             } catch (error) {
                 alert('등록실패');
