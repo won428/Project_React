@@ -30,11 +30,13 @@ import { useNavigate } from "react-router-dom";
             axios
                 .get(url)
                 .then((response)=>{
+                    
+                    
                     setCollegeList(response.data)
                     console.log(collegeList) 
                 })
                 .catch((error)=>{
-                    console.log(error)
+                    setCollegeList([]); // 실패 시 안전값
                 })
                 
             }
@@ -72,7 +74,8 @@ import { useNavigate } from "react-router-dom";
 		}
             } catch (error) {
                 alert('등록실패');
-                console.log(error.response.data)
+                console.log(error)
+                
             }
             
             
