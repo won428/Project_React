@@ -1,29 +1,32 @@
+import { useNavigate, useParams } from "react-router-dom";
+import Layout_Info from "../../ui/Layout_Info";
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
 
-function UsersSkeleton() {
+function App() {
 
-    const [userList,setUserList] = useState([]);
+    const {id} = useParams()
+    const [user,setUser] = useState({});
     const navigate = useNavigate();
 
     useEffect(()=>{
-        
-        const url = `${API_BASE_URL}/user/list`
-        
-        axios
-            .get(url)
+        const url = `${API_BASE_URL}/user/update/admin`
+
+        axios.get(url,{id})
             .then((response)=>{
-                setUserList(response.data)
-                console.log(response.data)
+                setUser(response.data)
             })
             .catch((error)=>{
-                console.log(error.response.data)
+                console.log(error)
             })
 
+
     },[])
+
+
+
 
     const typeMap = {
         ADMIN: '관리자',
@@ -31,8 +34,10 @@ function UsersSkeleton() {
         PROFESSOR: '교수'
     };
 
-  return (
-    <Container fluid className="py-4">
+    return (
+        <>
+            <Layout_Info>
+               <Container fluid className="py-4">
       {/* 상단 타이틀 + 우측 등록 버튼 */}
       <Row className="align-items-center mb-3">
         <Col md={6}>
@@ -65,13 +70,8 @@ function UsersSkeleton() {
             </tr>
           </thead>
           <tbody>
-            {/* 나중에 데이터 연결 시, 아래 샘플 <tr>을 map으로 대체하세요.
-                예: data.map((u) => (
-                      <tr key={u.id}> ... </tr>
-                    ))
-            */}
-            {userList.map((user)=>(
-                <tr key={user.user_code}>
+            
+              <tr key={user.user_code}>
               <td>{user.u_name}</td>
               <td>{user.gender === 'MALE' ? '남자' : '여자'}</td>
               <td>{user.birthdate}</td>
@@ -84,22 +84,20 @@ function UsersSkeleton() {
               <td>{typeMap[user.u_type]}</td>
               <td>
                 <div className="d-flex gap-2">
-                  <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
+                  <Button size="sm" variant="outline-primary" onClick={() => console.log('수정')}>
                     수정
-                  </Button>
-                  <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭", /* u.id */)}>
-                    삭제
                   </Button>
                 </div>
               </td>
             </tr>
-            ))}
+            
             
           </tbody>
         </Table>
       </div>
     </Container>
-  );
+            </Layout_Info>
+        </>
+    )
 }
-
-export default UsersSkeleton;
+export default App;

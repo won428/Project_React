@@ -16,6 +16,7 @@ import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
 
 import Insert_User from '../pages/Integrated_Info/Insert_User';
 import UserList from '../pages/Integrated_Info/UserList';
+import UserUpdateByAdmin from '../pages/User/UserUpdate';
 
 
 
@@ -56,7 +57,8 @@ function App() {
                 <Route path='/CollegeUpdate/:id' element={<CollegeUpdate />} ></Route>
 
 
-
+                {/*User(Admin)*/}
+                <Route path='/user/:id/update' element={<UserUpdateByAdmin />} ></Route>
 
 
                 {/* Schedule Tab */}
