@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../config/config";
 
 function App() {
-    const [form, setForm] = useState({ c_type: "", c_office: "" });
-    const [touched, setTouched] = useState({ c_type: false, c_office: false });
+    const [form, setForm] = useState({ cType: "", cOffice: "" });
+    const [touched, setTouched] = useState({ cType: false, cOffice: false });
     const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ type: "", text: "" });
     const navigate = useNavigate();
@@ -32,9 +32,9 @@ function App() {
 
     const errors = useMemo(() => {
         const e = {};
-        if (!form.c_type.trim()) e.c_type = "계열은 필수입니다.";
-        if (form.c_office && !phonePattern.test(form.c_office)) {
-            e.c_office = "전화번호는 2~3-3~4-4 형식이어야 합니다.";
+        if (!form.cType.trim()) e.cType = "계열은 필수입니다.";
+        if (form.cOffice && !phonePattern.test(form.cOffice)) {
+            e.cOffice = "전화번호는 2~3-3~4-4 형식이어야 합니다.";
         }
         return e;
     }, [form]);
@@ -43,7 +43,7 @@ function App() {
         const { name, value } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: name === "c_office" ? formatOfficePhone(value) : value,
+            [name]: name === "cOffice" ? formatOfficePhone(value) : value,
         }));
     };
 
@@ -55,18 +55,18 @@ function App() {
     const onSubmit = async (e) => {
         e.preventDefault();
         setMsg({ type: "", text: "" });
-        setTouched({ c_type: true, c_office: true });
-        if (errors.c_type || errors.c_office) return;
+        setTouched({ cType: true, cOffice: true });
+        if (errors.cType || errors.cOffice) return;
 
         try {
             setLoading(true);
             await axios.post(`${API_BASE_URL}/college/insert`, {
-                c_type: form.c_type.trim(),
-                c_office: form.c_office.trim() || null,
+                cType: form.cType.trim(),
+                cOffice: form.cOffice.trim() || null,
             });
             window.alert("단과대학 정보가 등록되었습니다.");
-            setForm({ c_type: "", c_office: "" });
-            setTouched({ c_type: false, c_office: false });
+            setForm({ cType: "", cOffice: "" });
+            setTouched({ cType: false, cOffice: false });
         } catch (err) {
             const reason = err.response?.data?.message || err.message || "요청 실패";
             setMsg({ type: "danger", text: `등록 실패: ${reason}` });
@@ -82,39 +82,39 @@ function App() {
             {msg.text && <Alert variant={msg.type}>{msg.text}</Alert>}
 
             <Form onSubmit={onSubmit} noValidate>
-                <Form.Group className="mb-3" controlId="c_type">
+                <Form.Group className="mb-3" controlId="cType">
                     <Form.Label>
                         계열 <span className="text-danger">*</span>
                     </Form.Label>
                     <Form.Control
                         type="text"
-                        name="c_type"
-                        value={form.c_type}
+                        name="cType"
+                        value={form.cType}
                         onChange={onChange}
                         onBlur={onBlur}
                         placeholder="예: IT·컴퓨팅계열"
                         maxLength={50}
-                        isInvalid={touched.c_type && !!errors.c_type}
+                        isInvalid={touched.cType && !!errors.cType}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.c_type}
+                        {errors.cType}
                     </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="c_office">
+                <Form.Group className="mb-3" controlId="cOffice">
                     <Form.Label>전화번호</Form.Label>
                     <Form.Control
                         type="text"
-                        name="c_office"
-                        value={form.c_office}
+                        name="cOffice"
+                        value={form.cOffice}
                         onChange={onChange}
                         onBlur={onBlur}
                         placeholder="예: 02-123-4567 / 02-1234-5678 / 010-1234-5678"
                         maxLength={13}
-                        isInvalid={touched.c_office && !!errors.c_office}
+                        isInvalid={touched.cOffice && !!errors.cOffice}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.c_office}
+                        {errors.cOffice}
                     </Form.Control.Feedback>
                     <Form.Text className="text-muted">
                         숫자만 입력해도 자동으로 하이픈이 들어갑니다.
@@ -131,7 +131,7 @@ function App() {
                     <Button
                         type="button"
                         variant="outline-secondary"
-                        onClick={() => navigate("/ColList")}
+                        onClick={() => navigate("/CollegeList")}
                         disabled={loading}   // 로딩 중엔 비활성화 (원하면 제거)
                     >
                         목록으로 이동
