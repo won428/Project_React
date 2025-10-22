@@ -14,8 +14,12 @@ import ColRegister from '../pages/Lecture/ColRegister';
 import ColList from '../pages/Lecture/ColList';
 import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
 
-import Isert_User from '../pages/Integrated_Info/Insert_User';
+import Insert_User from '../pages/Integrated_Info/Insert_User';
 import UserList from '../pages/Integrated_Info/UserList';
+
+
+
+
 
 
 
@@ -34,8 +38,9 @@ function App() {
                 <Route path='/InfoHome' element={<InfoHome />} ></Route>
                 <Route path='/This_Credit' element={<This_Credit />} ></Route>
                 <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
-                <Route path='/user/insert_user' element={<Isert_User />} ></Route>
+                <Route path='/user/insert_user' element={<Insert_User />} ></Route>
                 <Route path='/user/UserList' element={<UserList />} ></Route>
+                
 
 
 
