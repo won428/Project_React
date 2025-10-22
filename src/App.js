@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Menuitem from './ui/Menuitems'
+import Menuitem from './ui/Menuitems_St'
 
 import AppRoutes from './routes/AppRoutes'
 import axios from 'axios';
@@ -12,9 +12,6 @@ function App() {
   const [user, setUser] = useState('');
   const appName = ' LMS Service';
   const { isAuthenticated, roles } = useAuth();
-  console.log(isAuthenticated);
-  console.log(roles);
-
 
   /**
    * isAuthentivated 원리
@@ -27,18 +24,6 @@ function App() {
    */
 
 
-
-  //  <div>
-
-  //     < header className="app-wrapper" > <Menuitem /></header >
-
-  //     <main className='main-content'>
-  //     </main>
-  //     <footer className="bg-dark rooter py-3 mt-5">
-  //       <p>&copy;2025{appName}.All rights reserved</p>
-  //     </footer>
-
-  //   </div >
 
   return (
 

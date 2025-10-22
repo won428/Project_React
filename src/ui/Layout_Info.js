@@ -1,9 +1,9 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 
 
-export default function Layout({ children }) {
+export const LayoutStInfo = () => {
     const navigate = useNavigate();
 
     return (
@@ -36,7 +36,7 @@ export default function Layout({ children }) {
 
             <Col xs={10} className="p-4">
                 <Container>
-                    {children}
+                    <Outlet />
                 </Container>
             </Col>
 

@@ -4,35 +4,57 @@ import { createContext, useContext, useEffect, useState } from "react";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+
     const [user, setUser] = useState(null);
-    const [roles, setRoles] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const loadUserFromToken = () => {
-
-
+    useEffect(() => {
         const token = sessionStorage.getItem("accessToken");
+
         if (token) {
+            const decoded = jwtDecode(token);
             try {
-                const decoded = jwtDecode(token);
+
                 console.log(decoded);
 
                 if (decoded.exp > Date.now() / 1000) {
-                    setUser({ email: decoded.email })
-                    setRoles([decoded.role]);
-                    console.log(roles);
 
-                    setIsAuthenticated(true);
+                    setUser({
+                        email: decoded.sub,
+                        roles: [decoded.role],
+                        IsAuthenticated: true,
+                    })
                 }
-            } catch { sessionStorage.clear(); }
 
+                else {
+                    sessionStorage.clear();
+                }
+            } catch (err) {
+                console.log("err : " + err);
+
+            }
         }
 
 
-    };
+        setIsLoading(false)
+    }, [])
+    const login = (newToken) => {
+        const decoded = jwtDecode(newToken);
+        const token = sessionStorage.setItem("accessToken", newToken);
+        setUser({
+            email: decoded.sub,
+            roles: [decoded.role],
+            IsAuthenticated: true,
+        });
+    }
 
+    const logout = () => {
+        sessionStorage.removeItem("accessToken");
+        setUser(null);
+    };
+    const value = { user, login, logout }
     return (
-        <UserContext.Provider value={{ user, isAuthenticated, roles, loadUserFromToken }}>
+        <UserContext.Provider value={value}>
             {children}
         </UserContext.Provider>
     )

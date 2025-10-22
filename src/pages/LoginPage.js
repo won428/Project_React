@@ -5,36 +5,22 @@ import { API_BASE_URL } from "../config/config";
 import axios from "axios";
 import { useAuth, UserContext } from "../context/UserContext";
 import API, { setToken } from "../config/api"
+import { jwtDecode } from "jwt-decode";
 
 function App() {
-
-
-
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(false);
+    // const [status, setStatus] = useState(true);
     const navigate = useNavigate();
-    const { loadUserFromToken, roles, user } = useAuth();
-
-    useEffect(() => {
-        console.log("Context 마운트 시점 실행");
-        loadUserFromToken();
-    }, []);
-
-
-
-
+    const { login, user } = useAuth();
 
     const LoginAction = async (evt) => {
-
-
         evt.preventDefault();
         try {
             const url = `${API_BASE_URL}/auth/login`
             console.log(url);
-
             const parameters = {
                 email,
                 password
@@ -43,51 +29,52 @@ function App() {
             const respone = await axios.post(
                 url, parameters
             )
-
-
-
             const { accessToken, refreshToken } = respone.data;
             setToken(accessToken, refreshToken);
-
-            sessionStorage.setItem("email", email);
-
-            loadUserFromToken();
-
-            alert("로그인 성공");
+            console.log("로그인 성공");
 
 
-            if (loading) {
-                if (user.length === 0) {
-                    setLoading(false);
-                }
+            login(accessToken);
+            const decoded = jwtDecode(accessToken);
+            const userRole = decoded.role;
+            console.log(userRole);
+
+
+            switch (userRole) {
+                case 'ADMIN':
+                    navigate('/ha')
+                    break;
+                case 'STUDENT':
+                    navigate('/hs')
+                    break;
+                case 'PROFESSOR':
+                    navigate('/hp')
+                    break;
+                default:
+                    navigate('/Unauthorizedpage')
             }
-            if (roles?.includes("ADMIN")) return navigate("/");
-            if (roles?.includes("PROFESSOR")) return navigate("/LHome");
-            if (roles?.includes("STUDENT")) return navigate("/");
-            navigate("/Unauthorizedpage");
-
-
-
 
         } catch (error) {
+            console.log(error.message);
+            setError("ID/PW incorrect")
             alert("로그인 실패 " + error.response?.data || error.message);
-            console.log(setToken.newAccess);
 
         }
 
 
     }
 
+
     const logout = async () => {
         try {
-            const url = `${API_BASE_URL}/logout`
+            const url = `${API_BASE_URL}/auth/logout`
             await axios.post(url, {
                 email: sessionStorage.getItem("email")
             });
         }
         finally {
             sessionStorage.clear();
-            navigate("/login")
+            navigate("/")
         }
     }
 

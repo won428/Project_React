@@ -1,9 +1,10 @@
-import Layout from "../../ui/Layout_lec";
+
 function App() {
     return (
-        <Layout>
+        <div>
+
             LHome
-        </Layout>
+        </div>
     )
 }
 export default App;

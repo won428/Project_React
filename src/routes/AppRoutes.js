@@ -1,6 +1,6 @@
 import PrivateRoute from "../ui/PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import Home from './../pages/Home';
+import Home from '../pages/HomeAdmin';
 import Lecture_Home from '../pages/Lecture/Lecture_Home';
 import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
@@ -10,23 +10,18 @@ import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
 import Unauthorizedpage from '../pages/Unauthorizedpage';
 
-
+import HomeStudent from '../pages/HomeStudent';
+import HomeAdmin from '../pages/HomeAdmin';
+import HomePRO from '../pages/HomePRO';
 import LoginPage from '../pages/LoginPage';
 import { useAuth } from "../context/UserContext";
 import { useEffect } from "react";
+import StPage from "../pages/StPage";
+import { LayoutStLec } from "../ui/Layout_lec";
+import { LayoutStInfo } from "../ui/Layout_Info";
 
-
-
-
-
-
-const Loading = () => <div style={{ textAlign: 'center', marginTop: '100px' }}>⏳ 사용자 정보 불러오는 중...</div>;
 
 function App() {
-
-    const { isAuthenticated, user, roles, loading } = useAuth();
-    const navigate = useNavigate();
-
     /**
      * <PrivateRoute ></PrivateRoute>
      * <PrivateRoute allowedRoles ={['Roles']}>{children} </PrivateRoute>
@@ -38,71 +33,59 @@ function App() {
     return (
 
         <Routes>
-
-
             {/* Home */}
-            <Route path='/login' element={<LoginPage />} ></Route>
+            <Route path='/' element={<LoginPage />} ></Route>
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
+
+            {/* <Route element={<PrivateRoute allowedRoles={['ADMIN', 'STUDENT']} />}>
+                <Route path='/' element={<Home />}></Route>
+
+            </Route> */}
+            {/* ADMIN */}
+            <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
+                <Route path='/ha' element={<HomeAdmin />}></Route>
+
+            </Route>
 
 
 
             {/* STUDENT */}
             <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
-                <Route path='/' element={<Home />} ></Route>
-                <Route path='/InfoHome' element={<InfoHome />} ></Route>
-                <Route path='/This_Credit' element={<This_Credit />} ></Route>
+                <Route element={<StPage />}>
+                    <Route path='/hs' element={<HomeStudent />}></Route>
+                    <Route element={<LayoutStInfo />}>
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
+                        <Route path='/This_Credit' element={<This_Credit />} ></Route>
 
-                <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                        <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                    </Route>
+                    {/* Lecture Tab */}
+                    <Route element={< LayoutStLec />}>
+                        <Route path='/LHome' element={<Lecture_Home />} ></Route>
 
-                {/* Lecture Tab */}
-                <Route path='/LHome' element={<Lecture_Home />} ></Route>
+                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
-                <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
-                <Route path='/LRoom' element={<Lecture_Room />} ></Route>
-
-
-
-                {/* Schedule Tab */}
-                <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                    </Route>
 
 
+                    {/* Schedule Tab */}
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
+
+                </Route>
             </Route>
-
 
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
-                <Route path='/' element={<Home />} ></Route>
+                <Route path='/hp' element={<HomePRO />}></Route>
+
             </Route>
 
 
 
-            {/* ADMIN */}
-            <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
-                {/* Integrated_Info Tab */}
-                <Route path='/' element={<Home />} ></Route>
-                <Route path='/InfoHome' element={<InfoHome />} ></Route>
-                <Route path='/This_Credit' element={<This_Credit />} ></Route>
 
-                <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
-
-
-
-                {/* Lecture Tab */}
-                <Route path='/LHome' element={<Lecture_Home />} ></Route>
-
-                <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
-                <Route path='/LRoom' element={<Lecture_Room />} ></Route>
-
-
-
-
-
-                {/* Schedule Tab */}
-                <Route path='/acsche' element={<Academic_Schedule />} ></Route>
-            </Route>
         </Routes>
 
     )
