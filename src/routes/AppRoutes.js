@@ -52,8 +52,11 @@ function App() {
 
             {/* STUDENT */}
             <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
+                {/* Route 묶은 부분을 StPage적용 */}
                 <Route element={<StPage />}>
+
                     <Route path='/hs' element={<HomeStudent />}></Route>
+                    {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     <Route element={<LayoutStInfo />}>
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
@@ -61,6 +64,7 @@ function App() {
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                     </Route>
                     {/* Lecture Tab */}
+                    {/*Route 묶은 부분 LayoutStLec 적용*/}
                     <Route element={< LayoutStLec />}>
                         <Route path='/LHome' element={<Lecture_Home />} ></Route>
 
