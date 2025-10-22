@@ -15,7 +15,7 @@ function MenuSt() {
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand href="/" > Home </Navbar.Brand>
+                        <Navbar.Brand href="/hs" > Home </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
