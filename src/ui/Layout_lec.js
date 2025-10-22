@@ -24,6 +24,15 @@ export default function Layout({ children }) {
                         <Nav.Link
                             onClick={() => navigate(`/ToDoList`)}
                             className="text-white">TodoList</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/LecRegister`)}
+                            className="text-white">강의등록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/ColRegister`)}
+                            className="text-white">단과대학 등록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/ColList`)}
+                            className="text-white">단과대학 목록</Nav.Link>
 
                     </Nav>
                 </Container>
