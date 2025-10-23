@@ -8,6 +8,21 @@ import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
 
+import LecRegister from '../pages/Lecture/LecRegister';
+import CollegeList from '../pages/Lecture/CollegeList';
+import ColRegister from '../pages/Lecture/ColRegister';
+import ColList from '../pages/Lecture/ColList';
+import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
+
+import Insert_User from '../pages/Integrated_Info/Insert_User';
+import UserList from '../pages/Integrated_Info/UserList';
+import UserUpdateByAdmin from '../pages/User/UserUpdate';
+
+
+
+
+
+
 
 function App() {
 
@@ -24,18 +39,26 @@ function App() {
                 <Route path='/InfoHome' element={<InfoHome />} ></Route>
                 <Route path='/This_Credit' element={<This_Credit />} ></Route>
                 <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                <Route path='/user/insert_user' element={<Insert_User />} ></Route>
+                <Route path='/user/UserList' element={<UserList />} ></Route>
+                
+
 
 
 
                 {/* Lecture Tab */}
                 <Route path='/LHome' element={<Lecture_Home />} ></Route>
-
                 <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
                 <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                <Route path='/LecRegister' element={<LecRegister />} ></Route>
+                <Route path='/CollegeList' element={<CollegeList />} ></Route>
+                <Route path='/ColRegister' element={<ColRegister />} ></Route>
+                <Route path='/ColList' element={<ColList />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<CollegeUpdate />} ></Route>
 
 
-
+                {/*User(Admin)*/}
+                <Route path='/user/:id/update' element={<UserUpdateByAdmin />} ></Route>
 
 
                 {/* Schedule Tab */}
