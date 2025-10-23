@@ -71,9 +71,10 @@ function App() {
                 alert('등록 성공');
                 navigate('/user/UserList')
             }
-        } catch (error) {
+        } catch (err) {
             alert('등록실패');
-            console.log(error)
+            console.error("status:", err.response?.status);
+            console.error("data:", err.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
 
         }
 
@@ -183,7 +184,7 @@ function App() {
                         <option value={''}>단과 대학을 선택해주세요</option>
                         {collegeList.map(c => (
                             <option key={c.id} value={c.id}>
-                                {c.c_type}
+                                {c.type}
                             </option>
                         ))}
                     </Form.Select>
