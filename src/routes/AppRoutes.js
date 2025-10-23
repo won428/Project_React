@@ -1,6 +1,5 @@
 import PrivateRoute from "../ui/PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import Home from '../pages/HomeAdmin';
 import Lecture_Home from '../pages/Lecture/Lecture_Room/Lecture_Home';
 import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
@@ -32,9 +31,11 @@ import LoginPage from '../pages/LoginPage';
 import { useAuth } from "../context/UserContext";
 import { useEffect } from "react";
 import StPage from "../pages/StPage";
+import AdPage from "../pages/AdPage";
 import { LayoutStLec } from "../ui/Layout_lec";
 import { LayoutStInfo } from "../ui/Layout_Info";
 import CHPW from "../pages/FindPW";
+
 
 function App() {
     /**
@@ -72,13 +73,37 @@ function App() {
             </Route> */}
             {/* ADMIN */}
             <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
-                <Route path='/ha' element={<HomeAdmin />}></Route>
-                <Route path='/user/:id/update' element={<UserUpdateByAdmin />} ></Route>
-                <Route path='/user/insert_user' element={<Insert_User />} ></Route>
-                <Route path='/user/UserList' element={<UserList />} ></Route>
-                <Route path='/ColRegister' element={<ColRegister />} ></Route>
-                <Route path='/CollegeList' element={<CollegeList />} ></Route>
-                <Route path='/CollegeUpdate/:id' element={<CollegeUpdate />} ></Route>
+                {/* Route 묶은 부분을 StPage적용 */}
+                <Route element={<AdPage />}>
+                    
+                    <Route path='/ha' element={<HomeAdmin />}></Route>
+                    {/*Route 묶은 부분 LayoutStInfo 적용*/}
+                    {/* Integrated_Info Tab */}
+                    <Route element={<LayoutStInfo />}>
+
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
+                        <Route path='/This_Credit' element={<This_Credit />} ></Route>
+
+                        <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                    </Route>
+
+                    {/* Lecture Tab */}
+                    {/*Route 묶은 부분 LayoutStLec 적용*/}
+                    <Route element={< LayoutStLec />}>
+                        <Route path='/LHome' element={<Lecture_Home />} ></Route>
+
+                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
+
+                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        <Route path='/user/insert_user' element={<Insert_User />}></Route>
+                    </Route>
+
+
+                    {/* Schedule Tab */}
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
+
+                </Route>
             </Route>
 
 

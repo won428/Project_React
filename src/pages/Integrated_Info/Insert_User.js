@@ -84,6 +84,7 @@ function App() {
 
     return (
         <>
+        
             <Form onSubmit={signup}>
                 <Form.Group className="mb-3">
                     <Form.Label>이름</Form.Label>
@@ -229,6 +230,7 @@ function App() {
                     등록하기
                 </Button>
             </Form>
+            
         </>
     )
 }
