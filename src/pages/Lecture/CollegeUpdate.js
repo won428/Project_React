@@ -9,8 +9,8 @@ function App() {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [form, setForm] = useState({ cType: "", cOffice: "" });
-    const [touched, setTouched] = useState({ cType: false, cOffice: false });
+    const [form, setForm] = useState({ type: "", office: "" });
+    const [touched, setTouched] = useState({ type: false, office: false });
     const [loading, setLoading] = useState(true);   // 초기 로딩
     const [saving, setSaving] = useState(false);    // 저장 로딩
     const [msg, setMsg] = useState({ type: "", text: "" });
@@ -33,9 +33,9 @@ function App() {
 
     const errors = useMemo(() => {
         const e = {};
-        if (!form.cType.trim()) e.cType = "계열은 필수입니다.";
-        if (form.cOffice && !phonePattern.test(form.cOffice)) {
-            e.cOffice = "전화번호는 2~3-3~4-4 형식이어야 합니다.";
+        if (!form.type.trim()) e.type = "계열은 필수입니다.";
+        if (form.office && !phonePattern.test(form.office)) {
+            e.office = "전화번호는 2~3-3~4-4 형식이어야 합니다.";
         }
         return e;
     }, [form]);
@@ -46,10 +46,10 @@ function App() {
             setMsg({ type: "", text: "" });
             try {
                 const res = await axios.get(`${API_BASE_URL}/college/${id}`);
-                // 서버 응답 키에 맞춰 세팅 (id, cType, cOffice 사용 가정)
+                // 서버 응답 키에 맞춰 세팅 (id, type, office 사용 가정)
                 setForm({
-                    cType: res.data.cType ?? "",
-                    cOffice: res.data.cOffice ?? "",
+                    type: res.data.type ?? "",
+                    office: res.data.office ?? "",
                 });
             } catch (err) {
                 const reason = err.response?.data?.message || err.message || "요청 실패";
@@ -65,7 +65,7 @@ function App() {
         const { name, value } = e.target;
         setForm((prev) => ({
             ...prev,
-            [name]: name === "cOffice" ? formatOfficePhone(value) : value,
+            [name]: name === "office" ? formatOfficePhone(value) : value,
         }));
     };
 
@@ -76,16 +76,16 @@ function App() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        setTouched({ cType: true, cOffice: true });
+        setTouched({ type: true, office: true });
         setMsg({ type: "", text: "" });
 
-        if (errors.cType || errors.cOffice) return;
+        if (errors.type || errors.office) return;
 
         try {
             setSaving(true);
             await axios.put(`${API_BASE_URL}/college/${id}`, {
-                cType: form.cType.trim(),
-                cOffice: form.cOffice.trim() || null,
+                type: form.type.trim(),
+                office: form.office.trim() || null,
             }, { headers: { "Content-Type": "application/json" } });
 
             window.alert("단과대학 정보가 수정되었습니다.");
@@ -120,39 +120,39 @@ function App() {
             {msg.text && <Alert variant={msg.type}>{msg.text}</Alert>}
 
             <Form onSubmit={onSubmit} noValidate>
-                <Form.Group className="mb-3" controlId="cType">
+                <Form.Group className="mb-3" controlId="type">
                     <Form.Label>
                         계열 <span className="text-danger">*</span>
                     </Form.Label>
                     <Form.Control
                         type="text"
-                        name="cType"
-                        value={form.cType}
+                        name="type"
+                        value={form.type}
                         onChange={onChange}
                         onBlur={onBlur}
                         placeholder="예: IT·컴퓨팅계열"
                         maxLength={50}
-                        isInvalid={touched.cType && !!errors.cType}
+                        isInvalid={touched.type && !!errors.type}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.cType}
+                        {errors.type}
                     </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="cOffice">
+                <Form.Group className="mb-3" controlId="office">
                     <Form.Label>전화번호</Form.Label>
                     <Form.Control
                         type="text"
-                        name="cOffice"
-                        value={form.cOffice}
+                        name="office"
+                        value={form.office}
                         onChange={onChange}
                         onBlur={onBlur}
                         placeholder="예: 02-123-4567 / 02-1234-5678 / 010-1234-5678"
                         maxLength={13}
-                        isInvalid={touched.cOffice && !!errors.cOffice}
+                        isInvalid={touched.office && !!errors.office}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.cOffice}
+                        {errors.office}
                     </Form.Control.Feedback>
                 </Form.Group>
 

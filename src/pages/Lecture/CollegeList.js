@@ -72,8 +72,8 @@ export default function CollegeListPage() {
             setDeleting(true);
             const ids = [...selected];
             await Promise.all(
-                ids.map((college_id) =>
-                    axios.delete(`${API_BASE_URL}/college/delete/${college_id}`)
+                ids.map((id) =>
+                    axios.delete(`${API_BASE_URL}/college/delete/${id}`)
                 )
             );
             // 성공 후 새로고침
@@ -155,8 +155,8 @@ export default function CollegeListPage() {
                                         />
                                     </td>
                                     <td>{c.id}</td>
-                                    <td>{c.cType}</td>
-                                    <td>{c.cOffice ?? "-"}</td>
+                                    <td>{c.type}</td>
+                                    <td>{c.office ?? "-"}</td>
                                     <td style={{ width: 120 }}>
                                         <Button
                                             size="sm"
