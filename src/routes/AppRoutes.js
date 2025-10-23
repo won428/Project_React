@@ -34,7 +34,8 @@ import { useEffect } from "react";
 import StPage from "../pages/StPage";
 import { LayoutStLec } from "../ui/Layout_lec";
 import { LayoutStInfo } from "../ui/Layout_Info";
-import CHPW from "../pages/FindPW";
+import FindPW from "../pages/FindPW";
+import SetPW from "../pages/SetPW";
 
 function App() {
     /**
@@ -50,7 +51,8 @@ function App() {
         <Routes>
             {/* Home */}
             <Route path='/' element={<LoginPage />} ></Route>
-            <Route path='/CHPW' element={<CHPW />} ></Route>CHPW
+            <Route path='/findPw' element={<FindPW />} ></Route>
+            <Route path='/setPw' element={<SetPW />} ></Route>
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 

@@ -138,7 +138,7 @@ function App() {
                                                 <Button
                                                     variant="primary"
                                                     type="button"
-                                                    onClick={() => navigate("/CHPW")}
+                                                    onClick={() => navigate("/findPw")}
                                                 >Find PW(공사중)</Button>
                                             </ButtonGroup>
                                         </Col>

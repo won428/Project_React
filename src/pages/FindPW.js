@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function App() {
-    const [email, setEmail] = useState(null);
+    const [email, setEmail] = useState('');
     const navigate = useNavigate();
     const ValidatePW = async (evt) => {
         console.log(email);
@@ -20,7 +20,7 @@ function App() {
         if (respone.status === 400) {
             alert("존재하지 않는 Email입니다. 다시 입력해주세요.")
         } else {
-            navigate()
+            navigate("/setPw", { state: { email } })
         }
 
     }
