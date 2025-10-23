@@ -96,6 +96,8 @@ function App() {
 
                         <Route path='/LRoom' element={<Lecture_Room />} ></Route>
                         <Route path='/user/insert_user' element={<Insert_User />}></Route>
+                        <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
+                        <Route path='/user/UserList' element={<UserList />}></Route>
                     </Route>
 
 

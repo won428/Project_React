@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
@@ -18,39 +18,39 @@ function App() {
                 phone:'',
                 gender:'',
                 major:'',
+                college:'',
                 u_type:'',
                 });
     const[collegeList,setCollegeList] = useState([]);
     const[majorList,setMajorList] = useState([]);
     const[college,setCollege] = useState('');
   
-             const getCollegeList = () => {
-            const url = `${API_BASE_URL}/college/list`
-            axios
-                .get(url)
-                .then((response)=>{
-                    
-                    
-                    setCollegeList(response.data)
-                    console.log(collegeList) 
-                })
-                .catch((error)=>{
-                    setCollegeList([]); // 실패 시 안전값
-                })
-                
-            }
+    const getCollegeList = () => {
+    const url = `${API_BASE_URL}/college/list`
+        axios
+          .get(url)
+          .then((response)=>{
+              
+              
+              setCollegeList(response.data)
+          })
+          .catch((error)=>{
+              setCollegeList([]); // 실패 시 안전값
+          })
+          
+      }
 
-            useEffect(() => {getCollegeList();}, []);
+    useEffect(() => {getCollegeList();}, []);
 
-        useEffect(()=>{
-             if (!college) {           // <= 선택 전엔 요청하지 않기
+    useEffect(()=>{
+            if (!college) {           // <= 선택 전엔 요청하지 않기
             setMajorList([]);
             return;
             }
             
             const url = `${API_BASE_URL}/major/list`;
             axios
-                .get(url, {params: { college_id: college }})
+                .get(url, {params: { college_id: Number(userinfo.college)}})
                 .then((response)=>{
                     setMajorList(response.data)
                 })
@@ -59,10 +59,6 @@ function App() {
                 })
         },[college])
 
-    
-    
-    
-    
         useEffect(()=>{
         const url = `${API_BASE_URL}/user/selectUserCode/${id}`
         console.log({id})
@@ -89,13 +85,14 @@ function App() {
                 email:userinfo.email,
                 phone:userinfo.phone,
                 gender:userinfo.gender,
-                u_type:userinfo.u_type
+                u_type:userinfo.u_type,
+                major:userinfo.major,
+                college:userinfo.college
                  }))
       
     },[userinfo])
 
-     const signup = async(e) =>{
-            
+    const signup = async(e) =>{
             try {
             e.preventDefault();
             const url = `${API_BASE_URL}/user/signup`;
@@ -110,9 +107,7 @@ function App() {
                 console.log(error)
                 
             }
-            
-            
-        };
+            };
 
 
 
@@ -185,6 +180,20 @@ function App() {
               </Form.Group>
 
               <Form.Group className="mb-3">
+                <Form.Label>비밀번호</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="비밀번호를 입력해주세요."
+                  name="password"
+                  value={user.password}
+                  onChange={(event) => {
+                    setUser((previous) => ({ ...previous, password: event.target.value }));
+                    console.log(event.target.value);
+                  }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
                 <Form.Label>생년월일</Form.Label>
                 <div className="d-flex gap-2">
                   <Form.Control
@@ -225,7 +234,7 @@ function App() {
               <Form.Group className="mb-3">
                 <Form.Label>소속 단과 대학</Form.Label>
                 <Form.Select
-                 value={college}
+                 defaultValue={user.college}
                   onChange={(e) => {
                     const value = e.target.value;
                     setCollege(value);
@@ -234,8 +243,8 @@ function App() {
                 >
                   <option value={""}>단과 대학을 선택해주세요</option>
                   {collegeList.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.c_type}
+                    <option key={c.id} value={Number(c.id)}>
+                      {c.type}
                     </option>
                   ))}
                 </Form.Select>
@@ -253,7 +262,7 @@ function App() {
                 >
                   <option value={""}>소속 학과를 선택해주세요</option>
                   {majorList.map((m) => (
-                    <option key={m.id} value={m.id}>
+                    <option key={m.id} value={Number(m.id)}>
                       {m.m_name}
                     </option>
                   ))}
@@ -263,6 +272,7 @@ function App() {
               <Form.Group className="mb-3">
                 <Form.Label>사용자 구분</Form.Label>
                 <Form.Select
+                  value={user.u_type}
                   onChange={(e) => {
                     const value = e.target.value;
                     setUser((prev) => ({ ...prev, u_type: value }));
