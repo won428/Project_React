@@ -5,7 +5,6 @@ import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
 import This_Credit from '../pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
-import StudentDetailPage from '../pages/Integrated_Info/StudentDetailPage';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
 
