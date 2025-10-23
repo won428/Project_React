@@ -1,5 +1,6 @@
 import { Button, Form } from "react-bootstrap";
 import Layout_Info from "../../ui/Layout_Info";
+import Layout from "../../ui/Layout_lec";
 import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
@@ -85,7 +86,7 @@ import { useNavigate } from "react-router-dom";
         
         return (
             <>
-                <Layout_Info>
+                <Layout>
                 <Form onSubmit={signup}>
                     <Form.Group className="mb-3">
                         <Form.Label>이름</Form.Label>
@@ -228,7 +229,7 @@ import { useNavigate } from "react-router-dom";
                         등록하기
                     </Button>
             </Form>
-                </Layout_Info>
+                </Layout>
             </>
         )
     }
