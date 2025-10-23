@@ -31,7 +31,7 @@ export default function Layout({ children }) {
                             onClick={() => navigate(`/ColRegister`)}
                             className="text-white">단과대학 등록</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/ColList`)}
+                            onClick={() => navigate(`/CollegeList`)}
                             className="text-white">단과대학 목록</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/user/insert_user`)}

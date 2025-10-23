@@ -11,7 +11,6 @@ import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
 import LecRegister from '../pages/Lecture/LecRegister';
 import CollegeList from '../pages/Lecture/CollegeList';
 import ColRegister from '../pages/Lecture/ColRegister';
-import ColList from '../pages/Lecture/ColList';
 import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
 
 import Insert_User from '../pages/Integrated_Info/Insert_User';
@@ -46,15 +45,19 @@ function App() {
 
 
 
-                {/* Lecture Tab */}
+                {/* Lecture&College&Major(단과대학/학과/강의 CRUD) Tab */}
                 <Route path='/LHome' element={<Lecture_Home />} ></Route>
                 <Route path='/ToDoList' element={<ToDoList />} ></Route>
                 <Route path='/LRoom' element={<Lecture_Room />} ></Route>
                 <Route path='/LecRegister' element={<LecRegister />} ></Route>
-                <Route path='/CollegeList' element={<CollegeList />} ></Route>
+
                 <Route path='/ColRegister' element={<ColRegister />} ></Route>
-                <Route path='/ColList' element={<ColList />} ></Route>
+                <Route path='/CollegeList' element={<CollegeList />} ></Route>
                 <Route path='/CollegeUpdate/:id' element={<CollegeUpdate />} ></Route>
+
+                {/* <Route path='/CollegeUpdate/:id' element={<MajorList />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorRegister />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorUpdate />} ></Route> */}
 
 
                 {/*User(Admin)*/}
