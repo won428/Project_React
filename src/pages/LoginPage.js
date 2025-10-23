@@ -24,6 +24,12 @@ function App() {
     }, [user]);
 
 
+    useEffect(()=>{
+        if(user?.roles.includes( 'ADMIN')){navigate('/ha')}
+        if(user?.roles.includes('STUDENT')){navigate('/hs')}
+        if(user?.roles.includes('PROFESSOR')){navigate('/hp')}
+
+    },[])
     const LoginAction = async (evt) => {
         evt.preventDefault();
         try {
