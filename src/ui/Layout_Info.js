@@ -21,6 +21,10 @@ export default function Layout({ children }) {
                             className="text-white"
                         >학적</Nav.Link>
                         <Nav.Link
+                            onClick={() => navigate(`/StudentInfo`)}
+                            className="text-white"
+                        >학생 정보</Nav.Link>
+                        <Nav.Link
                             onClick={() => navigate(`/This_Credit`)}
                             className="text-white"
                         >당학기 성적 </Nav.Link>
