@@ -1,9 +1,9 @@
+
 function App() {
     return (
-        <>
-            INFOHOME
-        </>
-
+        <div>
+            LHome
+        </div>
     )
 }
 export default App;

@@ -1,9 +1,8 @@
-function App() {
+function App({ email }) {
     return (
         <>
-            INFOHOME
+            Menu Item
         </>
-
     )
 }
 export default App;

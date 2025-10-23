@@ -1,49 +1,160 @@
-import { Route, Routes } from "react-router-dom";
-import Home from './../pages/Home';
-import Lecture_Home from '../pages/Lecture/Lecture_Home';
+import PrivateRoute from "../ui/PrivateRoute";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import Lecture_Home from '../pages/Lecture/Lecture_Room/Lecture_Home';
 import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
+import StudentInfo from '../pages/Integrated_Info/StudentInfo';
 import This_Credit from '../pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
 
+import LecRegister from '../pages/Lecture/Lecture_Room/LecRegister';
+import CollegeList from '../pages/Lecture/CollegeList';
+import ColRegister from '../pages/Lecture/ColRegister';
+import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
+
+import Insert_User from '../pages/Integrated_Info/Insert_User';
+import UserList from '../pages/Integrated_Info/UserList';
+import UserUpdateByAdmin from '../pages/User/UserUpdate';
+
+
+
+
+
+
+import Unauthorizedpage from '../pages/Unauthorizedpage';
+
+import HomeStudent from '../pages/HomeStudent';
+import HomeAdmin from '../pages/HomeAdmin';
+import HomePRO from '../pages/HomePRO';
+import LoginPage from '../pages/LoginPage';
+import { useAuth } from "../context/UserContext";
+import { useEffect } from "react";
+import StPage from "../pages/StPage";
+import AdPage from "../pages/AdPage";
+import { LayoutStLec } from "../ui/Layout_lec";
+import { LayoutStInfo } from "../ui/Layout_Info";
+import CHPW from "../pages/FindPW";
+
 
 function App() {
-
+    /**
+     * <PrivateRoute ></PrivateRoute>
+     * <PrivateRoute allowedRoles ={['Roles']}>{children} </PrivateRoute>
+     * Roles가 있어야 children route에 접근 가능
+     */
 
 
 
     return (
-        <>
-            <Routes>
-                {/* Home */}
-                <Route path='/' element={<Home />} ></Route>
 
-                {/* Integrated_Info Tab */}
-                <Route path='/InfoHome' element={<InfoHome />} ></Route>
-                <Route path='/This_Credit' element={<This_Credit />} ></Route>
-                <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
-                <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
-                <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+        <Routes>
+            {/* Home */}
+            <Route path='/' element={<LoginPage />} ></Route>
+            <Route path='/CHPW' element={<CHPW />} ></Route>
+            <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 
-
-                {/* Lecture Tab */}
-                <Route path='/LHome' element={<Lecture_Home />} ></Route>
-
-                <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
-                <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+            {/* 재배치 라우터 목록 */}
 
 
 
 
 
-                {/* Schedule Tab */}
-                <Route path='/acsche' element={<Academic_Schedule />} ></Route>
-            </Routes>
-        </>
+            {/* <Route path='/CollegeUpdate/:id' element={<MajorList />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorRegister />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorUpdate />} ></Route> */}
+
+
+
+            {/* <Route element={<PrivateRoute allowedRoles={['ADMIN', 'STUDENT']} />}>
+                <Route path='/' element={<Home />}></Route>
+
+            </Route> */}
+            {/* ADMIN */}
+            <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
+                {/* Route 묶은 부분을 StPage적용 */}
+                <Route element={<AdPage />}>
+
+                    <Route path='/ha' element={<HomeAdmin />}></Route>
+                    {/*Route 묶은 부분 LayoutStInfo 적용*/}
+                    {/* Integrated_Info Tab */}
+                    <Route element={<LayoutStInfo />}>
+
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
+                        <Route path='/StudentInfo' element={<StudentInfo />} ></Route>
+                        <Route path='/This_Credit' element={<This_Credit />} ></Route>
+
+                        <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                    </Route>
+
+                    {/* Lecture Tab */}
+                    {/*Route 묶은 부분 LayoutStLec 적용*/}
+                    <Route element={< LayoutStLec />}>
+                        <Route path='/LHome' element={<Lecture_Home />} ></Route>
+
+                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
+
+                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        <Route path='/user/insert_user' element={<Insert_User />}></Route>
+                    </Route>
+
+
+                    {/* Schedule Tab */}
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
+
+                </Route>
+            </Route>
+
+
+
+            {/* STUDENT */}
+            <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
+                {/* Route 묶은 부분을 StPage적용 */}
+                <Route element={<StPage />}>
+
+                    <Route path='/hs' element={<HomeStudent />}></Route>
+                    {/*Route 묶은 부분 LayoutStInfo 적용*/}
+                    {/* Integrated_Info Tab */}
+                    <Route element={<LayoutStInfo />}>
+
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
+                        <Route path='/This_Credit' element={<This_Credit />} ></Route>
+
+                        <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
+                    </Route>
+
+                    {/* Lecture Tab */}
+                    {/*Route 묶은 부분 LayoutStLec 적용*/}
+                    <Route element={< LayoutStLec />}>
+                        <Route path='/LHome' element={<Lecture_Home />} ></Route>
+
+                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
+
+                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                    </Route>
+
+
+                    {/* Schedule Tab */}
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
+
+                </Route>
+            </Route>
+
+            {/* PROFESSOR */}
+            <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
+                <Route path='/hp' element={<HomePRO />}></Route>
+                <Route path='/LecRegister' element={<LecRegister />} ></Route>
+            </Route>
+
+
+
+
+        </Routes>
+
     )
 }
 export default App;

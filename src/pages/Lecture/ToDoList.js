@@ -1,10 +1,9 @@
-import Layout from "../../ui/Layout_lec";
 
 function App() {
     return (
-        <Layout>
+        <div>
             ToDoList
-        </Layout>
+        </div>
     )
 }
 export default App;
