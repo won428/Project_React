@@ -28,6 +28,8 @@ export const LayoutStInfo = () => {
                             onClick={() => navigate(`/Entire_Credit`)}
                             className="text-white"
                         >전체 성적</Nav.Link>
+                        
+                        
                     </Nav>
                 </Container>
             </Col>

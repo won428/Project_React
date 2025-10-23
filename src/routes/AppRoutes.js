@@ -1,13 +1,28 @@
 import PrivateRoute from "../ui/PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Home from '../pages/HomeAdmin';
-import Lecture_Home from '../pages/Lecture/Lecture_Home';
+import Lecture_Home from '../pages/Lecture/Lecture_Room/Lecture_Home';
 import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
 import This_Credit from '../pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
 import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
+
+import LecRegister from '../pages/Lecture/Lecture_Room/LecRegister';
+import CollegeList from '../pages/Lecture/CollegeList';
+import ColRegister from '../pages/Lecture/ColRegister';
+import CollegeUpdate from '../pages/Lecture/CollegeUpdate';
+
+import Insert_User from '../pages/Integrated_Info/Insert_User';
+import UserList from '../pages/Integrated_Info/UserList';
+import UserUpdateByAdmin from '../pages/User/UserUpdate';
+
+
+
+
+
+
 import Unauthorizedpage from '../pages/Unauthorizedpage';
 
 import HomeStudent from '../pages/HomeStudent';
@@ -39,6 +54,18 @@ function App() {
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 
+            {/* 재배치 라우터 목록 */}
+
+
+
+
+
+            {/* <Route path='/CollegeUpdate/:id' element={<MajorList />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorRegister />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<MajorUpdate />} ></Route> */}
+
+
+
             {/* <Route element={<PrivateRoute allowedRoles={['ADMIN', 'STUDENT']} />}>
                 <Route path='/' element={<Home />}></Route>
 
@@ -46,7 +73,12 @@ function App() {
             {/* ADMIN */}
             <Route element={<PrivateRoute allowedRoles={['ADMIN']} />}>
                 <Route path='/ha' element={<HomeAdmin />}></Route>
-
+                <Route path='/user/:id/update' element={<UserUpdateByAdmin />} ></Route>
+                <Route path='/user/insert_user' element={<Insert_User />} ></Route>
+                <Route path='/user/UserList' element={<UserList />} ></Route>
+                <Route path='/ColRegister' element={<ColRegister />} ></Route>
+                <Route path='/CollegeList' element={<CollegeList />} ></Route>
+                <Route path='/CollegeUpdate/:id' element={<CollegeUpdate />} ></Route>
             </Route>
 
 
@@ -58,12 +90,15 @@ function App() {
 
                     <Route path='/hs' element={<HomeStudent />}></Route>
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
+                    {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfo />}>
+
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
 
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                     </Route>
+
                     {/* Lecture Tab */}
                     {/*Route 묶은 부분 LayoutStLec 적용*/}
                     <Route element={< LayoutStLec />}>
@@ -85,7 +120,7 @@ function App() {
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
                 <Route path='/hp' element={<HomePRO />}></Route>
-
+                <Route path='/LecRegister' element={<LecRegister />} ></Route>
             </Route>
 
 
