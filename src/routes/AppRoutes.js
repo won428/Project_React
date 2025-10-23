@@ -19,7 +19,7 @@ import { useEffect } from "react";
 import StPage from "../pages/StPage";
 import { LayoutStLec } from "../ui/Layout_lec";
 import { LayoutStInfo } from "../ui/Layout_Info";
-
+import CHPW from "../pages/FindPW";
 
 function App() {
     /**
@@ -35,6 +35,7 @@ function App() {
         <Routes>
             {/* Home */}
             <Route path='/' element={<LoginPage />} ></Route>
+            <Route path='/CHPW' element={<CHPW />} ></Route>CHPW
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 

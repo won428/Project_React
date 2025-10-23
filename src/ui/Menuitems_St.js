@@ -15,7 +15,7 @@ function MenuSt() {
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand href="/hs" > Home </Navbar.Brand>
+                        <Navbar.Brand onClick={() => navigate(`/hs`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
@@ -32,6 +32,7 @@ function MenuSt() {
                                 {user.email}님
                             </Navbar.Text>
                             <Button size="sm" onClick={logoutAction} >Logout</Button>
+
                         </Nav>
                     </Container>
                 </Navbar>

@@ -31,11 +31,8 @@ export const UserProvider = ({ children }) => {
                 }
             } catch (err) {
                 console.log("err : " + err);
-
             }
         }
-
-
         setIsLoading(false)
     }, [])
     const login = (newToken) => {
@@ -52,6 +49,10 @@ export const UserProvider = ({ children }) => {
         sessionStorage.removeItem("accessToken");
         setUser(null);
     };
+
+
+
+
     const value = { user, login, logout }
     return (
         <UserContext.Provider value={value}>

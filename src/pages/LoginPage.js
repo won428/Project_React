@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Alert, Button, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/config";
 import axios from "axios";
@@ -20,7 +20,6 @@ function App() {
         evt.preventDefault();
         try {
             const url = `${API_BASE_URL}/auth/login`
-            console.log(url);
             const parameters = {
                 email,
                 password
@@ -31,7 +30,8 @@ function App() {
             )
             const { accessToken, refreshToken } = respone.data;
             setToken(accessToken, refreshToken);
-            console.log("로그인 성공");
+
+            alert("로그인 성공")
 
 
             login(accessToken);
@@ -64,34 +64,38 @@ function App() {
 
     }
 
+    // context로 기능 이전
+    // const logout = async () => {
+    //     try {
+    //         const url = `${API_BASE_URL}/auth/logout`
+    //         await axios.post(url, {
+    //             email: sessionStorage.getItem("email")
+    //         });
+    //     }
+    //     finally {
+    //         sessionStorage.clear();
+    //         navigate("/")
+    //     }
+    // }
 
-    const logout = async () => {
-        try {
-            const url = `${API_BASE_URL}/auth/logout`
-            await axios.post(url, {
-                email: sessionStorage.getItem("email")
-            });
-        }
-        finally {
-            sessionStorage.clear();
-            navigate("/")
-        }
-    }
+
 
     return (
         <>
-            <Container className="d-flex justify-content-center align-items-center">
-                <Row className="w-100 justify-content-center mt-5">
-                    <Col md={6} >
-                        <Card  >
-                            <CardBody onSubmit={LoginAction}>
+            <Container fluid className="d-flex justify-content-center align-items-center vh-100">
+                <Row className="w-100 justify-content-center">
+                    <Col xs={12} md={6} lg={4} >
+                        <Card className="w-100" >
+                            <CardBody >
                                 <h3>Login</h3>
                                 {error && <Alert variant="danger">{error}</Alert>}
-                                <Form>
+                                <br />
+                                <Form onSubmit={LoginAction}>
                                     <Form.Group>
                                         <Form.Label>
                                             Email or 학번
                                         </Form.Label>
+
                                         <Form.Control
                                             type="email"
                                             placeholder="Email을 입력하세요"
@@ -114,12 +118,21 @@ function App() {
                                     </Form.Group>
                                     <Row >
                                         <Col className="align-item-end">
-                                            <Button
-                                                variant="primary"
-                                                type="submit"
-                                                className="w-100"
 
-                                            >Login</Button>
+                                            <br />
+                                            <ButtonGroup className="w-100 ">
+                                                <Button
+                                                    variant="primary"
+                                                    type="submit"
+
+
+                                                >Login</Button>
+                                                <Button
+                                                    variant="primary"
+                                                    type="button"
+                                                    onClick={() => navigate("/CHPW")}
+                                                >Find PW(공사중)</Button>
+                                            </ButtonGroup>
                                         </Col>
 
                                     </Row>

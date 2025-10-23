@@ -10,7 +10,7 @@ function App() {
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand href="/hp" > Home </Navbar.Brand>
+                        <Navbar.Brand onClick={() => navigate(`/hp`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
