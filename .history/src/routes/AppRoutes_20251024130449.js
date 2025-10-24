@@ -2,8 +2,8 @@ import PrivateRoute from "./PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
-
-import StudentInfo from '../_student/pages/Integrated_Info/StudentInfo';
+import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
+import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
 import This_Credit from '../_student/pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../_student/pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
@@ -23,6 +23,10 @@ import CollegeUpdate from '../_admin/pages/Lecture/CollegeUpdate';
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
+
+
+
+
 
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
@@ -150,7 +154,7 @@ function App() {
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
 
-                        <Route path='/StudentInfo' element={<StudentInfo />} ></Route>
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                     </Route>

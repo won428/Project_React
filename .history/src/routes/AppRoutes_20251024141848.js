@@ -25,13 +25,17 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 
 
+
+
+
+
 import Unauthorizedpage from '../public/Unauthorizedpage';
 
 import HomeStudent from '../_student/pages/HomeStudent';
 import HomeAdmin from '../_admin/ui/Home/HomeAdmin';
 import HomePRO from '../_professor/ui/HomePRO';
 import LoginPage from '../public/pages/LoginPage';
-import { useAuth } from "../public/context/UserContext";
+import { useAuth } from "../../../context/UserContext";
 import { useEffect } from "react";
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";

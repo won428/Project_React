@@ -2,7 +2,7 @@ import PrivateRoute from "./PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
-
+import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
 import StudentInfo from '../_student/pages/Integrated_Info/StudentInfo';
 import This_Credit from '../_student/pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../_student/pages/Integrated_Info/Entire_Credit';
@@ -25,13 +25,17 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 
 
+
+
+
+
 import Unauthorizedpage from '../public/Unauthorizedpage';
 
 import HomeStudent from '../_student/pages/HomeStudent';
 import HomeAdmin from '../_admin/ui/Home/HomeAdmin';
 import HomePRO from '../_professor/ui/HomePRO';
 import LoginPage from '../public/pages/LoginPage';
-import { useAuth } from "../public/context/UserContext";
+import { useAuth } from "'../../../public/context/UserContext'";
 import { useEffect } from "react";
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
@@ -150,6 +154,7 @@ function App() {
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
 
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/StudentInfo' element={<StudentInfo />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>

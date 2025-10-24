@@ -1,15 +1,25 @@
 import PrivateRoute from "./PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+<<<<<<< HEAD
+import Lecture_Home from '../pages/Lecture/Lecture_Room/Lecture_Home';
+import ToDoList from '../pages/Lecture/ToDoList';
+import InfoHome from '../pages/Integrated_Info/InfoHome';
+import StudentInfo from '../pages/Integrated_Info/StudentInfo.js';
+import This_Credit from '../pages/Integrated_Info/This_Credit';
+import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
+import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
+import Lecture_Room from '../pages/Lecture/Lecture_Room/Lecture_Room';
+=======
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
-
-import StudentInfo from '../_student/pages/Integrated_Info/StudentInfo';
+import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
 import This_Credit from '../_student/pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../_student/pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
 import Academic_ScheduleMod from '../public/pages/Schedule/Academic_ScheduleMod';
 import Lecture_RoomAd from '../_admin/pages/Lecture_Room/Lecture_RoomAd';
 import Lecture_Room from '../_student/pages/LectureRoom/Lecture_Room';
+>>>>>>> b48c3637750ebf752d3b9b66e448629ff9344bcd
 
 import InfohomeAD from '../_admin/ui/Home/InfoHomeAD';
 import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
@@ -23,6 +33,10 @@ import CollegeUpdate from '../_admin/pages/Lecture/CollegeUpdate';
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
+
+
+
+
 
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
@@ -150,7 +164,7 @@ function App() {
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
 
-                        <Route path='/StudentInfo' element={<StudentInfo />} ></Route>
+                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                     </Route>

@@ -1,9 +1,0 @@
-function App() {
-    return (
-        <>
-            INFOHOME
-        </>
-
-    )
-}
-export default App;

@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import { useAuth } from './public/context/UserContext';
 import AppRoutes from './routes/AppRoutes'
 
 
