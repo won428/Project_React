@@ -3,7 +3,7 @@ import { Alert, Button, ButtonGroup, Card, CardBody, Col, Container, Form, Row }
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/config";
 import axios from "axios";
-import { useAuth, UserContext } from "../../context/UserContext";
+import { useAuth, UserContext } from "../../public/context/UserContext";
 import API, { setToken } from "../config/api"
 import { jwtDecode } from "jwt-decode";
 
@@ -24,12 +24,6 @@ function App() {
     }, [user]);
 
 
-    useEffect(() => {
-        if (user?.roles.includes('ADMIN')) { navigate('/ha') }
-        if (user?.roles.includes('STUDENT')) { navigate('/hs') }
-        if (user?.roles.includes('PROFESSOR')) { navigate('/hp') }
-
-    }, [])
     const LoginAction = async (evt) => {
         evt.preventDefault();
         try {

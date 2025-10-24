@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";//( >npm install jwt-decode ))
-import { useAuth } from "../context/UserContext";
+import { useAuth } from "./../public/context/UserContext";
 import { Navigate, Outlet } from "react-router-dom"; import { useEffect } from "react";
 ;
 

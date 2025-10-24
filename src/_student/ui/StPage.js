@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
-import MenuAd from "../ui/Menuitems_AD";
+import MenuSt from "./Menuitems_St";
 import { appName } from "../../public/appName";
 
-const AdPage = () => {
+const StPage = () => {
     //Student 권한 Menu + Layout + footer Form
     return (
         <>
-            <header><MenuAd /></header>
+            <header><MenuSt /></header>
             <main>
                 <Outlet />
             </main>
@@ -16,4 +16,4 @@ const AdPage = () => {
         </>
     )
 }
-export default AdPage;
+export default StPage;

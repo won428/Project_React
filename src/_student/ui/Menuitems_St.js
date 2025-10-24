@@ -1,16 +1,21 @@
-import { Col, Container, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../public/context/UserContext";
 
-function App() {
-
+function MenuSt() {
+    const { user, logout } = useAuth();
 
     const navigate = useNavigate();
+    const logoutAction = () => {
+        logout();
+        navigate("login")
+    }
     return (
         <Row>
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand onClick={() => navigate(`/ha`)} > Home </Navbar.Brand>
+                        <Navbar.Brand onClick={() => navigate(`/hs`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
@@ -24,8 +29,10 @@ function App() {
                         </Nav>
                         <Nav>
                             <Navbar.Text className="text-white">
-                                userName 님
+                                {user.email}님
                             </Navbar.Text>
+                            <Button size="sm" onClick={logoutAction} >Logout</Button>
+
                         </Nav>
                     </Container>
                 </Navbar>
@@ -33,4 +40,4 @@ function App() {
         </Row>
     )
 }
-export default App;
+export default MenuSt;

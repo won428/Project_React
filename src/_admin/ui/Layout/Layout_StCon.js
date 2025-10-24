@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStInfo = () => {
+export const LayoutStCon = () => {
     const navigate = useNavigate();
 
     return (
@@ -17,19 +17,21 @@ export const LayoutStInfo = () => {
                     <Nav
                         className="flex-column">
                         <Nav.Link
-                            onClick={() => navigate(`/InfoHome`)}
+                            onClick={() => navigate(`/sthm/ad`)}
                             className="text-white"
-                        >학적</Nav.Link>
+                        >구성원 관리 홈</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/This_Credit`)}
+                            onClick={() => navigate(`/user/insert_user`)}
                             className="text-white"
-                        >당학기 성적 </Nav.Link>
+                        >구성원 등록</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/Entire_Credit`)}
+                            onClick={() => navigate(`/user/:id/update`)}
                             className="text-white"
-                        >전체 성적</Nav.Link>
-                        
-                        
+                        >구성원 정보 수정</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/user/UserList`)}
+                            className="text-white"
+                        >구성원 리스트</Nav.Link>
                     </Nav>
                 </Container>
             </Col>

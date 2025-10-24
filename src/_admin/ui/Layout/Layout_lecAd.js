@@ -18,7 +18,7 @@ export const LayoutStLec = () => {
                 <Container>
                     <Nav className="flex-column">
                         <Nav.Link
-                            onClick={() => navigate(`/LHome`)}
+                            onClick={() => navigate(`/LHomeAD`)}
                             className="text-white">강의 홈</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/LRoom`)}
@@ -36,14 +36,6 @@ export const LayoutStLec = () => {
                         <Nav.Link
                             onClick={() => navigate(`/CollegeList`)}
                             className="text-white">단과대학 목록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/user/insert_user`)}
-                            className="text-white"
-                        >사용자 등록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/user/UserList`)}
-                            className="text-white"
-                        >사용자 목록 조회</Nav.Link>
 
                     </Nav>
                 </Container>

@@ -1,4 +1,3 @@
-import Layout from "../../../student/ui/Layout_lec";
 function App() {
     return (
         <>

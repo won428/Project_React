@@ -1,5 +1,5 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { useAuth } from "../../context/UserContext";
+import { useAuth } from "../../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 
@@ -17,7 +17,7 @@ function App() {
         <Container className="mt-4">
             <Row>
                 <Col>
-                    Processor? : {user.roles}
+                    Admin? : {user.roles}
                     <Button onClick={logoutAction} >Logout</Button>
                 </Col>
             </Row>

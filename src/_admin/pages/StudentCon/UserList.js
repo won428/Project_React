@@ -1,35 +1,35 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../../public/config/config";
+import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 
 function UsersSkeleton() {
 
-    const [userList,setUserList] = useState([]);
-    const navigate = useNavigate();
+  const [userList, setUserList] = useState([]);
+  const navigate = useNavigate();
 
-    useEffect(()=>{
-        
-        const url = `${API_BASE_URL}/user/list`
-        
-        axios
-            .get(url)
-            .then((response)=>{
-                setUserList(response.data)
-                console.log(response.data)
-            })
-            .catch((error)=>{
-                console.log(error.response.data)
-            })
+  useEffect(() => {
 
-    },[])
+    const url = `${API_BASE_URL}/user/list`
 
-    const typeMap = {
-        ADMIN: '관리자',
-        STUDENT: '학생',
-        PROFESSOR: '교수'
-    };
+    axios
+      .get(url)
+      .then((response) => {
+        setUserList(response.data)
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error.response.data)
+      })
+
+  }, [])
+
+  const typeMap = {
+    ADMIN: '관리자',
+    STUDENT: '학생',
+    PROFESSOR: '교수'
+  };
 
   return (
     <Container fluid className="py-4" style={{ maxWidth: "100%" }}>
@@ -55,7 +55,7 @@ function UsersSkeleton() {
               <th style={{ width: 100 }}>성별</th>
               <th style={{ width: 100 }}>생년월일</th>
               <th style={{ width: 140 }}>학번</th>
-              <th style={{ minWidth: 300 }}>이메일</th> 
+              <th style={{ minWidth: 300 }}>이메일</th>
               <th style={{ minWidth: 160 }}>휴대전화번호</th>
               <th style={{ minWidth: 160 }}>단과대학</th>
               <th style={{ minWidth: 180 }}>학과</th>
@@ -69,32 +69,32 @@ function UsersSkeleton() {
                       <tr key={u.id}> ... </tr>
                     ))
             */}
-            {userList.map((user)=>(
-                <tr key={user.user_code}>
-              <td>{user.u_name}</td>
-              <td>{user.gender === 'MALE' ? '남자' : '여자'}</td>
-              <td>{user.birthdate}</td>
-              <td>{user.user_code}</td>
-               <td style={{ whiteSpace: "normal", wordBreak: "break-all", overflowWrap: "anywhere" }}>
-              {user.email}
-            </td>
-              <td>{user.phone}</td>
-              <td>{user.college}</td>
-              <td>{user.major}</td>
-              <td>{typeMap[user.u_type]}</td>
-              <td>
-                <div className="d-flex gap-2">
-                  <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
-                    수정
-                  </Button>
-                  <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭", /* u.id */)}>
-                    삭제
-                  </Button>
-                </div>
-              </td>
-            </tr>
+            {userList.map((user) => (
+              <tr key={user.user_code}>
+                <td>{user.u_name}</td>
+                <td>{user.gender === 'MALE' ? '남자' : '여자'}</td>
+                <td>{user.birthdate}</td>
+                <td>{user.user_code}</td>
+                <td style={{ whiteSpace: "normal", wordBreak: "break-all", overflowWrap: "anywhere" }}>
+                  {user.email}
+                </td>
+                <td>{user.phone}</td>
+                <td>{user.college}</td>
+                <td>{user.major}</td>
+                <td>{typeMap[user.u_type]}</td>
+                <td>
+                  <div className="d-flex gap-2">
+                    <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
+                      수정
+                    </Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭", /* u.id */)}>
+                      삭제
+                    </Button>
+                  </div>
+                </td>
+              </tr>
             ))}
-            
+
           </tbody>
         </Table>
       </div>

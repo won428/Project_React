@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../config/config";
+import { API_BASE_URL } from "../public/config/config";
 
 function App() {
     const navigate = useNavigate();

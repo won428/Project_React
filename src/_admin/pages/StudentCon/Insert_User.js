@@ -1,8 +1,9 @@
 import { Button, Form } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
-import { API_BASE_URL } from "../../public/config/config";
+import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../public/context/UserContext";
 
 
 function App() {
@@ -22,7 +23,6 @@ function App() {
     const [college, setCollege] = useState('');
 
     const navigate = useNavigate();
-
 
     const getCollegeList = () => {
         const url = `${API_BASE_URL}/college/list`
@@ -85,7 +85,7 @@ function App() {
 
     return (
         <>
-        
+
             <Form onSubmit={signup}>
                 <Form.Group className="mb-3">
                     <Form.Label>이름</Form.Label>
@@ -231,7 +231,7 @@ function App() {
                     등록하기
                 </Button>
             </Form>
-            
+
         </>
     )
 }
