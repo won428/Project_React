@@ -1,21 +1,20 @@
-// src/pages/college/CollegeEditPage.jsx
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useMemo } from "react";
 import { Form, Button, Alert, Spinner, Stack } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+// 경로는 현재 파일 위치 기준으로 맞추세요: 예) "../config/config" 또는 "config/config"
 import { API_BASE_URL } from "../../../public/config/config";
 
 function App() {
-    const { id } = useParams();
-    const navigate = useNavigate();
-
     const [form, setForm] = useState({ type: "", office: "" });
     const [touched, setTouched] = useState({ type: false, office: false });
-    const [loading, setLoading] = useState(true);   // 초기 로딩
-    const [saving, setSaving] = useState(false);    // 저장 로딩
+    const [loading, setLoading] = useState(false);
     const [msg, setMsg] = useState({ type: "", text: "" });
+    const navigate = useNavigate();
 
+    // 2~3-3~4-4 허용
     const phonePattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
+
     const formatOfficePhone = (raw) => {
         const d = (raw || "").replace(/\D/g, "").slice(0, 11);
         if (!d) return "";
@@ -27,8 +26,8 @@ function App() {
         }
         if (d.length <= 3) return d;
         if (d.length <= 7) return `${d.slice(0, 3)}-${d.slice(3)}`;
-        if (d.length <= 10) return `${d.slice(0, 3)}-${d.slice(3, d.length - 4)}-${d.slice(-4)}`;
-        return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;
+        if (d.length <= 10) return `${d.slice(0, 3)}-${d.slice(3, d.length - 4)}-${d.slice(-4)}`; // 3-3-4
+        return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;                              // 3-4-4
     };
 
     const errors = useMemo(() => {
@@ -39,27 +38,6 @@ function App() {
         }
         return e;
     }, [form]);
-
-    // 기존 데이터 로드
-    useEffect(() => {
-        const load = async () => {
-            setMsg({ type: "", text: "" });
-            try {
-                const res = await axios.get(`${API_BASE_URL}/college/${id}`);
-                // 서버 응답 키에 맞춰 세팅 (id, type, office 사용 가정)
-                setForm({
-                    type: res.data.type ?? "",
-                    office: res.data.office ?? "",
-                });
-            } catch (err) {
-                const reason = err.response?.data?.message || err.message || "요청 실패";
-                setMsg({ type: "danger", text: `상세 조회 실패: ${reason}` });
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, [id]);
 
     const onChange = (e) => {
         const { name, value } = e.target;
@@ -76,46 +54,30 @@ function App() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        setTouched({ type: true, office: true });
         setMsg({ type: "", text: "" });
-
+        setTouched({ type: true, office: true });
         if (errors.type || errors.office) return;
 
         try {
-            setSaving(true);
-            await axios.put(`${API_BASE_URL}/college/${id}`, {
+            setLoading(true);
+            await axios.post(`${API_BASE_URL}/college/insert`, {
                 type: form.type.trim(),
                 office: form.office.trim() || null,
-            }, { headers: { "Content-Type": "application/json" } });
-
-            window.alert("단과대학 정보가 수정되었습니다.");
-            navigate("/CollegeList");
+            });
+            window.alert("단과대학 정보가 등록되었습니다.");
+            setForm({ type: "", office: "" });
+            setTouched({ type: false, office: false });
         } catch (err) {
             const reason = err.response?.data?.message || err.message || "요청 실패";
-            setMsg({ type: "danger", text: `수정 실패: ${reason}` });
+            setMsg({ type: "danger", text: `등록 실패: ${reason}` });
         } finally {
-            setSaving(false);
+            setLoading(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className="container mt-4 d-flex justify-content-center">
-                <Spinner />
-            </div>
-        );
-    }
-
     return (
         <div className="container mt-4" style={{ maxWidth: 560 }}>
-            <Stack direction="horizontal" className="mb-3">
-                <h3 className="mb-0">단과대학 수정</h3>
-                <div className="ms-auto">
-                    <Button variant="outline-secondary" onClick={() => navigate("/CollegeList")}>
-                        목록으로
-                    </Button>
-                </div>
-            </Stack>
+            <h3 className="mb-3">단과대학 등록</h3>
 
             {msg.text && <Alert variant={msg.type}>{msg.text}</Alert>}
 
@@ -154,15 +116,25 @@ function App() {
                     <Form.Control.Feedback type="invalid">
                         {errors.office}
                     </Form.Control.Feedback>
+                    <Form.Text className="text-muted">
+                        숫자만 입력해도 자동으로 하이픈이 들어갑니다.
+                    </Form.Text>
                 </Form.Group>
 
-                <Stack direction="horizontal" gap={2}>
-                    <div className="ms-auto" />
-                    <Button type="submit" disabled={saving}>
-                        {saving ? <Spinner size="sm" /> : "수정 저장"}
+                <Stack direction="horizontal" gap={8}>
+                    <Button type="submit" disabled={loading}>
+                        {loading ? <Spinner size="sm" /> : "등록"}
                     </Button>
-                    <Button type="button" variant="outline-secondary" onClick={() => navigate("/CollegeList")} disabled={saving}>
-                        취소
+
+                    {/* ✅ 항상 보이는 목록 이동 버튼 */}
+                    <div className="ms-auto" />
+                    <Button
+                        type="button"
+                        variant="outline-secondary"
+                        onClick={() => navigate("/collist")}
+                        disabled={loading}   // 로딩 중엔 비활성화 (원하면 제거)
+                    >
+                        목록으로 이동
                     </Button>
                 </Stack>
             </Form>

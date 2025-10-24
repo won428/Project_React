@@ -31,10 +31,10 @@ export const LayoutStLec = () => {
                             onClick={() => navigate(`/LecRegister`)}
                             className="text-white">강의등록</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/ColRegister`)}
+                            onClick={() => navigate(`/colreg`)}
                             className="text-white">단과대학 등록</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/CollegeList`)}
+                            onClick={() => navigate(`/collist`)}
                             className="text-white">단과대학 목록</Nav.Link>
 
                     </Nav>

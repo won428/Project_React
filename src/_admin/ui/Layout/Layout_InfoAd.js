@@ -31,15 +31,12 @@ export const LayoutStInfo = () => {
                         <Nav.Link
                             onClick={() => navigate(`/collist`)}
                             className="text-white"
-                        >단과대학 리스트</Nav.Link>
+                        >단과대학 조회</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/colreg`)}
                             className="text-white"
                         >단과대학 생성</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/colup`)}
-                            className="text-white"
-                        >단과대학 업데이트</Nav.Link>
+
 
 
                     </Nav>
