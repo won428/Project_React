@@ -23,7 +23,8 @@ import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 
-
+import NoticeIns from "../_professor/NoticeIns";
+import NoticeList from "../_professor/NoticeList";
 
 
 
@@ -33,11 +34,19 @@ import Unauthorizedpage from '../public/Unauthorizedpage';
 import HomeStudent from '../_student/pages/HomeStudent';
 import HomeAdmin from '../_admin/ui/Home/HomeAdmin';
 import HomePRO from '../_professor/ui/HomePRO';
+
+import LecRegisterPro from '../_professor/Lecture_Room/LecRegisterPro';
+import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
+import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
+import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro';
+
+
 import LoginPage from '../public/pages/LoginPage';
 import { useAuth } from "../public/context/UserContext";
 import { useEffect } from "react";
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
+import ProPage from "../_professor/ui/ProPage";
 
 
 import { LayoutStLec } from "../_admin/ui/Layout/Layout_lecAd";
@@ -46,6 +55,9 @@ import { LayoutStCon } from "../_admin/ui/Layout/Layout_StCon";
 
 import { LayoutStLecst } from "../_student/ui/Layout/Layout_lecSt";
 import { LayoutStInfost } from "../_student/ui/Layout/Layout_InfoSt";
+
+
+import { Layout_lecP } from "../_professor/ui/Layout/Layout_lecP";
 
 
 import FindPW from "../public/FindPW";
@@ -153,6 +165,7 @@ function App() {
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
 
+
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
@@ -178,10 +191,21 @@ function App() {
 
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
-                <Route path='/hp' element={<HomePRO />}></Route>
-                <Route path='/LecRegister' element={<LecRegister />} ></Route>
-            </Route>
+                <Route element={<ProPage />}>
+                    <Route path='/hp' element={<HomePRO />}></Route>
+                    <Route element={<Layout_lecP />}>
 
+                        <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
+                        <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
+                        <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
+                        <Route path='/noticep' element={<NoticeIns />} ></Route>
+                        <Route path='/notionlist' element={<NoticeList />} ></Route>
+                    </Route>
+
+
+                    <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
+                </Route>
+            </Route>
 
 
 
