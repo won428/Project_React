@@ -1,5 +1,5 @@
 import { Col, FormControl, FormLabel, Row, Form, Card, CardBody, Container, Button } from "react-bootstrap";
-import { API_BASE_URL } from "../config/config";
+import { API_BASE_URL } from "./config/config";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

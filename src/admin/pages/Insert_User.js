@@ -1,6 +1,6 @@
 import { Button, Form } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
-import { API_BASE_URL } from "../../config/config";
+import { API_BASE_URL } from "../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

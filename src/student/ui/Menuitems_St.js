@@ -1,6 +1,6 @@
 import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/UserContext";
+import { useAuth } from "../../context/UserContext";
 
 function MenuSt() {
     const { user, logout } = useAuth();

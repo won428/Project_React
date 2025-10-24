@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import Menuitem from './ui/Menuitems_St'
+import Menuitem from './student/ui/Menuitems_St'
 
 import AppRoutes from './routes/AppRoutes'
 import axios from 'axios';

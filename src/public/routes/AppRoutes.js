@@ -1,40 +1,40 @@
-import PrivateRoute from "../public/PrivateRoute";
+import PrivateRoute from "../PrivateRoute";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import Lecture_Home from '../admin/pages/Lecture_Room/Lecture_Home';
-import ToDoList from '../admin/pages/Lecture/ToDoList';
-import InfoHome from '../student/pages/Integrated_Info/InfoHome';
-import This_Credit from '../student/pages/Integrated_Info/This_Credit';
-import Entire_Credit from '../student/pages/Integrated_Info/Entire_Credit';
-import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
-import Lecture_Room from '../admin/pages/Lecture_Room/Lecture_Room';
+import Lecture_Home from '../../pages/Lecture/Lecture_Room/Lecture_Home';
+import ToDoList from '../../pages/Lecture/ToDoList';
+import InfoHome from '../../student/ui/InfoHome';
+import This_Credit from '../../student/pages/Integrated_Info/This_Credit';
+import Entire_Credit from '../../student/pages/Integrated_Info/Entire_Credit';
+import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
+import Lecture_Room from '../../pages/Lecture/Lecture_Room/Lecture_Room';
 
-import LecRegister from '../admin/pages/Lecture_Room/LecRegister';
-import CollegeList from '../admin/pages/Lecture/CollegeList';
-import ColRegister from '..//admin/pages/Lecture/ColRegister';
-import CollegeUpdate from '../admin/pages/Lecture/CollegeUpdate';
+import LecRegister from '../../pages/Lecture/Lecture_Room/LecRegister';
+import CollegeList from '../../pages/Lecture/CollegeList';
+import ColRegister from '../../pages/Lecture/ColRegister';
+import CollegeUpdate from '../../pages/Lecture/CollegeUpdate';
 
-import Insert_User from '../admin/pages/Insert_User';
-import UserList from '../admin/pages/UserList';
-import UserUpdateByAdmin from '../admin/pages/UserUpdate';
-
-
+import Insert_User from '../../student/pages/Integrated_Info/Insert_User';
+import UserList from '../../admin/UserList';
+import UserUpdateByAdmin from '../../admin/UserUpdate';
 
 
 
 
-import Unauthorizedpage from '../public/Unauthorizedpage';
 
-import HomeStudent from '../student/pages/HomeStudent';
-import HomeAdmin from '../admin/ui/HomeAdmin';
-import HomePRO from '../professor/ui/HomePRO';
-import LoginPage from '../public/pages/LoginPage';
-import { useAuth } from "../context/UserContext";
+
+import Unauthorizedpage from '../Unauthorizedpage';
+
+import HomeStudent from '../../student/pages/HomeStudent';
+import HomeAdmin from '../../pages/HomeAdmin';
+import HomePRO from '../../pages/HomePRO';
+import LoginPage from '../pages/LoginPage';
+import { useAuth } from "../../context/UserContext";
 import { useEffect } from "react";
-import StPage from "../student/ui/StPage";
-import AdPage from "../admin/pages/AdPage";
-import { LayoutStLec } from "../student/ui/Layout_lec";
-import { LayoutStInfo } from "../student/ui/Layout_Info";
-import CHPW from "../public/FindPW";
+import StPage from "../StPage";
+import AdPage from "../../admin/ui/AdPage";
+import { LayoutStLec } from "../../student/ui/Layout_lec";
+import { LayoutStInfo } from "../../student/ui/Layout_Info";
+import CHPW from "../FindPW";
 
 
 function App() {

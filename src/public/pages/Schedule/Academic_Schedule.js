@@ -1,6 +1,6 @@
 import { Calendar, dataFnsLocalizer } from "react-big-calendar";
 import { Container } from "react-bootstrap";
-import MenuSt from "../../ui/Menuitems_St";
+import MenuSt from "../../../student/ui/Menuitems_St";
 
 function App() {
     return (

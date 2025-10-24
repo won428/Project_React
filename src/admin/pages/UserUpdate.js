@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { use, useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
-import { API_BASE_URL } from "../../config/config";
+import { API_BASE_URL } from "../../public/config/config";
 import axios from "axios";
 
 function App() {

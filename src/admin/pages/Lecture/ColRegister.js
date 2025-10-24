@@ -3,7 +3,7 @@ import { Form, Button, Alert, Spinner, Stack } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // 경로는 현재 파일 위치 기준으로 맞추세요: 예) "../config/config" 또는 "config/config"
-import { API_BASE_URL } from "../../config/config";
+import { API_BASE_URL } from "../../../public/config/config";
 
 function App() {
     const [form, setForm] = useState({ type: "", office: "" });

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import MenuAd from "../ui/Menuitems_AD";
-import { appName } from "../ui/appName";
+import { appName } from "../../public/appName";
 
 const AdPage = () => {
     //Student 권한 Menu + Layout + footer Form
