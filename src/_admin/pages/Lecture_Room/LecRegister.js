@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
@@ -22,6 +22,9 @@ function App() {
         totalStudent:''
     });
     const [major, setMajor] = useState('');
+    
+    const startRef = useRef(null);
+    const endRef = useRef(null);
     
     
 
@@ -181,6 +184,100 @@ function App() {
                         }}
 
                     />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>강의 설명</Form.Label> {/* +82 같이 국가번호 셀렉박스 추가 */}
+                    <Form.Control
+                        type="text"
+                        placeholder="강의 설명을 입력해주세요."
+                        name="descripton"
+                        value={lecture.description}
+                        onChange={(event) => {
+                            setLecture((previous)=>({...previous, description: event.target.value}))
+                            console.log(event.target.value)
+                        }}
+
+                    />
+                </Form.Group>
+                
+                <Form.Group className="mb-3">
+                    <Form.Label>시작 날짜</Form.Label>
+                    <div className="d-flex gap-2">
+                        <Form.Control
+                            ref={startRef}
+                            type="date"                 // 브라우저 내장 달력
+                            placeholder="YYYY-MM-DD"
+                            name="birthdate"
+                            value={lecture.startDate}
+                            onChange={(event) => {
+                                setLecture(previous => ({ ...previous, startDate: event.target.value }))
+                                console.log(event.target.value)
+                            }}
+                        />
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => startRef.current?.showPicker?.() || startRef.current?.focus()}
+                        >
+                            달력
+                        </Button>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>종료 날짜</Form.Label>
+                    <div className="d-flex gap-2">
+                        <Form.Control
+                            ref={endRef}
+                            type="date"                 // 브라우저 내장 달력
+                            placeholder="YYYY-MM-DD"
+                            name="birthdate"
+                            value={lecture.endDate}
+                            onChange={(event) => {
+                                setLecture(previous => ({ ...previous, endDate: event.target.value }))
+                                console.log(event.target.value)
+                            }}
+                        />
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => endRef.current?.showPicker?.() || endRef.current?.focus()}
+                        >
+                            달력
+                        </Button>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>학점</Form.Label>
+                    <Form.Select
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setLecture(prev => ({ ...prev, credit: value }))
+                            console.log(e.target.value)
+                        }}
+                    >
+                        <option value={''}>선택</option>
+                        <option value={'1'}>1학점</option>
+                        <option value={'2'}>2학점</option>
+                        <option value={'3'}>3학점</option>
+                        <option value={'4'}>4학점</option>
+                    </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>상태</Form.Label>
+                    <Form.Select
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setLecture(prev => ({ ...prev, status: value }))
+                            console.log(e.target.value)
+                        }}
+                    >
+                        <option value={''}>선택</option>
+                        <option value={'PENDING'}>승인 대기</option>
+                        <option value={'INPROGRESS'}>수강중</option>
+                        <option value={'COMPLETED'}>종강</option>
+                    </Form.Select>
                 </Form.Group>
 
 
