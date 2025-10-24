@@ -1,0 +1,168 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Container, Row, Col, Card, Table, Spinner, Alert } from 'react-bootstrap';
+import { API_BASE_URL } from '../../config/config';
+
+
+function App() {
+    // 나중에 axios로 API 호출 후 상태로 변경 예정
+    const [studentInfo, setStudentInfo] = useState({
+        userid: null,                  // Long 타입 숫자 → 초기값 null
+        userCode: null,            // 고유 코드 Long
+        name: '',                  // 이름 문자열
+        password: '',              // 비밀번호 문자열
+        birthDate: '',             // 'yyyy-MM-dd' 형식 날짜 문자열
+        email: '',                 // 이메일 문자열
+        phone: '',                 // 휴대전화 문자열
+        gender: '',                // 성별 문자열 (예: 'MALE', 'FEMALE')
+        major: null,               // 소속 학과 객체 혹은 ID(null 초기)
+        type: '',                  // 사용자 유형 문자열 (예: 'STUDENT', 'PROFESSOR', 'ADMIN')
+    });
+
+
+    const [statusRecords, setStatusRecords] = useState({
+        statusid: null,                 // 학적 상태 PK 번호(Long)
+        studentStatus: 'ENROLLED', // 학적 상태 문자열 (재학, 휴학, 복학, 퇴학, 졸업 등)
+        admissionDate: '',         // 입학일자 (yyyy-MM-dd 형식)
+        leaveDate: '',             // 휴학일자 (nullable)
+        returnDate: '',            // 복학일자 (nullable)
+        graduationDate: '',        // 졸업일자 (nullable)
+        retentionDate: '',         // 유급일자 (nullable)
+        expelledDate: '',          // 퇴학/제적일 (nullable)
+        totalCredit: 0,            // 총 학점 (integer)
+        currentCredit: 0.0,        // 이번 학기 학점 (double)
+        studentImage: '',          // 증명사진 이미지 경로 문자열
+    });
+
+    const [error, setError] = useState(null);
+
+
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/api/student/info`)
+            .then(res => {
+                if (res.data.type === 'STUDENT') {
+                    setStudentInfo(res.data.studentInfo);        // res.data 구조에 맞게
+                    setStatusRecords(res.data.statusRecords);   // res.data 구조에 맞게
+                } else {
+                    setStudentInfo(null);
+                    setStatusRecords(null);
+                    // 에러 처리 분기
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                // 에러 상태 업데이트 등
+            });
+    }, []);
+
+    return (
+        <div>
+            <h2>학생 기본 정보</h2>
+            <table style={{ borderCollapse: 'collapse', width: '100%', tableLayout: 'fixed' }}>
+                <colgroup>
+                    <col style={{ width: '25%' }} />  {/* 제목(헤더) 영역 */}
+                    <col style={{ width: '75%' }} />  {/* 내용 영역 */}
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>아이디</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.userid}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>학번</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.userCode}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>이름</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.name}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>이메일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.email}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>전화번호</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.phone}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>생년월일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.birthDate}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>성별</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.gender}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>소속학과</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.major?.name || ''}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left', backgroundColor: '#f9f9f9' }}>사용자 유형</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.type}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>학적 상태</h2>
+            <table style={{ borderCollapse: 'collapse', width: '100%', marginTop: '1rem', tableLayout: 'fixed' }}>
+                <colgroup>
+                    <col style={{ width: '25%' }} />  {/* 컬럼명 영역 */}
+                    <col style={{ width: '75%' }} />  {/* 내용 영역 */}
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>증명사진</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                            {statusRecords.studentImage
+                                ? <img src={statusRecords.studentImage} alt="[translate:증명사진]" style={{ width: '100px' }} />
+                                : '-'}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>학적 상태 ID</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.statusid}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>학적 상태</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.studentStatus}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>입학일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.admissionDate}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>휴학일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.leaveDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>복학일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.returnDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>졸업일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.graduationDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>유급일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.retentionDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>퇴학일</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.expelledDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>총 학점</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.totalCredit}</td>
+                    </tr>
+                    <tr>
+                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>이번 학기 학점</th>
+                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.currentCredit}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    );
+}
+
+export default App;

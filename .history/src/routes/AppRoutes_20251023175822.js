@@ -3,7 +3,7 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import Lecture_Home from '../pages/Lecture/Lecture_Room/Lecture_Home';
 import ToDoList from '../pages/Lecture/ToDoList';
 import InfoHome from '../pages/Integrated_Info/InfoHome';
-import StudentInfo from '../pages/Integrated_Info/StudentInfo.js';
+import StudentInfo from '../pages/Integrated_Info/StudentInfo';
 import This_Credit from '../pages/Integrated_Info/This_Credit';
 import Entire_Credit from '../pages/Integrated_Info/Entire_Credit';
 import Academic_Schedule from '../pages/Schedule/Academic_Schedule';
