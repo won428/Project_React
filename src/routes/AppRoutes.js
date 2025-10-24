@@ -19,6 +19,9 @@ import CollegeList from '../_admin/pages/College/CollegeList';
 import ColRegister from '../_admin/pages/College/ColRegister';
 import CollegeUpdate from '../_admin/pages/College/CollegeUpdate';
 
+import MajorRegister from '../_admin/pages/Major/MajorRegister';
+import MajorList from '../_admin/pages/Major/MajorList';
+
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
@@ -118,6 +121,14 @@ function App() {
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
                         <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
+
+                    </Route>
+
+
+                    {/* Integrated_Info Tab */}
+                    <Route element={<LayoutStInfo />}>
+                        <Route path='/majorReg' element={<MajorRegister />} ></Route>
+                        <Route path='/majorList' element={<MajorList />} ></Route>
 
                     </Route>
 

@@ -35,7 +35,15 @@ export const LayoutStInfo = () => {
                         <Nav.Link
                             onClick={() => navigate(`/colreg`)}
                             className="text-white"
-                        >단과대학 생성</Nav.Link>
+                        >단과대학 등록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/majorList`)}
+                            className="text-white"
+                        >학과 조회</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/majorReg`)}
+                            className="text-white"
+                        >학과 등록</Nav.Link>
 
 
 
