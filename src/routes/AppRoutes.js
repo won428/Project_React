@@ -15,9 +15,9 @@ import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
 import StHomeAD from '../_admin/ui/Home/StHomeAd';
 
 import LecRegister from '../_admin/pages/Lecture_Room/LecRegister';
-import CollegeList from '../_admin/pages/Lecture/CollegeList';
-import ColRegister from '../_admin/pages/Lecture/ColRegister';
-import CollegeUpdate from '../_admin/pages/Lecture/CollegeUpdate';
+import CollegeList from '../_admin/pages/College/CollegeList';
+import ColRegister from '../_admin/pages/College/ColRegister';
+import CollegeUpdate from '../_admin/pages/College/CollegeUpdate';
 
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
@@ -118,7 +118,7 @@ function App() {
                         <Route path='/etrcdt' element={<Entire_Credit />} ></Route>
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
-                        <Route path='/colup' element={<CollegeUpdate />} ></Route>
+                        <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
 
                     </Route>
 

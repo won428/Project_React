@@ -29,6 +29,17 @@ export const LayoutStInfo = () => {
                             className="text-white"
                         >전체 성적 관리 </Nav.Link>
 
+                        <Nav.Link
+                            onClick={() => navigate(`/collist`)}
+                            className="text-white"
+                        >단과대학 조회</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/colreg`)}
+                            className="text-white"
+                        >단과대학 생성</Nav.Link>
+
+
+
 
                     </Nav>
                 </Container>

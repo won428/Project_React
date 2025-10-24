@@ -55,7 +55,6 @@ function App() {
         setMajorList(response.data)
       })
       .catch((error) => {
-          alert('등록실패');
           console.error("status:", error.response?.status);
           console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
 
@@ -73,7 +72,6 @@ function App() {
 
       })
       .catch((error) => {
-          alert('등록실패');
           console.error("status:", error.response?.status);
           console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
       })
