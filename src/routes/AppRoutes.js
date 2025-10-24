@@ -15,13 +15,14 @@ import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
 import StHomeAD from '../_admin/ui/Home/StHomeAd';
 
 import LecRegister from '../_admin/pages/Lecture_Room/LecRegister';
-import CollegeList from '../_admin/pages/Lecture/CollegeList';
-import ColRegister from '../_admin/pages/Lecture/ColRegister';
-import CollegeUpdate from '../_admin/pages/Lecture/CollegeUpdate';
+import CollegeList from '../_admin/pages/College/CollegeList';
+import ColRegister from '../_admin/pages/College/ColRegister';
+import CollegeUpdate from '../_admin/pages/College/CollegeUpdate';
 
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
+import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 
 
 
@@ -117,7 +118,7 @@ function App() {
                         <Route path='/etrcdt' element={<Entire_Credit />} ></Route>
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
-                        <Route path='/colup' element={<CollegeUpdate />} ></Route>
+                        <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
 
                     </Route>
 
@@ -128,6 +129,7 @@ function App() {
                         <Route path='/LHomeAD' element={<LHomeAD />} ></Route>
                         <Route path='/LRoomAd' element={<Lecture_RoomAd />} ></Route>
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
+                        <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
 
 
 

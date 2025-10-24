@@ -1,13 +1,10 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStLec = () => {
+export default function Layout({ children }) {
     const navigate = useNavigate();
-
-
-
     return (
 
         <Row className="pt-0 mt-0 min-vh-100">
@@ -18,7 +15,7 @@ export const LayoutStLec = () => {
                 <Container>
                     <Nav className="flex-column">
                         <Nav.Link
-                            onClick={() => navigate(`/LHomeAD`)}
+                            onClick={() => navigate(`/LHome`)}
                             className="text-white">강의 홈</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/LRoom`)}
@@ -27,18 +24,6 @@ export const LayoutStLec = () => {
                         <Nav.Link
                             onClick={() => navigate(`/ToDoList`)}
                             className="text-white">TodoList</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/LecRegister`)}
-                            className="text-white">강의등록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/colreg`)}
-                            className="text-white">단과대학 등록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/collist`)}
-                            className="text-white">단과대학 목록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/lectureRegister   `)}
-                            className="text-white">강의 등록</Nav.Link>
 
                     </Nav>
                 </Container>
@@ -48,7 +33,7 @@ export const LayoutStLec = () => {
 
             <Col xs={10} className="p-4">
                 <Container>
-                    <Outlet />
+                    {children}
                 </Container>
             </Col>
 
