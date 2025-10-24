@@ -37,7 +37,7 @@ export default function CollegeListPage() {
         async function load() {
             try {
                 setLoading(true);
-                const response = await axios.get(`${API_BASE_URL}/college/list`, {
+                const response = await axios.get(`${API_BASE_URL}/college/page/list`, {
                     params: {
                         pageSize: Math.max(1, paging.pageSize),
                         pageNumber: paging.pageNumber,
