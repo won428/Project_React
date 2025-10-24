@@ -29,14 +29,23 @@ function App() {
             email,
             newPassword: pw
         };
-        const respone = await axios.post(url, parameter);
-
-        if (respone !== 200) {
+        try {
+            const respone = await axios.post(url, parameter);
+            console.log(respone.data);
+            alert("변경이 완료되었습니다.");
             navigate("/")
-        } else {
-            return;
-        }
 
+
+        }
+        catch (error) {
+            if (error.response.status === 406) {
+                alert("이미 사용하는 Pw입니다.");
+                return;
+            } else {
+                alert("오류가 발생했습니다.");
+                return;
+            }
+        }
 
 
     }
@@ -62,7 +71,6 @@ function App() {
                                             value={pw}
                                             onChange={(evt) => {
                                                 setPw(evt.target.value)
-                                                console.log(pw);
                                             }
 
 
@@ -80,7 +88,6 @@ function App() {
                                             value={vpw}
                                             onChange={(evt) => {
                                                 setVpw(evt.target.value)
-                                                console.log(vpw);
 
                                             }
                                             }
