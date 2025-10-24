@@ -23,6 +23,8 @@ import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
+import LectureList from '../_admin/pages/Lecture_Room/LectureList';
+
 
 
 
@@ -130,6 +132,7 @@ function App() {
                         <Route path='/LRoomAd' element={<Lecture_RoomAd />} ></Route>
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
+                        <Route path='/lectureList' element={<LectureList />} ></Route>
 
 
 
