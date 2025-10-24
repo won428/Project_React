@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import MenuSt from "../ui/Menuitems_St";
-import { appName } from "../ui/appName";
+import { appName } from "../../public/appName";
 
 const StPage = () => {
     //Student 권한 Menu + Layout + footer Form

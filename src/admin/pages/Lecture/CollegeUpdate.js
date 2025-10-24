@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button, Alert, Spinner, Stack } from "react-bootstrap";
 import axios from "axios";
-import { API_BASE_URL } from "../../config/config";
+import { API_BASE_URL } from "../../../public/config/config";
 
 function App() {
     const { id } = useParams();
