@@ -50,12 +50,15 @@ function App() {
 
     const url = `${API_BASE_URL}/major/list`;
     axios
-      .get(url, { params: { college_id: Number(userinfo.college) } })
+      .get(url, { params: { college_id: college } })
       .then((response) => {
         setMajorList(response.data)
       })
       .catch((error) => {
-        console.log(error)
+          alert('등록실패');
+          console.error("status:", error.response?.status);
+          console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+
       })
   }, [college])
 
@@ -70,7 +73,9 @@ function App() {
 
       })
       .catch((error) => {
-        console.log(error)
+          alert('등록실패');
+          console.error("status:", error.response?.status);
+          console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
       })
 
 
@@ -81,7 +86,7 @@ function App() {
     setUser((previous) => ({
       ...previous,
       u_name: userinfo.u_name,
-      password: userinfo.password,
+      password: '',
       birthdate: userinfo.birthdate,
       email: userinfo.email,
       phone: userinfo.phone,
@@ -96,8 +101,8 @@ function App() {
   const signup = async (e) => {
     try {
       e.preventDefault();
-      const url = `${API_BASE_URL}/user/signup`;
-      const response = await axios.post(url, user);
+      const url = `${API_BASE_URL}/user/admin/update/${id}`;
+      const response = await axios.patch(url, user);
 
       if (response.status === 200) {
         alert('등록 성공');
@@ -235,40 +240,40 @@ function App() {
                   <Form.Group className="mb-3">
                     <Form.Label>소속 단과 대학</Form.Label>
                     <Form.Select
-                      defaultValue={user.college}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setCollege(value);
-                        console.log(value);
-                      }}
+                        value={college}
+                        onChange={(e) => {
+                            const value = e.target.value
+                            setCollege(value)
+                            console.log(value)
+                        }}
                     >
-                      <option value={""}>단과 대학을 선택해주세요</option>
-                      {collegeList.map((c) => (
-                        <option key={c.id} value={Number(c.id)}>
-                          {c.type}
-                        </option>
-                      ))}
+                        <option value={''}>단과 대학을 선택해주세요</option>
+                        {collegeList.map(c => (
+                            <option key={c.id} value={c.id}>
+                                {c.type}
+                            </option>
+                        ))}
                     </Form.Select>
-                  </Form.Group>
+                </Form.Group>
 
-                  <Form.Group className="mb-3">
+                <Form.Group className="mb-3">
                     <Form.Label>소속 학과</Form.Label>
                     <Form.Select
-                      value={user.major}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setUser((prev) => ({ ...prev, major: value }));
-                        console.log(e.target.value);
-                      }}
+                        value={user.major}
+                        onChange={(e) => {
+                            const value = e.target.value
+                            setUser(prev => ({ ...prev, major: value }))
+                            console.log(e.target.value)
+                        }}
                     >
-                      <option value={""}>소속 학과를 선택해주세요</option>
-                      {majorList.map((m) => (
-                        <option key={m.id} value={Number(m.id)}>
-                          {m.m_name}
-                        </option>
-                      ))}
+                        <option value={''}>소속 학과를 선택해주세요</option>
+                        {majorList.map(m => (
+                            <option key={m.id} value={m.id}>
+                                {m.m_name}
+                            </option>
+                        ))}
                     </Form.Select>
-                  </Form.Group>
+                </Form.Group>
 
                   <Form.Group className="mb-3">
                     <Form.Label>사용자 구분</Form.Label>
