@@ -1,17 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import Menuitem from './ui/Menuitems_St'
 
 import AppRoutes from './routes/AppRoutes'
-import axios from 'axios';
-import { useState } from 'react';
-import { useAuth, UserContext } from './context/UserContext';
 
 
 function App() {
-  const [user, setUser] = useState('');
-  const appName = ' LMS Service';
-  const { isAuthenticated, roles } = useAuth();
 
   /**
    * isAuthentivated 원리
