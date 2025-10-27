@@ -26,6 +26,7 @@ import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 
 import NoticeIns from "../_professor/NoticeIns";
 import NoticeList from "../_professor/NoticeList";
+import NoticeListSpec from "../_professor/NoticeListSpec";
 
 
 
@@ -202,6 +203,7 @@ function App() {
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
                         <Route path='/noticep' element={<NoticeIns />} ></Route>
                         <Route path='/notionlist' element={<NoticeList />} ></Route>
+                        <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
                     </Route>
 
 
