@@ -25,6 +25,7 @@ import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 
 import NoticeIns from "../_professor/NoticeIns";
 import NoticeList from "../_professor/NoticeList";
+import NoticeListSpec from "../_professor/NoticeListSpec";
 
 
 
@@ -200,6 +201,7 @@ function App() {
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
                         <Route path='/noticep' element={<NoticeIns />} ></Route>
                         <Route path='/notionlist' element={<NoticeList />} ></Route>
+                        <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
                     </Route>
 
 
