@@ -33,6 +33,13 @@ export const Layout_lecP = () => {
                         <Nav.Link
                             onClick={() => navigate(`/notionlist`)}
                             className="text-white">공지 목록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/lectureListPro`)}
+                            className="text-white">강의 목록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/lectureDetail`)}
+                            className="text-white">강의 상세보기</Nav.Link>
+                            
 
 
                     </Nav>

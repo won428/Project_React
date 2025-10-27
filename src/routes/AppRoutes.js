@@ -24,6 +24,10 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 import LectureList from '../_admin/pages/Lecture_Room/LectureList';
+import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
+import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
+import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
+import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
 
 
 import NoticeIns from "../_professor/NoticeIns";
@@ -145,6 +149,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
+                        <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
 
 
 
@@ -184,6 +189,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
                         <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
                     </Route>
 
 
@@ -205,6 +211,8 @@ function App() {
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
                         <Route path='/noticep' element={<NoticeIns />} ></Route>
                         <Route path='/notionlist' element={<NoticeList />} ></Route>
+                        <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
+                        <Route path='/LectureDetail' element={<LectureDetail />} ></Route>
                     </Route>
 
 
