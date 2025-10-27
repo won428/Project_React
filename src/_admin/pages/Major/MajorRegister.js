@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Table, Button, Alert, Spinner, Stack, Form, Col, Row } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Alert, Spinner, Stack, Form, Col, Row } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +9,17 @@ function App() {
     const [major, setMajor] = useState({ name: "", office: "", collegeId: "" });
     const [colleges, setColleges] = useState([]);
 
-    const [form, setForm] = useState({ name: "", office: "", college: '' });
+    // 해당 input에 포커스를 올렸는지 안올렸는지 상태 체크
+    const [touched, setTouched] = useState({ name: false, office: false, collegeId: false });
+
+    const [errors, setErrors] = useState({});
+
+    // 입력폼 제출 시 상태 메세지 띄우는 용
+    const [msg, setMsg] = useState({ type: "", text: "" });
 
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const [msg, setMsg] = useState({ type: "", text: "" });
 
     const phonePattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
@@ -33,54 +38,84 @@ function App() {
         return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;                              // 3-4-4
     };
 
-    const errors = useMemo(() => {
+    // 학과 전화번호 포맷 다듬기
+    const onChange = (e) => {
+        const { name, value } = e.target;
+        setMajor((prev) => ({
+            ...prev,
+            [name]: name === "office" ? formatOfficePhone(value) : value,
+        }));
+    };
+
+    // 입력칸을 건드릴 시 해당 input 상태 true로 바꾸기
+    const onBlur = (e) => {
+        const { name } = e.target;
+        setTouched((prev) => ({
+            ...prev,
+            [name]: true
+        }))
+    };
+
+    // 단과대학 콤보박스 목록 가져오는 useEffect
+    useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await axios.get(`${API_BASE_URL}/college/list`);
+                setColleges(data);
+                if (data.length > 0) {
+                    setMajor(f => ({ ...f, collegeId: f.collegeId || String(data[0].id) }))
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        })();
+    }, []);
+
+    // 검증용 useEffect
+    useEffect(() => {
         const e = {};
-        if (!form.name.trim()) e.name = "학과명은 필수입니다.";
-        if (!form.office && !phonePattern.test(form.office)) {
+        if (!(major.name ?? '').trim()) e.name = "학과명은 필수입니다.";
+        if ((major.office ?? '').trim() && !phonePattern.test(major.office)) {
             e.office = "전화번호는 2~3-3~4-4 형식이어야 합니다.";
         }
-        if (!form.college) {
-            e.college = "단과대학은 필수입니다."
+        if (!(major.collegeId ?? '').toString().trim()) e.collegeId = "단과대학을 선택하세요.";
+        setErrors(e);
+    }, [major]);
+
+    const onSubmit = async (event) => {
+
+        event.preventDefault();
+        setMsg({ type: "", text: "" });
+        setTouched({
+            name: true, office: true, collegeId: true
+        });
+        if (errors.name || errors.office || errors.collegeId) return;
+
+
+        try {
+            setLoading(true);
+            const url = `${API_BASE_URL}/major/insert`;
+            await axios.post(url, {
+                name: major.name.trim(),
+                office: major.office.trim() || null,
+                collegeId: Number(major.collegeId)
+            });
+            window.alert("학과 정보가 등록되었습니다.");
+            setMajor({ name: "", office: "", collegeId: colleges[0] ? String(colleges[0].id) : "" });
+            setTouched({ name: false, office: false, collegeId: false });
+            setMsg({ type: "success", text: "등록 완료" });
         }
-        return e;
-    }, [form]);
+        catch (err) {
+            const reason = err.response?.data?.message || err.message || "요청 실패";
+            setMsg({ type: "danger", text: `등록실패 : ${reason}` });
+        }
+        finally {
+            setLoading(false);
+        }
+    }
 
-    useEffect(async () => {
-        setLoading(true);
-        const url = `${API_BASE_URL}/college/list`;
-        await axios.get(url)
-            .then((response) => {
-                setColleges(response.data);
-                console.log(response.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }, []
-    );
 
-    const onSubmit = async (e) => {
-        // e.preventDefault();
-        // setMsg({ type: "", text: "" });
-        // setTouched({ type: true, office: true });
-        // if (errors.type || errors.office) return;
 
-        // try {
-        //     setLoading(true);
-        //     await axios.post(`${API_BASE_URL}/college/insert`, {
-        //         type: form.type.trim(),
-        //         office: form.office.trim() || null,
-        //     });
-        //     window.alert("단과대학 정보가 등록되었습니다.");
-        //     setForm({ type: "", office: "" });
-        //     setTouched({ type: false, office: false });
-        // } catch (err) {
-        //     const reason = err.response?.data?.message || err.message || "요청 실패";
-        //     setMsg({ type: "danger", text: `등록 실패: ${reason}` });
-        // } finally {
-        //     setLoading(false);
-        // }
-    };
 
     return (
         <div className="container mt-4" style={{ maxWidth: 560 }}>
@@ -97,18 +132,14 @@ function App() {
                         type="text"
                         name="name"
                         value={major.name}
-                        onChange={(e) => {
-                            setMajor((prev) => ({
-                                ...prev, name: e.target.value
-                            }))
-                        }}
-                        // onBlur={onBlur}
-                        placeholder="예: IT·컴퓨팅계열"
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        placeholder="예: 컴퓨터공학과,소프트웨어공학과"
                         maxLength={50}
-                    // isInvalid={touched.type && !!errors.type}
+                        isInvalid={touched.name && !!errors.name}
                     />
                     <Form.Control.Feedback type="invalid">
-                        {errors.type}
+                        {errors.name}
                     </Form.Control.Feedback>
                 </Form.Group>
 
@@ -118,15 +149,11 @@ function App() {
                         type="text"
                         name="office"
                         value={major.office}
-                        onChange={(e) => {
-                            setMajor((prev) => ({
-                                ...prev, office: e.target.value
-                            }))
-                        }}
-                        // onBlur={onBlur}
+                        onChange={onChange}
+                        onBlur={onBlur}
                         placeholder="예: 02-123-4567 / 02-1234-5678 / 010-1234-5678"
                         maxLength={13}
-                    // isInvalid={touched.office && !!errors.office}
+                        isInvalid={touched.office && !!errors.office}
                     />
                     <Form.Control.Feedback type="invalid">
                         {errors.office}
@@ -137,26 +164,20 @@ function App() {
                     <Form.Group controlId="college">
                         <Form.Label>계열 선택</Form.Label>
                         <Form.Select
+                            name="collegeId"
                             value={major.collegeId}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                setMajor((prev) => ({
-                                    ...prev, collegeId: value
-                                }));
-                            }}
+                            onChange={onChange}
+                            onBlur={onBlur}
                             aria-label="단과대학 선택 콤보박스"
                             size="md"
+                            isInvalid={touched.collegeId && !!errors.collegeId}
                         >
-
-                            <option value="">해당 단과대학</option>
                             {colleges.map((res) => (
-                                <option key={res.id} value={res.id}>{res.type}</option>
+                                <option key={res.id} value={String(res.id)}>{res.type}</option>
                             ))}
 
                         </Form.Select>
-                        <Form.Text className="text-muted">
-                            목록 필터링 기준을 선택하세요.
-                        </Form.Text>
+                        <Form.Control.Feedback type="invalid">{errors.collegeId}</Form.Control.Feedback>
                     </Form.Group>
                 </Form.Group>
 
