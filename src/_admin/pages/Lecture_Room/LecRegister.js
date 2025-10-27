@@ -12,7 +12,7 @@ function App() {
     const [college,setCollege] = useState('');
     const [lecture,setLecture] = useState({
         name:'',
-        id:'',
+        user:'',
         credit:'',
         startDate:'',
         endDate:'',
@@ -92,7 +92,7 @@ function App() {
     const signup = async (e) => {
         try {
             e.preventDefault();
-            const url = `${API_BASE_URL}/user/signup`;
+            const url = `${API_BASE_URL}/lecture/admin/lectureRegister`;
             const response = await axios.post(url, lecture);
 
             if (response.status === 200) {
@@ -155,10 +155,10 @@ function App() {
                     
                     <Form.Label>담당 교수</Form.Label>
                     <Form.Select
-                        value={lecture.id}
+                        value={lecture.user}
                         onChange={(e) => {
                             const value = e.target.value
-                            setLecture((previous)=>({...previous, id: value}))
+                            setLecture((previous)=>({...previous, user: value}))
                             console.log(value)
                         }}
                     >
@@ -195,6 +195,21 @@ function App() {
                         value={lecture.description}
                         onChange={(event) => {
                             setLecture((previous)=>({...previous, description: event.target.value}))
+                            console.log(event.target.value)
+                        }}
+
+                    />
+                </Form.Group>
+
+                 <Form.Group className="mb-3">
+                    <Form.Label>총원</Form.Label> {/* +82 같이 국가번호 셀렉박스 추가 */}
+                    <Form.Control
+                        type="number"
+                        placeholder="강의 총원을 입력해주세요."
+                        name="totalStudent"
+                        value={lecture.totalStudent}
+                        onChange={(event) => {
+                            setLecture((previous)=>({...previous, totalStudent: event.target.value}))
                             console.log(event.target.value)
                         }}
 
