@@ -11,8 +11,18 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
     const data = location?.state;
-    console.log(data);
+    useEffect(() => {
+        const url = `${API_BASE_URL}/notice/specific`
+        const parameter = { id: data }
+        axios.get(url, parameter)
+            .then((res) => {
 
+            })
+            .catch((e) => console.log(e))
+
+
+
+    }, [])
 
 
     return (
@@ -23,11 +33,13 @@ function App() {
 
                         <Card >
                             <CardBody>
-                                id : {data.id}
-                                name : {data.username}
-                                title :  {data.title}
-                                content : {data.content}
-                                created : {data.createdAt}
+                                <Col>
+                                    <Row >id : {data}</Row>
+                                    <Row >name : {data.username}</Row>
+                                    <Row >title :  {data.title}</Row>
+                                    <Row >content : {data.content}</Row>
+                                    <Row >created : {data.createdAt}</Row>
+                                </Col>
                             </CardBody>
                         </Card>
 

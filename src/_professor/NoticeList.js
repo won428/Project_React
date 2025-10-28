@@ -26,8 +26,9 @@ function App() {
 
     const specificPage = (evt, item) => {
         evt.preventDefault();
+        console.log(item);
 
-        navigate("/notionlistspec/", { state: item })
+        navigate("/notionlistspec/", { state: item.id })
 
 
     }
@@ -43,11 +44,12 @@ function App() {
 
                                     <Card onClick={(e) => specificPage(e, item)}>
                                         <CardBody>
-                                            <Row>id : {item.id}</Row>
-                                            <Row>name : {item.username}</Row>
-                                            <Row>id : title :  {item.title}</Row>
-                                            <Row>created : {item.createdAt}</Row>
-
+                                            <Col>
+                                                <Row>id : {item.id}</Row>
+                                                <Row>name : {item.username}</Row>
+                                                <Row>id : title :  {item.title}</Row>
+                                                <Row>created : {item.createdAt}</Row>
+                                            </Col>
 
 
 
