@@ -1,13 +1,53 @@
 import { Badge, Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { useAuth } from "../../public/context/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../../config/config";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 function App() {
   
+  const [lecture, setLecture] = useState({});
   const [props, setProps] = useState({});
+  const [studentList, setStudentList] = useState([]);
   const {user} = useAuth;
+  const { id } = useParams(); 
+  
+  const navigate = useNavigate();
 
 
 
+  useEffect(()=>{
+    const url = `${API_BASE_URL}/lecture/detail/${id}`;
+    axios
+      .get(url)
+      .then((response)=>{
+        setLecture(response.data)
+      })
+      .catch((error)=>{
+        const err = error.response;
+           if(!err){
+            alert('네트워크 오류가 발생하였습니다')
+            return;
+           }
+      })
+  },[])
+
+  useEffect(()=>{
+    const url = `${API_BASE_URL}/lecture/detail/studentList/${id}`;
+    axios
+      .get(url)
+      .then((response)=>{
+        setStudentList(response.data)
+      })
+      .catch((error)=>{
+        const err = error.response;
+           if(!err){
+            alert('네트워크 오류가 발생하였습니다')
+            return;
+           }
+      })
+
+  },[lecture]);
 
 
 
@@ -19,13 +59,13 @@ function App() {
         <Card.Body>
           <Row className="align-items-center">
             <Col>
-              <h3 className="mb-2">{props.title ?? "강의명"}</h3>
+              <h3 className="mb-2">{lecture.name}</h3>
               <div className="text-muted">
-                학과: {props.majorName ?? "학과명"} · 소속: {props.collegeName ?? "소속대학"} · 담당교수: {props.professorName ?? "담당교수"} · 총원: {props.capacity ?? 0}
+                학과: {lecture.majorName} · 담당교수: {lecture.userName} · 총원: {lecture.totalStudent}
               </div>
             </Col>
             <Col xs="auto">
-              <Button variant="outline-secondary" size="sm" onClick={props.onBack ?? (() => {})}>돌아가기</Button>
+              <Button variant="outline-secondary" size="sm" onClick={()=>navigate('/lectureListPro')}>돌아가기</Button>
             </Col>
           </Row>
         </Card.Body>
@@ -35,7 +75,7 @@ function App() {
       <Card>
         <Card.Header className="d-flex justify-content-between">
           <span>수강생 목록</span>
-          <span>{(props.studentCount ?? 0) + "/" + (props.capacity ?? 0)}</span>
+          <span>{lecture.nowStudent + "/" + lecture.totalStudent}</span>
         </Card.Header>
         <Card.Body className="p-0">
           <Table responsive hover className="mb-0">
@@ -51,13 +91,17 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {props.showEmpty ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-4">표시할 학생이 없습니다.</td>
-                </tr>
-              ) : (
-                props.children
-              )}
+                {studentList.map((student)=>(
+                  <tr key={student.userCode}>
+                    <td>{student.userCode}</td>
+                    <td>{student.u_name}</td>
+                    <td>{student.majorName}</td>
+                    <td>추가예정</td>
+                    <td>{student.email}</td>
+                    <td>{student.phone}</td>
+                    <td>예비</td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
         </Card.Body>

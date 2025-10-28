@@ -212,7 +212,7 @@ function App() {
                         <Route path='/noticep' element={<NoticeIns />} ></Route>
                         <Route path='/notionlist' element={<NoticeList />} ></Route>
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
-                        <Route path='/LectureDetail' element={<LectureDetail />} ></Route>
+                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
                     </Route>
 
 

@@ -290,6 +290,7 @@ function App() {
                     >
                         <option value={''}>선택</option>
                         <option value={'PENDING'}>승인 대기</option>
+                        <option value={'APPROVED'}>승인</option>
                         <option value={'INPROGRESS'}>수강중</option>
                         <option value={'COMPLETED'}>종강</option>
                     </Form.Select>
