@@ -32,19 +32,14 @@ function App() {
 
 
      const typeMap = {
-     PENDING : '처리중',   // 처리중(검토 대기)
-    APPROVED: '승인',  // 승인
-    REJECTED:'거부',  // 거부
+    ADMIN: '관리자',
+    STUDENT: '학생',
+    PROFESSOR: '교수'
   };
-   
-  const typeMapTwo = {
-        ENROLLED: '재학',    // 재학
-        ON_LEAVE: '휴학',    // 휴학
-        REINSTATED: '복학',  // 복학
-        EXPELLED:'퇴학',    // 퇴학(징계 제적)
-        GRADUATED:'졸업',    // 졸업
-        MILITARY_LEAVE:'군휴학', // 군 휴학
-        MEDICAL_LEAVE:'병가' // 입원으로 인한 출석 인정 용도
+   const typeMap = {
+    ADMIN: '관리자',
+    STUDENT: '학생',
+    PROFESSOR: '교수'
   };
 
 
@@ -85,9 +80,9 @@ function App() {
                                 <td>{record.title}</td>
                                 <td>{record.appliedDate}</td>
                                 <td>{record.processedDate}</td>
-                                <td>{typeMapTwo[record.studentStatus]}</td>
+                                <td>{record.studentStatus}</td>
                                 <td>
-                                    {typeMap[record.status]}
+                                    {record.status}
                                 </td>
 
 

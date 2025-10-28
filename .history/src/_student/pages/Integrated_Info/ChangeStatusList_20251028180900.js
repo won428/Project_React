@@ -85,7 +85,7 @@ function App() {
                                 <td>{record.title}</td>
                                 <td>{record.appliedDate}</td>
                                 <td>{record.processedDate}</td>
-                                <td>{typeMapTwo[record.studentStatus]}</td>
+                                <td>{typeMapTwo[record.status]}</td>
                                 <td>
                                     {typeMap[record.status]}
                                 </td>

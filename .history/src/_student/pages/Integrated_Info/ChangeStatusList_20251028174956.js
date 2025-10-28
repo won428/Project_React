@@ -3,27 +3,22 @@ import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
-import { useAuth } from "../../../public/context/UserContext";
+import { useAuth } from "../../../public/";
 
 function App() {
 
     const [applyList, setApplyList] = useState([]);
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const {user} = useAuth
 
 
     useEffect(() => {
         const url = `${API_BASE_URL}/api/student/record/my`;
 
         axios
-            .get(url, {
-                params: {
-                    id: 3
-                }
-            })
+            .get(url)
             .then((response) => {
                 setApplyList(response.data)
-                console.log(response.data)
             })
             .catch((error) => {
                 console.log(error)
@@ -31,21 +26,7 @@ function App() {
     }, []);
 
 
-     const typeMap = {
-     PENDING : '처리중',   // 처리중(검토 대기)
-    APPROVED: '승인',  // 승인
-    REJECTED:'거부',  // 거부
-  };
-   
-  const typeMapTwo = {
-        ENROLLED: '재학',    // 재학
-        ON_LEAVE: '휴학',    // 휴학
-        REINSTATED: '복학',  // 복학
-        EXPELLED:'퇴학',    // 퇴학(징계 제적)
-        GRADUATED:'졸업',    // 졸업
-        MILITARY_LEAVE:'군휴학', // 군 휴학
-        MEDICAL_LEAVE:'병가' // 입원으로 인한 출석 인정 용도
-  };
+
 
 
 
@@ -81,13 +62,13 @@ function App() {
                     ))
             */}
                         {applyList.map((record) => (
-                            <tr key={record.recordId}>
-                                <td>{record.title}</td>
-                                <td>{record.appliedDate}</td>
-                                <td>{record.processedDate}</td>
-                                <td>{typeMapTwo[record.studentStatus]}</td>
+                            <tr key={record.id}>
+                                <td>{record.title}?'제목'</td>
+                                <td>{record.appliedDate}?'신청일'</td>
+                                <td>{record.processedDate}?'처리일'</td>
+                                <td>{record.studentStatus}?'변경 신청 학적'</td>
                                 <td>
-                                    {typeMap[record.status]}
+                                    {record.status}?'처리상태'
                                 </td>
 
 
