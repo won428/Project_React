@@ -21,6 +21,7 @@ import CollegeUpdate from '../_admin/pages/College/CollegeUpdate';
 
 import MajorRegister from '../_admin/pages/Major/MajorRegister';
 import MajorList from '../_admin/pages/Major/MajorList';
+import MajorUpdate from '../_admin/pages/Major/MajorUpdate';
 
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
 import UserList from '../_admin/pages/StudentCon/UserList';
@@ -124,6 +125,7 @@ function App() {
 
                         <Route path='/majorReg' element={<MajorRegister />} ></Route>
                         <Route path='/majorList' element={<MajorList />} ></Route>
+                        <Route path='/majorUp/:id' element={<MajorUpdate />} ></Route>
                     </Route>
 
 
