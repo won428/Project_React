@@ -26,6 +26,7 @@ import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 
 import NoticeIns from "../_professor/NoticeIns";
 import NoticeList from "../_professor/NoticeList";
+import NoticeListSpec from "../_professor/NoticeListSpec";
 
 
 
@@ -193,20 +194,8 @@ function App() {
 
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
-                <Route element={<ProPage />}>
-                    <Route path='/hp' element={<HomePRO />}></Route>
-                    <Route element={<Layout_lecP />}>
-
-                        <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
-                        <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
-                        <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
-                        <Route path='/noticep' element={<NoticeIns />} ></Route>
-                        <Route path='/notionlist' element={<NoticeList />} ></Route>
-                    </Route>
-
-
-                    <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
-                </Route>
+                <Route path='/hp' element={<HomePRO />}></Route>
+                <Route path='/LecRegister' element={<LecRegister />} ></Route>
             </Route>
 
 

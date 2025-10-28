@@ -15,9 +15,7 @@ function App() {
             .then((res) => {
                 setPost({
                     title: res?.data.title,
-                    name: res?.data.user.name,
-                    createdat: res?.data.createdAt,
-                    updatedat: res?.data.updatedAt,
+
                 })
                 console.log(post);
 
