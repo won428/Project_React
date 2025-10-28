@@ -1,5 +1,5 @@
 import PrivateRoute from "./PrivateRoute";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
 import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
@@ -14,7 +14,7 @@ import InfohomeAD from '../_admin/ui/Home/InfoHomeAD';
 import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
 import StHomeAD from '../_admin/ui/Home/StHomeAd';
 
-import LecRegister from '../_admin/pages/Lecture_Room/LecRegister';
+
 import CollegeList from '../_admin/pages/College/CollegeList';
 import ColRegister from '../_admin/pages/College/ColRegister';
 import CollegeUpdate from '../_admin/pages/College/CollegeUpdate';
@@ -24,6 +24,10 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 import LectureList from '../_admin/pages/Lecture_Room/LectureList';
+import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
+import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
+import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
+import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
 
 
 import NoticeIns from "../_professor/NoticeIns";
@@ -46,8 +50,7 @@ import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro'
 
 
 import LoginPage from '../public/pages/LoginPage';
-import { useAuth } from "../public/context/UserContext";
-import { useEffect } from "react";
+
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
 import ProPage from "../_professor/ui/ProPage";
@@ -116,7 +119,7 @@ function App() {
 
                     {/* Student Apply */}
                     <Route element={<LayoutStCon />}>
-                        <Route element={<LayoutStCon />}></Route>
+                        
                         <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
                         <Route path='/user/insert_user' element={<Insert_User />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
@@ -146,6 +149,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
+                        <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
 
 
 
@@ -185,6 +189,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
                         <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
                     </Route>
 
 
@@ -206,6 +211,8 @@ function App() {
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
                         <Route path='/noticep' element={<NoticeIns />} ></Route>
                         <Route path='/notionlist' element={<NoticeList />} ></Route>
+                        <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
+                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
                         <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
                     </Route>
 
