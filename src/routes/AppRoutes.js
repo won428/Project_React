@@ -122,15 +122,14 @@ function App() {
                         <Route path='/colreg' element={<ColRegister />} ></Route>
                         <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
 
+                        <Route path='/majorReg' element={<MajorRegister />} ></Route>
+                        <Route path='/majorList' element={<MajorList />} ></Route>
                     </Route>
 
 
                     {/* Integrated_Info Tab */}
-                    <Route element={<LayoutStInfo />}>
-                        <Route path='/majorReg' element={<MajorRegister />} ></Route>
-                        <Route path='/majorList' element={<MajorList />} ></Route>
-
-                    </Route>
+                    {/* <Route element={<LayoutStInfo />}>
+                    </Route> */}
 
 
                     {/* Lecture Tab */}
