@@ -13,7 +13,7 @@ export const LayoutStInfost = () => {
     const [meId, setMeId] = useState(null);
     const [fetching, setFetching] = useState(false);
 
-    const goStudentInfo = () => navigate("/InfoHome");
+    const goStudentInfo = () => navigate("/StudentInfo");
     const goThisCredit = () => navigate("/This_Credit");
     const goEntireCredit = () => navigate("/etrcdt");
 

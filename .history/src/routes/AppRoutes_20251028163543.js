@@ -180,7 +180,7 @@ function App() {
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/This_Credit' element={<This_Credit />} ></Route>
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
-                        <Route path='/Change_Status' element={<Change_Status />} ></Route>
+                        <Route path='/Change_Status' element={<Entire_Credit />} ></Route>
                     </Route>
 
                     {/* Lecture Tab */}
