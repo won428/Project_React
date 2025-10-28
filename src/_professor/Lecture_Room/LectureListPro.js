@@ -171,7 +171,7 @@ function App() {
               <td>자료</td>
               <td>{typeMap[lec.status]}</td>
               <td>
-                <Button>
+                <Button onClick={()=> navigate(`/lectureDetail/${lec.id}`)}>
                   상세 정보
                 </Button>
               </td>
@@ -211,7 +211,7 @@ function App() {
               <td>자료</td>
               <td>{typeMap[lec.status]}</td>
               <td>
-                <Button>
+               <Button onClick={()=> navigate(`/lectureDetail/${lec.id}`)}>
                   상세 정보
                 </Button>
               </td>
@@ -250,7 +250,7 @@ function App() {
               <td>자료</td>
               <td>{typeMap[lec.status]}</td>
               <td>
-                <Button>
+                <Button onClick={()=> navigate(`/lectureDetail/${lec.id}`)}>
                   상세 정보
                 </Button>
               </td>
