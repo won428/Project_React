@@ -1,13 +1,10 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStLecst = () => {
+export default function Layout({ children }) {
     const navigate = useNavigate();
-
-
-
     return (
 
         <Row className="pt-0 mt-0 min-vh-100">
@@ -27,11 +24,6 @@ export const LayoutStLecst = () => {
                         <Nav.Link
                             onClick={() => navigate(`/ToDoList`)}
                             className="text-white">TodoList</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/courseRegistration`)}
-                            className="text-white">수강신청</Nav.Link>
-
-
 
                     </Nav>
                 </Container>
@@ -41,7 +33,7 @@ export const LayoutStLecst = () => {
 
             <Col xs={10} className="p-4">
                 <Container>
-                    <Outlet />
+                    {children}
                 </Container>
             </Col>
 

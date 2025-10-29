@@ -21,6 +21,7 @@ export const UserProvider = ({ children }) => {
 
                     setUser({
                         email: decoded.sub,
+                        id: decoded.uid ? Number(decoded.uid) : undefined, // ★ 추가
                         roles: [decoded.role],
                         IsAuthenticated: true,
                     })
@@ -40,6 +41,7 @@ export const UserProvider = ({ children }) => {
         const token = sessionStorage.setItem("accessToken", newToken);
         setUser({
             email: decoded.sub,
+            id: decoded.uid ? Number(decoded.uid) : undefined, // ★ 추가
             roles: [decoded.role],
             IsAuthenticated: true,
         });
