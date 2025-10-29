@@ -1,9 +1,9 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStInfost = () => {
+export default function Layout({ children }) {
     const navigate = useNavigate();
 
     return (
@@ -19,21 +19,15 @@ export const LayoutStInfost = () => {
                         <Nav.Link
                             onClick={() => navigate(`/InfoHome`)}
                             className="text-white"
-                        >학적 홈</Nav.Link>
+                        >학적</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/This_Credit`)}
                             className="text-white"
-                        >당학기 성적</Nav.Link>
+                        >당학기 성적 </Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/etrcdt`)}
+                            onClick={() => navigate(`/Entire_Credit`)}
                             className="text-white"
-                        >전체 성적 </Nav.Link>
-                         <Nav.Link
-                            onClick={() => navigate(`/Change_Status`)}
-                            className="text-white"
-                        >학적 변경 </Nav.Link>
-
-
+                        >전체 성적</Nav.Link>
                     </Nav>
                 </Container>
             </Col>
@@ -42,7 +36,7 @@ export const LayoutStInfost = () => {
 
             <Col xs={10} className="p-4">
                 <Container>
-                    <Outlet />
+                    {children}
                 </Container>
             </Col>
 

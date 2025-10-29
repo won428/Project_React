@@ -124,7 +124,7 @@ function App() {
 
                     {/* Student Apply */}
                     <Route element={<LayoutStCon />}>
-
+                        
                         <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
                         <Route path='/user/insert_user' element={<Insert_User />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
@@ -186,8 +186,7 @@ function App() {
                         <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
-                        {/* 동적 파라미터 포함 경로 */}
-                        <Route path="/ChangeStatusDetail/:recordId" element={<ChangeStatusDetail />} />
+                        <Route path='/ChangeStatusDetail' element={<ChangeStatusDetail />} ></Route>
                     </Route>
 
                     {/* Lecture Tab */}

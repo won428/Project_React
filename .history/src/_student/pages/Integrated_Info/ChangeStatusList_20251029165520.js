@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useAuth } from "../../../public/context/UserContext";
@@ -40,17 +39,9 @@ function App() {
     };
 
     const handleDelete = (recordId) => {
-    const url = `${API_BASE_URL}/api/student/record/${recordId}`;
-    axios.delete(url)
-      .then(res => {
-        console.log('삭제 성공:', res.data);
-        // 삭제 후 리스트 갱신
-        setApplyList(prevList => prevList.filter(record => record.recordId !== recordId));
-      })
-      .catch(err => {
-        console.error('삭제 에러:', err);
-      });
-};
+        // 삭제 로직 구현
+        console.log('삭제할 recordId:', recordId);
+    };
 
     const handleEdit = (recordId) => {
         // 수정 로직 또는 페이지 이동 구현
@@ -95,9 +86,8 @@ function App() {
                                 <td>{record.processedDate}</td>
                                 <td>{typeMapTwo[record.studentStatus]}</td>
                                 <td>
-                                    <span style={{ marginRight: '12px' }}>
-                                        {typeMap[record.status]}
-                                    </span>
+                                    <span style={{ marginRight: '12px' }}></span>
+                                    {typeMap[record.status]}
                                     <Button
                                         variant="danger"
                                         size="sm"

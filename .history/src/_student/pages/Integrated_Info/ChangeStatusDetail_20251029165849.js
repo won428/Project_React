@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 
-function App() {
+function RecordDetail() {
   const { recordId } = useParams(); // URL에서 recordId 읽기
   const [record, setRecord] = useState(null);
 

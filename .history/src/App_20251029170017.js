@@ -21,9 +21,13 @@ function App() {
 
   return (
 
+    <td>
+  <Link to={`/record-detail/${record.recordId}`} style={{ textDecoration: 'underline', color: 'blue' }}>
+    {record.title}
+  </Link>
+</td>
 
     
-    <AppRoutes />
 
   );
 }

@@ -40,17 +40,9 @@ function App() {
     };
 
     const handleDelete = (recordId) => {
-    const url = `${API_BASE_URL}/api/student/record/${recordId}`;
-    axios.delete(url)
-      .then(res => {
-        console.log('삭제 성공:', res.data);
-        // 삭제 후 리스트 갱신
-        setApplyList(prevList => prevList.filter(record => record.recordId !== recordId));
-      })
-      .catch(err => {
-        console.error('삭제 에러:', err);
-      });
-};
+        // 삭제 로직 구현
+        console.log('삭제할 recordId:', recordId);
+    };
 
     const handleEdit = (recordId) => {
         // 수정 로직 또는 페이지 이동 구현

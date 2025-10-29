@@ -29,9 +29,9 @@ export const LayoutStInfost = () => {
                             className="text-white"
                         >전체 성적 </Nav.Link>
                          <Nav.Link
-                            onClick={() => navigate(`/Change_Status`)}
+                            onClick={() => navigate(`/etrcdt`)}
                             className="text-white"
-                        >학적 변경 </Nav.Link>
+                        >전체 성적 </Nav.Link>
 
 
                     </Nav>

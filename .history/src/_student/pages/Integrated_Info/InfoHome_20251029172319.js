@@ -44,7 +44,26 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
+    // user 객체가 아직 세팅 안됐거나 null일 때 처리
+    if (!user) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/'); // 로그인 페이지 경로로 이동 - 실제 로그인 경로로 바꿔주세요
+      return;
+    }
+
+    // user.roles가 배열인지 확인하여 권한 체크 안전하게 처리
+    if (!Array.isArray(user.roles)) {
+      alert('사용자 권한 정보를 불러오는데 문제가 발생했습니다.');
+      navigate('/'); // 권한 정보 없으면 로그인 페이지로 이동
+      return;
+    }
+
+    // STUDENT 권한이 없으면 권한 경고 및 다른 페이지로 이동
+    if (!user.roles.includes("STUDENT")) {
+      alert('학생 권한이 필요합니다.');
+      navigate('/Unauthorizedpage');
+      return;
+    }
 
    
 
@@ -179,4 +198,4 @@ function App() {
   );
 }
 
-export default App;
+export default StudentInfo;

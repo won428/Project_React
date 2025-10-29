@@ -43,8 +43,7 @@ function App() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
+  
 
    
 
