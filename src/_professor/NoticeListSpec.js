@@ -33,7 +33,7 @@ function App() {
             .catch((e) => console.log(e))
     }, [data])
     console.log(resdata);
-    console.log(user?.uid);
+    console.log(user);
     console.log(resdata?.userid);
 
     return (
@@ -74,7 +74,7 @@ function App() {
                             <Button variant="secondary" onClick={() => navigate(-1)}>
                                 목록으로
                             </Button>
-                            {user?.uid === resdata.userid && (
+                            {user?.id === resdata.userid && (
                                 <>
                                     <Button variant="warning">수정</Button>
                                     <Button variant="danger">삭제</Button>

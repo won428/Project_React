@@ -38,13 +38,17 @@ export const UserProvider = ({ children }) => {
     }, [])
     const login = (newToken) => {
         const decoded = jwtDecode(newToken);
+        console.log(decoded);
+
         const token = sessionStorage.setItem("accessToken", newToken);
         setUser({
             email: decoded.sub,
-            id: decoded.uid ? Number(decoded.uid) : undefined, // ★ 추가
+            id: decoded?.uid ? Number(decoded.uid) : undefined, // ★ 추가
             roles: [decoded.role],
             IsAuthenticated: true,
         });
+        console.log(user);
+
     }
 
     const logout = () => {
