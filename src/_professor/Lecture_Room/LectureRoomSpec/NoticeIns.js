@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Form, Button } from "react-bootstrap";
-import { API_BASE_URL } from "../public/config/config";
-import { useAuth } from "../public/context/UserContext";
+import { API_BASE_URL } from "../../../public/config/config";
+import { useAuth } from "../../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -39,7 +39,7 @@ function App() {
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
-            navigate("/hp");
+            navigate("/notionlist");
         } else {
             alert(respone.statusText)
         }

@@ -1,58 +1,58 @@
 import { Badge, Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { useAuth } from "../../public/context/UserContext";
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../../config/config";
+import { API_BASE_URL } from "../../public/config/config";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 function App() {
-  
+
   const [lecture, setLecture] = useState({});
   const [props, setProps] = useState({});
   const [studentList, setStudentList] = useState([]);
-  const {user} = useAuth;
-  const { id } = useParams(); 
-  
+  const { user } = useAuth;
+  const { id } = useParams();
+
   const navigate = useNavigate();
 
 
 
-  useEffect(()=>{
+  useEffect(() => {
     const url = `${API_BASE_URL}/lecture/detail/${id}`;
     axios
       .get(url)
-      .then((response)=>{
+      .then((response) => {
         setLecture(response.data)
       })
-      .catch((error)=>{
+      .catch((error) => {
         const err = error.response;
-           if(!err){
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-           }
+        if (!err) {
+          alert('네트워크 오류가 발생하였습니다')
+          return;
+        }
       })
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     const url = `${API_BASE_URL}/lecture/detail/studentList/${id}`;
     axios
       .get(url)
-      .then((response)=>{
+      .then((response) => {
         setStudentList(response.data)
       })
-      .catch((error)=>{
+      .catch((error) => {
         const err = error.response;
-           if(!err){
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-           }
+        if (!err) {
+          alert('네트워크 오류가 발생하였습니다')
+          return;
+        }
       })
 
-  },[lecture]);
+  }, [lecture]);
 
 
 
-    
- return (
+
+  return (
     <Container className="py-4">
       {/* 상단: 최소 정보만 */}
       <Card className="mb-3">
@@ -65,7 +65,7 @@ function App() {
               </div>
             </Col>
             <Col xs="auto">
-              <Button variant="outline-secondary" size="sm" onClick={()=>navigate('/lectureListPro')}>돌아가기</Button>
+              <Button variant="outline-secondary" size="sm" onClick={() => navigate('/lectureListPro')}>돌아가기</Button>
             </Col>
           </Row>
         </Card.Body>
@@ -91,17 +91,17 @@ function App() {
               </tr>
             </thead>
             <tbody>
-                {studentList.map((student)=>(
-                  <tr key={student.userCode}>
-                    <td>{student.userCode}</td>
-                    <td>{student.u_name}</td>
-                    <td>{student.majorName}</td>
-                    <td>추가예정</td>
-                    <td>{student.email}</td>
-                    <td>{student.phone}</td>
-                    <td>예비</td>
-                  </tr>
-                ))}
+              {studentList.map((student) => (
+                <tr key={student.userCode}>
+                  <td>{student.userCode}</td>
+                  <td>{student.u_name}</td>
+                  <td>{student.majorName}</td>
+                  <td>추가예정</td>
+                  <td>{student.email}</td>
+                  <td>{student.phone}</td>
+                  <td>예비</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Card.Body>

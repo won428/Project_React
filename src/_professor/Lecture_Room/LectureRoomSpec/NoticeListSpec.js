@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Form, Button, Table, CardTitle } from "react-bootstrap";
-import { API_BASE_URL } from "../public/config/config";
-import { useAuth } from "../public/context/UserContext";
+import { API_BASE_URL } from "../../../public/config/config";
+import { useAuth } from "../../../public/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
