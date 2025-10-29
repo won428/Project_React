@@ -24,6 +24,7 @@ import MajorList from '../_admin/pages/Major/MajorList';
 import MajorUpdate from '../_admin/pages/Major/MajorUpdate';
 
 import Insert_User from '../_admin/pages/StudentCon/Insert_User';
+import UserBatchReg from '../_admin/pages/StudentCon/UserBatchReg';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 
@@ -107,6 +108,7 @@ function App() {
                         <Route element={<LayoutStCon />}></Route>
                         <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
                         <Route path='/user/insert_user' element={<Insert_User />}></Route>
+                        <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
                     </Route>

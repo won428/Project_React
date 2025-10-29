@@ -25,6 +25,10 @@ export const LayoutStCon = () => {
                             className="text-white"
                         >구성원 등록</Nav.Link>
                         <Nav.Link
+                            onClick={() => navigate(`/user/UserBatchReg`)}
+                            className="text-white"
+                        >구성원 일괄등록</Nav.Link>
+                        <Nav.Link
                             onClick={() => navigate(`/user/:id/update`)}
                             className="text-white"
                         >구성원 정보 수정</Nav.Link>
