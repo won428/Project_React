@@ -29,7 +29,10 @@ export const LayoutStInfost = () => {
                             className="text-white"
                         >전체 성적 </Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/Change_Status`)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigate('/Change_Status');
+                            }}
                             className="text-white"
                         >학적 변경 </Nav.Link>
 

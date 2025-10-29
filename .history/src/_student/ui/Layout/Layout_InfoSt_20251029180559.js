@@ -31,7 +31,7 @@ export const LayoutStInfost = () => {
                         <Nav.Link
                             onClick={() => navigate(`/Change_Status`)}
                             className="text-white"
-                        >학적 변경 </Nav.Link>
+                        >학적 변경</Nav.Link>
 
 
                     </Nav>

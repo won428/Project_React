@@ -1,5 +1,5 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 
 
@@ -28,10 +28,7 @@ export const LayoutStInfost = () => {
                             onClick={() => navigate(`/etrcdt`)}
                             className="text-white"
                         >전체 성적 </Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/Change_Status`)}
-                            className="text-white"
-                        >학적 변경 </Nav.Link>
+                        <Link to="/Change_Status">학적 변경</Link>
 
 
                     </Nav>
