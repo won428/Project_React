@@ -12,59 +12,46 @@ function App() {
     useEffect(() => {
         const url = `${API_BASE_URL}/notice/List`
         axios.get(url, { params: { email: user.email } })
-            .then((res) => {
-                setPost(res.data)
-
-
-            })
+            .then((res) => { setPost(res.data) })
             .catch((e) => {
                 console.log(e);
             })
     }, [user.email])
     console.log(post);
 
-
-    const specificPage = (evt, item) => {
-        evt.preventDefault();
+    const specificPage = (item) => {
         console.log(item);
-
         navigate("/notionlistspec/", { state: item.id })
-
-
     }
     return (
-        <>
-            <Container style={{ maxWidth: '600px', margin: '2rem auto' }} >
-                <Row>
-                    <Col>
-
-                        {
-                            post.length > 0 ?
-                                (post?.map((item) =>
-
-                                    <Card onClick={(e) => specificPage(e, item)}>
-                                        <CardBody>
-                                            <Col>
-                                                <Row>id : {item.id}</Row>
-                                                <Row>name : {item.username}</Row>
-                                                <Row>id : title :  {item.title}</Row>
-                                                <Row>created : {item.createdAt}</Row>
-                                            </Col>
-
-
-
-                                        </CardBody>
-                                    </Card>)
-                                )
-                                :
-                                <div>
-                                    게시물이 존재하지 않습니다.
-                                </div>
-                        }
-                    </Col>
-                </Row>
-            </Container>
-        </>
-    )
+        <Container style={{ maxWidth: "700px", marginTop: "2rem" }}>
+            <Row>
+                <Col>
+                    {post.length > 0 ? (
+                        post.map((item) => (
+                            <Card
+                                key={item.id}
+                                onClick={() => specificPage(item)}
+                                className="mb-3 shadow-sm"
+                                style={{ cursor: "pointer" }}
+                            >
+                                <CardBody>
+                                    <h5 className="fw-bold mb-2">{item.title}</h5>
+                                    <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
+                                        <span>{item.username}</span>
+                                        <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                </CardBody>
+                            </Card>
+                        ))
+                    ) : (
+                        <div className="text-center mt-5 text-muted">
+                            게시물이 존재하지 않습니다.
+                        </div>
+                    )}
+                </Col>
+            </Row>
+        </Container>
+    );
 }
 export default App;
