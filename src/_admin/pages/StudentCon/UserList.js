@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, Pagination, Row, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
@@ -13,15 +13,16 @@ function UsersSkeleton() {
 
   const [paging, setPaging] = useState({
 		totalElements : 0, // 전체 데이터 개수(165개)
-		pageSize : 20, // 1페이지에 보여 주는 데이터 개수(20개)
+		pageSize : 10, // 1페이지에 보여 주는 데이터 개수(20개)
 		totalPages : 0, // 전체 페이지 개수(28페이지)
 		pageNumber : 0, // 현재 페이지 번호(20페이지)
 		pageCount : 10, // 페이지 하단 버튼의 개수(10개)
 		beginPage : 0, // 페이징 시작 번호
 		endPage : 0, // 페이징 끝 번호
-		searchCollege: 'all', // 단과대학
-		searchMajor: 'all', // 학과
-		searchGender: 'all', // 성별
+		searchCollege: '', // 단과대학
+		searchMajor: '', // 학과
+		searchGender: '', // 성별
+		searchUserType: '', // 유저 역할
 		searchMode: '', // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
 		searchKeyword:'', // 검색 키워드 입력 상자
 	});
@@ -30,21 +31,56 @@ function UsersSkeleton() {
 
   useEffect(() => {
 
-    const url = `${API_BASE_URL}/user/list`
-
+    const url = `${API_BASE_URL}/user/pageList`
+    const parameters = {
+			params:{
+			pageNumber: paging.pageNumber,
+			pageSize: paging.pageSize,
+			searchCollege: paging.searchCollege, // 단과대학
+      searchMajor: paging.searchMajor, // 학과
+      searchGender: paging.searchGender, // 성별
+      searchUserType: paging.searchUserType, // 유저 역할
+      searchMode: paging.searchMode, // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
+      searchKeyword:paging.searchKeyword, // 검색 키워드 입력 상자		
+			},
+		};
     axios
-      .get(url)
+      .get(url, parameters)
       .then((response) => {
+        console.log('응답 받은 데이터')
+				console.log(response.data)
+				setUserList(response.data.content||[]);
+        
+        setPaging((previous)=>{
+          const totalElements = response.data.totalElements;
+					const totalPages =response.data.totalPages;
+					const pageNumber = response.data.pageable.pageNumber;
+          const pageSize = response.data.pageable.pageSize;
+
+          const beginPage = Math.floor(pageNumber/ previous.pageCount )* previous.pageCount;
+					const endPage = Math.min(beginPage + previous.pageCount -1, totalPages -1);
 
 
-        setUserList(response.data)
-        console.log(response.data)
+           return {
+						...previous,
+						totalElements:totalElements,
+						totalPages:totalPages,
+						pageNumber:pageNumber,
+						pageSize:pageSize,
+						beginPage:beginPage,
+						endPage:endPage,
+						};
+
+        })
+
+         
+        
       })
       .catch((error) => {
         console.log(error.response.data)
       })
 
-  }, [])
+  }, [paging.pageNumber, paging.searchCollege, paging.searchMajor, paging.searchCollege, paging.searchGender, paging.searchUserType, paging.searchMode, paging.searchKeyword])
   
   useEffect(()=>{
     const url = `${API_BASE_URL}/college/list`;
@@ -68,7 +104,7 @@ function UsersSkeleton() {
   useEffect(()=>{
     const url = `${API_BASE_URL}/major/list`
 
-     if (!college?.id) {
+     if (!college) {
     setMajorList([]);
     return;
   }
@@ -76,7 +112,7 @@ function UsersSkeleton() {
     axios
       .get(url,{
          params:{
-          college_id: Number(college.id)
+          college_id: Number(college)
         }
       })
       .then((response)=>{
@@ -112,17 +148,32 @@ function UsersSkeleton() {
 
         {/* 필터/검색: 화면 크기에 따라 자동 줄바꿈 */}
         <Col xs={12} md>
-          <Row xs={1} sm={2} md={5} className="g-2">
+          <Row xs={1} sm={2} md={6} className="g-2">
+
+            <Col>
+              <Form.Select size="sm"
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchUserType : value}))
+                  console.log(paging)
+                }}
+              >
+                <option value={''}>역할</option>
+                <option value={'ADMIN'}>관리자</option>
+                <option value={'PROFESSOR'}>교수</option>
+                <option value={'STUDENT'}>학생</option>
+              </Form.Select>
+            </Col>
             <Col>
               <Form.Select 
                 size="sm"
                 onChange={(e)=>{
                   const value = e.target.value;
                   setCollege(value);
-                  console.log(value)
+                  setPaging((previous)=>({...previous, pageNumber: 0, searchCollege : value}))
                 }}
                 >
-                <option value={'all'}>단과대학</option>
+                <option value={''}>단과대학</option>
                 {colllegeList.map((college)=>(
                   <option
                     key={college.id} value={college.id}
@@ -133,8 +184,13 @@ function UsersSkeleton() {
               </Form.Select>
             </Col>
             <Col>
-              <Form.Select size="sm">
-                <option value={'all'}>학과</option>
+              <Form.Select size="sm"
+                 onChange={(e)=>{
+                  const value = e.target.value;
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMajor : value}))
+                }}
+              >
+                <option value={''}>학과</option>
                 {majorList.map((major)=>(
                   <option
                     key={major.id} value={major.id}
@@ -145,18 +201,41 @@ function UsersSkeleton() {
               </Form.Select>
             </Col>
             <Col>
-              <Form.Select size="sm">
-                <option value={'all'}>성별</option>
+              <Form.Select size="sm"
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchGender : value}))
+                }}
+              >
+                <option value={''}>성별</option>
+                <option value={'MALE'}>남자</option>
+                <option value={'FEMALE'}>여자</option>
               </Form.Select>
             </Col>
             <Col>
-              <Form.Select size="sm">
-                <option value={''}>검색모드</option>
+              <Form.Select size="sm"
+                  onChange={(e)=>{
+                  const value = e.target.value;
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMode : value}))
+                }}
+              >
+                <option value={''}>전체 검색</option>
+                <option value={'name'}>이름</option>
+                <option value={'email'}>이메일</option>
+                <option value={'phone'}>휴대전화번호</option>
               </Form.Select>
             </Col>
-            <Col>
-              <Form.Control size="sm" placeholder="검색어 입력" />
+            <Col
+                  
+              >
+              <Form.Control size="sm" placeholder="검색어 입력" 
+                onChange={(e)=>{
+                  const value = e.target.value;
+                  setPaging((previous)=>({...previous, searchKeyword : value}))
+                }}
+              />
             </Col>
+          
           </Row>
         </Col>
 
@@ -220,6 +299,77 @@ function UsersSkeleton() {
           </tbody>
         </Table>
       </div>
+      {/* 페이징 처리 영역 */}
+				  <Pagination className="justify-content-center mt-4">
+					{/* 앞쪽 영역 */}
+					<Pagination.First
+						onClick={()=>{
+							console.log('First 버튼 클릭(0 페이지로 이동)')
+							setPaging((previous)=>({...previous, pageNumber: 0}))
+						}}
+						disabled={paging.pageNumber < paging.pageCount}
+						as="button"
+					>
+						맨처음
+					</Pagination.First>
+					
+					<Pagination.Prev
+						onClick={()=>{
+							const gotoPage = paging.beginPage -1;
+							console.log(`Prev 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber < paging.pageCount}
+						as="button"
+					>
+						이전
+					</Pagination.Prev>
+
+					
+					{/* 숫자 링크가 들어가는 영역 */}
+					{[...Array(paging.endPage - paging.beginPage + 1)].map((_, idx)=>{
+						// pageIndex는 숫자 링크 번호입니다.
+						const pageIndex = paging.beginPage + idx + 1 ;
+
+						return(
+							<Pagination.Item 
+								key={pageIndex}
+								active={paging.pageNumber === (pageIndex -1)}
+								onClick={()=>{
+								console.log(`(${pageIndex} 페이지로 이동)`)
+								setPaging((previous)=>({...previous, pageNumber: pageIndex-1}))
+						}}
+							>
+								{pageIndex}
+							</Pagination.Item>
+						)
+					})}
+					
+					
+					
+					<Pagination.Next 
+						onClick={()=>{
+							const gotoPage = paging.endPage +1;
+							console.log(`Next 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
+						as="button"
+					>
+						다음
+						</Pagination.Next>
+					<Pagination.Last 
+						onClick={()=>{
+							const gotoPage = paging.totalPages -1;
+							console.log(`Last 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
+						as="button"	
+					>
+						맨끝
+					</Pagination.Last>
+				</Pagination>
     </Container>
   );
 }

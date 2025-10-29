@@ -21,6 +21,9 @@ function App() {
     const [collegeList, setCollegeList] = useState([]);
     const [majorList, setMajorList] = useState([]);
     const [college, setCollege] = useState('');
+    const [errors, setErrors] = useState({
+	name:'', email:'', password:'', birthdate:'', phone:'', gender:'',major:'',type:'' 
+});
 
     const navigate = useNavigate();
 
@@ -64,26 +67,46 @@ function App() {
 
         try {
             e.preventDefault();
+
+            
+
+            if(user.u_type === ''){
+                alert('역할을 선택하세요')
+                return;
+            }
+            if(user.gender === ''){
+                alert('성별을 선택하세요')
+                return;
+            }
+            
             const url = `${API_BASE_URL}/user/signup`;
             const response = await axios.post(url, user);
 
-            if (response.status === 200) {
+             if (response.data.success) {
+                alert('등록 성공');
+                navigate('/user/UserList')
+            }else{
                 alert('등록 성공');
                 navigate('/user/UserList')
             }
-        } catch (err) {
-            alert('등록실패');
-            console.error("status:", err.response?.status);
-            console.error("data:", err.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+        } catch (error) {
+            
+            const err = error.response;
+            if(!err){
+            alert('네트워크 오류가 발생하였습니다')
+            return;
+           }
 
+            const httpStatus = err.status;
+            const errData = err.data;
+
+            const message = errData?.message??'오류 발생'
+
+            alert(message)
         }
-
-
     };
 
-
-
-    return (
+        return (
         <>
 
             <Form onSubmit={signup}>
