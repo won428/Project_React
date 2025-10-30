@@ -40,29 +40,22 @@ function App() {
     };
 
     const handleDelete = (recordId) => {
-        const url = `${API_BASE_URL}/api/student/record/${recordId}`;
-        axios.delete(url)
-            .then(res => {
-                console.log('삭제 성공:', res.data);
-                // 삭제 후 리스트 갱신
-                setApplyList(prevList => prevList.filter(record => record.recordId !== recordId));
-            })
-            .catch(err => {
-                console.error('삭제 에러:', err);
-            });
-    };
+    const url = `${API_BASE_URL}/api/student/record/${recordId}`;
+    axios.delete(url)
+      .then(res => {
+        console.log('삭제 성공:', res.data);
+        // 삭제 후 리스트 갱신
+        setApplyList(prevList => prevList.filter(record => record.recordId !== recordId));
+      })
+      .catch(err => {
+        console.error('삭제 에러:', err);
+      });
+};
 
     const handleEdit = (recordId) => {
         navigate(`/Change_Status?recordId=${recordId}`);
     };
 
-    const handleView = (recordId) => {
-        navigate(`/Change_Status?recordId=${recordId}&readonly=true`);
-    };
-
-    const handleAdd = () => {
-        navigate('/Change_Status');  // 신규 신청 페이지로 이동 (recordId 없이)
-    };
 
     return (
         <Container fluid className="py-4" style={{ maxWidth: "100%" }}>
@@ -71,9 +64,6 @@ function App() {
                 <Col md={6}>
                     <h4 className="mb-0">학적 변경 신청 목록</h4>
                     <div className="text-muted small">엑셀 스타일 표 UI</div>
-                </Col>
-                <Col md={6} className="text-end">
-                    <Button variant="primary" onClick={handleAdd}>학적변경신청</Button>
                 </Col>
 
             </Row>
@@ -99,10 +89,7 @@ function App() {
             */}
                         {applyList.map((record) => (
                             <tr key={record.recordId}>
-                                <td style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-                                    onClick={() => handleView(record.recordId)}>
-                                    {record.title}
-                                </td>
+                                <td>{record.title}</td>
                                 <td>{record.appliedDate}</td>
                                 <td>{record.processedDate}</td>
                                 <td>{typeMapTwo[record.studentStatus]}</td>

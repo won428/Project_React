@@ -123,7 +123,7 @@ function App() {
         }
     };
 
-    {/* 파일 첨부 가능하도록 해야함 */ }
+    {/* 파일 첨부 가능하도록 해야함 */}
 
     return (
         <Container style={{ maxWidth: 720, marginTop: 24 }}>
@@ -138,7 +138,7 @@ function App() {
                             value={form.studentStatus}
                             onChange={onChange}
                             required
-                            disabled={readonly}
+                             disabled={readonly}
                         >
                             {OPTIONS.map(o => (
                                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -164,7 +164,7 @@ function App() {
                         onChange={onChange}
                         placeholder="제목을 입력하세요"
                         required
-                        disabled={readonly}
+                        readOnly={readonly}
                     />
                 </Form.Group>
 
@@ -178,14 +178,12 @@ function App() {
                         onChange={onChange}
                         placeholder="신청 내용을 입력하세요"
                         required
-                        disabled={readonly}
+                        readOnly={readonly}
                     />
                 </Form.Group>
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                    {!readonly && (
-                        <Button type="submit" variant="primary">신청 접수</Button>
-                    )}
+                    <Button type="submit" variant="primary">신청 접수</Button>
                     <Button type="button" variant="secondary" onClick={() => navigate(-1)}>이전</Button>
                     <Button type="button" variant="outline-secondary" onClick={() => navigate('/ChangeStatusList')}>내 신청내역 보기</Button>
                 </div>

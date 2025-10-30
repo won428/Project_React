@@ -72,9 +72,6 @@ function App() {
                     <h4 className="mb-0">학적 변경 신청 목록</h4>
                     <div className="text-muted small">엑셀 스타일 표 UI</div>
                 </Col>
-                <Col md={6} className="text-end">
-                    <Button variant="primary" onClick={handleAdd}>학적변경신청</Button>
-                </Col>
 
             </Row>
 

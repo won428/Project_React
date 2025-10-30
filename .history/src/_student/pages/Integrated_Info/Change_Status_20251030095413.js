@@ -23,8 +23,6 @@ function App() {
     // 쿼리 파라미터에서 recordId 추출 (수정 모드 구분)
     const query = new URLSearchParams(location.search);
     const recordId = query.get('recordId');
-    const readonly = query.get('readonly') === "true";
-
 
     const [form, setForm] = useState({
         userId: null,
@@ -50,8 +48,7 @@ function App() {
     // 수정 모드: 기존 신청서 데이터 불러오기용 별도의 useEffect
     useEffect(() => {
         if (!recordId) return;
-        // 기존 신청 내용을 불러오기
-        axios.get(`${API_BASE_URL}/api/student/record/${recordId}`)
+        axios.get(`${API_BASE_URL}/api/student/record/${recordId}`) // 기존 신청 내용을 불러오기
             .then(res => {
                 const data = res.data;
                 setForm({
@@ -69,7 +66,9 @@ function App() {
             });
     }, [recordId, user, navigate, today]);
 
-    const newSubmit = () => {
+    const onSubmit = (e) => {
+        e.preventDefault();
+        if (!form.userId) return;
 
         const body = {
             userId: form.userId,
@@ -92,39 +91,6 @@ function App() {
             });
     };
 
-    const updateSubmit = () => {
-        const body = {
-            userId: form.userId,
-            studentStatus: form.studentStatus,
-            title: form.title,
-            content: form.content,
-            appliedDate: form.appliedDate,
-            status: 'PENDING'
-        };
-        axios.put(`${API_BASE_URL}/api/student/record/${recordId}`, body)
-            .then(() => {
-                window.alert('신청이 수정되었습니다.');
-                navigate('/Change_Status');
-            })
-            .catch(err => {
-                console.error(err);
-                window.alert('신청 수정 중 오류가 발생했습니다.');
-            });
-    };
-
-    const onSubmit = (e) => {
-        e.preventDefault();
-        if (!form.userId) return;
-
-        if (recordId) {
-            updateSubmit();
-        } else {
-            newSubmit();
-        }
-    };
-
-    {/* 파일 첨부 가능하도록 해야함 */ }
-
     return (
         <Container style={{ maxWidth: 720, marginTop: 24 }}>
             <h3 style={{ marginBottom: 16 }}>학적 변경 신청</h3>
@@ -138,7 +104,6 @@ function App() {
                             value={form.studentStatus}
                             onChange={onChange}
                             required
-                            disabled={readonly}
                         >
                             {OPTIONS.map(o => (
                                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -164,7 +129,6 @@ function App() {
                         onChange={onChange}
                         placeholder="제목을 입력하세요"
                         required
-                        disabled={readonly}
                     />
                 </Form.Group>
 
@@ -178,14 +142,11 @@ function App() {
                         onChange={onChange}
                         placeholder="신청 내용을 입력하세요"
                         required
-                        disabled={readonly}
                     />
                 </Form.Group>
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                    {!readonly && (
-                        <Button type="submit" variant="primary">신청 접수</Button>
-                    )}
+                    <Button type="submit" variant="primary">신청 접수</Button>
                     <Button type="button" variant="secondary" onClick={() => navigate(-1)}>이전</Button>
                     <Button type="button" variant="outline-secondary" onClick={() => navigate('/ChangeStatusList')}>내 신청내역 보기</Button>
                 </div>

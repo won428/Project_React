@@ -178,7 +178,7 @@ function App() {
                         onChange={onChange}
                         placeholder="신청 내용을 입력하세요"
                         required
-                        disabled={readonly}
+                        readOnly={readonly}
                     />
                 </Form.Group>
 
