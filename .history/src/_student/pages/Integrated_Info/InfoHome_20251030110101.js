@@ -31,8 +31,8 @@ function App() {
     retentionDate: '',
     expelledDate: '',
     majorCredit: 0,
-    generalCredit: 0.0,
-    totalCredit: 0.0,
+    generalCredit: 0,
+    totalCredit: ,
     currentCredit: 0.0,
     studentImage: '',
   });

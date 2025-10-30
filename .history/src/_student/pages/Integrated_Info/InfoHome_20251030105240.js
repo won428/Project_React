@@ -30,9 +30,8 @@ function App() {
     graduationDate: '',
     retentionDate: '',
     expelledDate: '',
-    majorCredit: 0,
-    generalCredit: 0.0,
-    totalCredit: 0.0,
+    majorCredit: 0
+    totalCredit: 0,
     currentCredit: 0.0,
     studentImage: '',
   });
@@ -173,8 +172,6 @@ function App() {
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>졸업일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.graduationDate || '-'}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>유급일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.retentionDate || '-'}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>퇴학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.expelledDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>전공 학점</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.majorCredit}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>교양 학점</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.generalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>총 학점</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.totalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>이번 학기 학점</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.currentCredit}</td></tr>
         </tbody>
