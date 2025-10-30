@@ -45,17 +45,17 @@ function App() {
   // 년도 4자리에서 뒤에 2자리 잘라서 사용하는 로직
   const splitStartDate = (date) => {
     const [yyyy, mm] = date.split("-")
-    const year = yyyy.slice(-2);
+    const yaer = yyyy.slice(-2);
     let splitMonth = (Number(mm))
     let splitDate = '';
     if(splitMonth >= 1 && splitMonth <= 2 ){
-      splitDate = `${year}년도 겨울 계절학기`
+      splitDate = `${yaer}년도 겨울 계절학기`
     }else if(splitMonth >= 3  && splitMonth <= 6){
-      splitDate = `${year}년도 1학기`
+      splitDate = `${yaer}년도 1학기`
     }else if(splitMonth >= 7 && splitMonth <= 8){
-      splitDate = `${year}년도 여름 계절학기`
+      splitDate = `${yaer}년도 여름 계절학기`
     }else if(splitMonth >= 9 && splitMonth <= 12){
-      splitDate = `${year}년도 2학기`
+      splitDate = `${yaer}년도 2학기`
     }
     
     return splitDate;

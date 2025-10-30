@@ -53,9 +53,9 @@ function App() {
     }else if(splitMonth >= 3  && splitMonth <= 6){
       splitDate = `${year}년도 1학기`
     }else if(splitMonth >= 7 && splitMonth <= 8){
-      splitDate = `${year}년도 여름 계절학기`
+      splitDate = `${yaer}년도 여름 계절학기`
     }else if(splitMonth >= 9 && splitMonth <= 12){
-      splitDate = `${year}년도 2학기`
+      splitDate = `${yaer}년도 2학기`
     }
     
     return splitDate;

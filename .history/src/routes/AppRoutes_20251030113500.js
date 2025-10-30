@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
 import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
-import This_Credit from '../_student/pages/Integrated_Info/Student_Credit';
-
+import This_Credit from '../_student/pages/Integrated_Info/This_Credit';
+import Entire_Credit from '../_student/pages/Integrated_Info/Entire_Credit';
 import Change_Status from '../_student/pages/Integrated_Info/Change_Status';
 import ChangeStatusList from '../_student/pages/Integrated_Info/ChangeStatusList';
 import ChangeStatusDetail from '../_student/pages/Integrated_Info/ChangeStatusDetail';
@@ -137,7 +137,7 @@ function App() {
 
 
                         <Route path='/infohome/ad' element={<InfohomeAD />} ></Route>
-                        
+
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
                         <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
@@ -178,11 +178,11 @@ function App() {
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
-                        
+
 
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
-                        <Route path='Student_Credit' element={<This_Credit />} ></Route>
-                        
+                        <Route path='/This_Credit' element={<This_Credit />} ></Route>
+                        <Route path='/Entire_Credit' element={<Entire_Credit />} ></Route>
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
                         {/* 동적 파라미터 포함 경로 */}
