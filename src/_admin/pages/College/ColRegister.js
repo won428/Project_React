@@ -15,6 +15,7 @@ function App() {
     // 2~3-3~4-4 허용
     const phonePattern = /^\d{2,3}-\d{3,4}-\d{4}$/;
 
+    // 전화번호 입력 시 유효성 검사
     const formatOfficePhone = (raw) => {
         const d = (raw || "").replace(/\D/g, "").slice(0, 11);
         if (!d) return "";
@@ -30,6 +31,7 @@ function App() {
         return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7, 11)}`;                              // 3-4-4
     };
 
+    // 입력칸 유효성 검사
     const errors = useMemo(() => {
         const e = {};
         if (!form.type.trim()) e.type = "계열은 필수입니다.";
@@ -39,6 +41,7 @@ function App() {
         return e;
     }, [form]);
 
+    // 이벤트가 발생한 곳이 office인 경우 전화번호 포맷 다듬기
     const onChange = (e) => {
         const { name, value } = e.target;
         setForm((prev) => ({
@@ -47,8 +50,9 @@ function App() {
         }));
     };
 
+    // 입력칸을 한번이라도 건드렸다면 touched 상태를 true로 업데이트 
     const onBlur = (e) => {
-        const { name } = e.target;
+        const { name } = e.target; // blur가 난 input의 name
         setTouched((prev) => ({ ...prev, [name]: true }));
     };
 

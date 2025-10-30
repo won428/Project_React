@@ -9,14 +9,14 @@ import { useAuth } from "../../../public/context/UserContext";
 function App() {
     const dateInputRef = useRef(null);
     const [user, setUser] = useState({
-        u_name: '',
+        name: '',
         password: '',
         birthdate: '',
         email: '',
         phone: '',
         gender: '',
         major: '',
-        u_type: '',
+        type: '',
     });
     const [collegeList, setCollegeList] = useState([]);
     const [majorList, setMajorList] = useState([]);
@@ -116,9 +116,9 @@ function App() {
                         type="text"
                         placeholder="이름을 입력해 주세요."
                         name="name"
-                        value={user.u_name}
+                        value={user.name}
                         onChange={(event) => {
-                            setUser(previous => ({ ...previous, u_name: event.target.value }))
+                            setUser(previous => ({ ...previous, name: event.target.value }))
                             console.log(event.target.value)
                         }}
 
@@ -237,7 +237,7 @@ function App() {
                     <Form.Select
                         onChange={(e) => {
                             const value = e.target.value;
-                            setUser(prev => ({ ...prev, u_type: value }))
+                            setUser(prev => ({ ...prev, type: value }))
                             console.log(e.target.value)
                         }}
                     >
