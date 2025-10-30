@@ -49,6 +49,8 @@ function App() {
 
   }, [lecture]);
 
+  
+
 
 
 
@@ -94,7 +96,7 @@ function App() {
               {studentList.map((student) => (
                 <tr key={student.userCode}>
                   <td>{student.userCode}</td>
-                  <td>{student.u_name}</td>
+                  <td>{student.name}</td>
                   <td>{student.majorName}</td>
                   <td>추가예정</td>
                   <td>{student.email}</td>

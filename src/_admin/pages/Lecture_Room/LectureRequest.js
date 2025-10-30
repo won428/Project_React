@@ -67,7 +67,7 @@ function App() {
             e.preventDefault();
             const response = await axios.put(url,null,
                 { params: { 
-                    status: 'INPROGRESS' ,
+                    status: 'APPROVED' ,
                     id : id
                 } } 
             )
