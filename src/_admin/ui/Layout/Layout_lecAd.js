@@ -34,6 +34,7 @@ export const LayoutStLec = () => {
                             onClick={() => navigate(`/collist`)}
                             className="text-white">단과대학 목록</Nav.Link>
                         <Nav.Link
+
                             onClick={() => navigate(`/lectureRegister`)}
                             className="text-white">강의 등록</Nav.Link>
                         <Nav.Link
@@ -42,9 +43,14 @@ export const LayoutStLec = () => {
                             <Nav.Link
                             onClick={() => navigate(`/lectureRequest`)}
                             className="text-white">강의 등록 신청 목록</Nav.Link>
-
-
-                            
+                        <Nav.Link
+                            onClick={() => navigate(`/majorList`)}
+                            className="text-white"
+                        >학과 조회</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/majorReg`)}
+                            className="text-white"
+                        >학과 등록</Nav.Link>
 
                     </Nav>
                 </Container>

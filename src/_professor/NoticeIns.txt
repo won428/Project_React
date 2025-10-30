@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Form, Button } from "react-bootstrap";
 import { API_BASE_URL } from "../public/config/config";
 import { useAuth } from "../public/context/UserContext";
@@ -9,6 +9,9 @@ function App() {
     const { user } = useAuth();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [readedfiles, setReadedfiles] = useState([]);
+    const [subfiles, setSubfiles] = useState([]);
+    const fileRef = useRef();
     const navigate = useNavigate();
 
 
@@ -18,24 +21,48 @@ function App() {
         console.log(content);
 
         const url = `${API_BASE_URL}/notice/insert`
-        const parameter = {
-            email: user.email,
-            title,
-            content,
-        };
-        console.log(parameter);
-
-        const respone = await axios.post(url, parameter);
+        const formData = new FormData();
+        formData.append("email", user.email);
+        formData.append("title", title);
+        formData.append("content", content);
+        subfiles.forEach(file => {
+            console.log(file);
+            formData.append("files", file)
+        });
+        const respone = await axios.post(url, formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
         } else {
-
-
             alert(respone.statusText)
         }
 
     }
+
+    const Fileselect = (evt) => {
+        const { files } = evt.target;
+        const selectedFiles = Array.from(files);
+
+        if (selectedFiles.length > 3) {
+            alert("3개까지만 첨부할 수 있습니다.");
+            setReadedfiles([]);
+            setSubfiles([]);
+            return;
+        }
+
+        selectedFiles.forEach(file => {
+            const reader = new FileReader;
+            setSubfiles(prev => [...prev, file]);
+
+            const previewUrl = URL.createObjectURL(file);
+            setReadedfiles(prev => [...prev, { url: previewUrl, name: file.name }]);
+
+
+        })
+    }
+    console.log(readedfiles);
     return (
         <>
             <Container style={{ maxWidth: '600px', margin: '2rem auto' }} >
@@ -66,6 +93,17 @@ function App() {
                                             placeholder="내용을 입력하세요"
                                             value={content}
                                             onChange={(evt) => setContent(evt.target.value)}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Label>Files</Form.Label>
+                                        <Form.Control
+                                            type="file"
+                                            name="file"
+                                            multiple
+                                            max={3}
+
+                                            onChange={Fileselect}
                                         />
                                     </Form.Group>
                                 </Form>

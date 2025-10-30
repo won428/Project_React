@@ -7,6 +7,8 @@ import { API_BASE_URL } from '../../../public/config/config';
 function App() {
     const { user } = useAuth();
     const userId = user?.id;
+    console.log(123);
+    
 
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedSemester, setSelectedSemester] = useState(null);

@@ -38,6 +38,8 @@ export const UserProvider = ({ children }) => {
     }, [])
     const login = (newToken) => {
         const decoded = jwtDecode(newToken);
+        console.log(decoded);
+
         const token = sessionStorage.setItem("accessToken", newToken);
         setUser({
             email: decoded.sub,
@@ -45,6 +47,8 @@ export const UserProvider = ({ children }) => {
             roles: [decoded.role],
             IsAuthenticated: true,
         });
+        console.log(user);
+
     }
 
     const logout = () => {

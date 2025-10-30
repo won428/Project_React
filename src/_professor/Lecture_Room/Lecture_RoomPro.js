@@ -1,51 +1,62 @@
-import { Card, Col, Row } from "react-bootstrap";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { Card, Col, Row, Container, Spinner } from "react-bootstrap";
+import { API_BASE_URL } from "../../public/config/config";
+import { useAuth } from "../../public/context/UserContext";
+import "../ui/LectureList.css"; // 스타일 분리 추천
+import { useNavigate } from "react-router-dom";
 
-function App() {
+function LectureList() {
+    const [lecRoom, setLecRoom] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const { user } = useAuth();
 
+    useEffect(() => {
+        const url = `${API_BASE_URL}/lecture/List`;
+        axios.get(url, { params: { email: user.email } })
+            .then((res) => {
+                setLecRoom(res.data);
+                setLoading(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setLoading(false);
+            });
+    }, [user]);
+    console.log(lecRoom);
 
-    // user-> id -> id로 lecture list 불러오고 
+    if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" /> <div>불러오는 중...</div>
+            </Container>
+        );
+    }
+
     return (
-        <div>
-
-            <Row>
-                <Col>
-                    <Card
-
-                        className="h-100" style={{ cursor: 'pointer' }}>
-                        1
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        2
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        3
-                    </Card>
-                </Col>
-                <Col>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        4
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        5
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        6
-                    </Card>
-                </Col>
-                <Col>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        7
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        8
-                    </Card>
-                    <Card className="h-100" style={{ cursor: 'pointer' }}>
-                        9
-                    </Card>
-                </Col>
+        <Container className="mt-4">
+            <h4 className="fw-bold mb-3"> 강의 목록</h4>
+            <Row xs={1} md={2} lg={3} className="g-3">
+                {lecRoom.length > 0 ? (
+                    lecRoom.map((item) => (
+                        <Col key={item.id}>
+                            <Card className="lecture-card" onClick={() => navigate("/roomspec", { state: item.id })}>
+                                <Card.Body>
+                                    <div className="lecture-name">{item.name}</div>
+                                    <div className="lecture-info text-muted">
+                                        {item.userName}
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))
+                ) : (
+                    <div className="text-muted text-center mt-5">등록된 강의가 없습니다.</div>
+                )}
             </Row>
-
-        </div>
-    )
+        </Container>
+    );
 }
-export default App;
+
+export default LectureList;
