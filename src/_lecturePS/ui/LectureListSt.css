@@ -1,0 +1,22 @@
+.lecture-card {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s;
+  background: #ffffff;
+  border: 1px solid #eee;
+}
+
+.lecture-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.lecture-name {
+  font-size: 1.15rem;
+  font-weight: bold;
+}
+
+.lecture-info {
+  font-size: 0.9rem;
+  margin-top: 6px;
+}

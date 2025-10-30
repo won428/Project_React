@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Button, Pagination } from "react-bootstrap";
-import { API_BASE_URL } from "../../../public/config/config";
-import { useAuth } from "../../../public/context/UserContext";
+import { API_BASE_URL } from "../../public/config/config";
+import { useAuth } from "../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useLectureStore } from "./store/lectureStore";
 
 function App() {
     const { user } = useAuth();
     const [post, setPost] = useState([]); // content
     const [page, setPage] = useState(1);
     const [pageInfo, setPageInfo] = useState(null);
+    const { lectureId } = useLectureStore();
     const navigate = useNavigate();
     const pageRange = 10; // 한 번에 표시할 페이지 수
 
     useEffect(() => {
-        const url = `${API_BASE_URL}/notice/List`;
+        const url = `${API_BASE_URL}/assign/List`;
         axios.get(url, {
             params: {
-                email: user.email,
+                id: lectureId,
                 page: page - 1, // Spring은 0부터 시작!
                 size: 10
             }
@@ -31,7 +33,7 @@ function App() {
 
     if (!pageInfo) return null;
 
-    const specificPage = (item) => navigate("/notionlistspec", { state: item.id });
+    const specificPage = (item) => navigate("/asnspec", { state: item.id });
 
     const totalPages = pageInfo.totalPages;
 
@@ -43,10 +45,10 @@ function App() {
 
             {/* 상단 타이틀 */}
             <Row className="mb-3 align-items-center">
-                <Col><h4>공지사항</h4></Col>
+                <Col><h4>과제</h4></Col>
                 <Col xs="auto">
-                    <Button variant="primary" onClick={() => navigate("/noticep")}>
-                        공지 작성
+                    <Button variant="primary" onClick={() => navigate("/asn")}>
+                        과제 작성
                     </Button>
                 </Col>
             </Row>
