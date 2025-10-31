@@ -54,7 +54,7 @@ function App() {
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
-            navigate("/notionlist");
+            navigate("/asnlst");
         } else {
             alert(respone.statusText)
         }
@@ -64,7 +64,7 @@ function App() {
         const { files } = evt.target;
         const selectedFiles = Array.from(files);
         const totalCount = selectedFiles.length;
-        if (totalCount.length > 3) {
+        if (totalCount > 3) {
             alert("3개까지만 첨부할 수 있습니다.");
             fileRef.current.value = "";
             return;

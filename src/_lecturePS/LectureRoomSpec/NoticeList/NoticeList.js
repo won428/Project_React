@@ -52,11 +52,11 @@ function App() {
             {/* 상단 타이틀 */}
             <Row className="mb-3 align-items-center">
                 <Col><h4>공지사항</h4></Col>
-                <Col xs="auto">
+                {user.roles.includes("PROFESSOR") && (<Col xs="auto">
                     <Button variant="primary" onClick={() => navigate("/noticep")}>
                         공지 작성
                     </Button>
-                </Col>
+                </Col>)}
             </Row>
 
             {/* 게시글 목록 */}

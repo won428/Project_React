@@ -11,6 +11,7 @@ function App() {
     const [post, setPost] = useState([]); // content
     const [page, setPage] = useState(1);
     const [pageInfo, setPageInfo] = useState(null);
+
     const { lectureId } = useLectureStore();
     const navigate = useNavigate();
     const pageRange = 10; // 한 번에 표시할 페이지 수
@@ -31,6 +32,8 @@ function App() {
             .catch(console.error);
     }, [page, user.email]);
 
+    console.log(post);
+
     if (!pageInfo) return null;
 
     const specificPage = (item) => navigate("/asnspec", { state: item.id });
@@ -46,11 +49,12 @@ function App() {
             {/* 상단 타이틀 */}
             <Row className="mb-3 align-items-center">
                 <Col><h4>과제</h4></Col>
-                <Col xs="auto">
-                    <Button variant="primary" onClick={() => navigate("/asn")}>
-                        과제 작성
-                    </Button>
-                </Col>
+                {user.roles.includes("PROFESSOR") && (
+                    <Col xs="auto">
+                        <Button variant="primary" onClick={() => navigate("/asn")}>
+                            과제 작성
+                        </Button>
+                    </Col>)}
             </Row>
 
             {/* 게시글 목록 */}
@@ -68,7 +72,7 @@ function App() {
                                     <h5 className="fw-bold mb-2">{item.title}</h5>
                                     <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
                                         <span>{item.username}</span>
-                                        <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                                        <span>{new Date(item.createAt).toLocaleDateString()}</span>
                                     </div>
                                 </CardBody>
                             </Card>
