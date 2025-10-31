@@ -49,6 +49,8 @@ function App() {
 
   }, [lecture]);
 
+  
+
 
 
 
@@ -65,7 +67,7 @@ function App() {
               </div>
             </Col>
             <Col xs="auto">
-              <Button variant="outline-secondary" size="sm" onClick={() => navigate('/lectureListPro')}>돌아가기</Button>
+              <Button variant="outline-secondary" size="sm" onClick={() => navigate('/LRoomPro')}>돌아가기</Button>
             </Col>
           </Row>
         </Card.Body>
@@ -94,7 +96,7 @@ function App() {
               {studentList.map((student) => (
                 <tr key={student.userCode}>
                   <td>{student.userCode}</td>
-                  <td>{student.u_name}</td>
+                  <td>{student.name}</td>
                   <td>{student.majorName}</td>
                   <td>추가예정</td>
                   <td>{student.email}</td>
