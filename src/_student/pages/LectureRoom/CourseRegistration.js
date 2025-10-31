@@ -7,224 +7,225 @@ import axios from "axios";
 
 function App() {
 
-    const [lectureList, setLectureList] = useState([]);
-    const [lectureListSt, setLectureListSt] = useState([]);
-    const [myLectureList, setMyLectureList] = useState([]);
-    const [submitLecList,setSubmitlecList] = useState([]);
-    const [approvedLecList, setApprovedLecList] = useState([]) 
-    const [majorList, setMajorList] = useState([]);
-    const navigate = useNavigate();
-    const { user } = useAuth();
-    const [selected, setSelected] = useState([]);
-    
-    const [paging, setPaging] = useState({
-		totalElements : 0, // 전체 데이터 개수
-		pageSize : 10, // 1페이지에 보여 주는 데이터 개수(10개)
-		totalPages : 0, // 전체 페이지 개수
-		pageNumber : 0, // 현재 페이지 번호
-		pageCount : 10, // 페이지 하단 버튼의 개수(10개)
-		beginPage : 0, // 페이징 시작 번호
-		endPage : 0, // 페이징 끝 번호
-		searchMajor: '', // 학과
-		searchCompletionDiv: '', // 이수구분
-		searchLevel: '', // 학년
-		searchCredit: '', // 학점
-		searchMode: '', // 유저 검색 모드
-		searchKeyword:'', // 검색 키워드 입력 상자
-	});
+  const [lectureList, setLectureList] = useState([]);
+  const [lectureListSt, setLectureListSt] = useState([]);
+  const [myLectureList, setMyLectureList] = useState([]);
+  const [submitLecList, setSubmitlecList] = useState([]);
+  const [approvedLecList, setApprovedLecList] = useState([])
+  const [majorList, setMajorList] = useState([]);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [selected, setSelected] = useState([]);
 
- 
+  const [paging, setPaging] = useState({
+    totalElements: 0, // 전체 데이터 개수
+    pageSize: 10, // 1페이지에 보여 주는 데이터 개수(10개)
+    totalPages: 0, // 전체 페이지 개수
+    pageNumber: 0, // 현재 페이지 번호
+    pageCount: 10, // 페이지 하단 버튼의 개수(10개)
+    beginPage: 0, // 페이징 시작 번호
+    endPage: 0, // 페이징 끝 번호
+    searchMajor: '', // 학과
+    searchCompletionDiv: '', // 이수구분
+    searchLevel: '', // 학년
+    searchCredit: '', // 학점
+    searchMode: '', // 유저 검색 모드
+    searchKeyword: '', // 검색 키워드 입력 상자
+  });
 
-  const fetchLectures = useCallback(()=>{
+
+
+  const fetchLectures = useCallback(() => {
     const url = `${API_BASE_URL}/lecture/apply/list`;
 
-        axios
-        .get(url,{
-            params:{
-                id:user.id
-            }
-        })
-        .then((response) => {
-            
-            setLectureList(response.data)
-            console.log(response.data)
-        })
-        .catch((error) => {
-            setLectureList([]);
-            console.error("status:", error.response?.status);
-            console.error("data:", error.response?.data);
-        })
-
-  },[])
-
-    useEffect(() => {
-       fetchLectures();
-    }, [fetchLectures]);
-
-    useEffect(() => {
-        const url = `${API_BASE_URL}/lecture/mylist`;
-        axios
-        .get(url, {
-            params: {
-            userId: user.id
-            }
-        })
-        .then((response) => {
-            setMyLectureList(response.data)
-        })
-        .catch((error) => {
-            const err = error.response;
-            if (!err) {
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-            }
-        })
-
-    }, [lectureList]);
-
-    useEffect(()=>{
-        const url = `${API_BASE_URL}/major/all/list`;
-
-        axios
-            .get(url)
-            .then((response)=>{
-                setMajorList(response.data)
-                console.log(response.data)
-            })
-            .catch((error)=>{
-                const err = error.response;
-            if (!err) {
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-            }
-            })
-    },[])
-    
-    
-
-    useEffect(() => {
-        if (!Array.isArray(lectureList)) return;
-        setLectureListSt(lectureList.filter(lec => lec.status === 'APPROVED'));
-    }, [lectureList]);
-
-     useEffect(() => {
-        if (!Array.isArray(myLectureList)) return;
-        setSubmitlecList(myLectureList.filter(lec => lec.status === 'SUBMITTED' ))
-        setApprovedLecList(myLectureList.filter(lec => lec.status === 'PENDING' ))
-    }, [myLectureList]);
-
-    
-    
-
-    const splitStartDate = (date) => {
-        const [yyyy, mm] = date.split("-");
-        const yaer = yyyy.slice(-2);
-        const m = Number(mm);
-        if (m >= 1 && m <= 2) return `${yaer}년도 겨울 계절학기`;
-        if (m >= 3 && m <= 6) return `${yaer}년도 1학기`;
-        if (m >= 7 && m <= 8) return `${yaer}년도 여름 계절학기`;
-        return `${yaer}년도 2학기`;
-    };
-
-    const typeMap = {
-        PENDING: "처리중",
-        APPROVED: "신청 가능",
-        REJECTED: "거부",
-        INPROGRESS: "개강",
-        COMPLETED: "종강"
-    };
-
-    const typeMap2 = {
-        MAJOR_REQUIRED: '전공 필수',
-        MAJOR_ELECTIVE: '전공 선택',
-        LIBERAL_REQUIRED: '교양 필수',
-        LIBERAL_ELECTIVE: '교양 선택',
-        GENERAL_ELECTIVE: ' 일반 선택'
-    };
-
-     const typeMap3 = {
-        APPROVED: "개강 대기",
-        REJECTED: "거부",
-        INPROGRESS: "개강",
-        COMPLETED: "종강",
-        SUBMITTED:"신청 완료"
-        
-    };
-
-    const addSelect = (e) => {
-        const value = e.target.value;
-        const checked = e.target.checked;
-
-        setSelected(prev =>
-        checked
-            ? (prev.includes(value) ? prev : [...prev, value])
-            : prev.filter(v => v !== value)
-        );
-    };
-
-    useEffect(() => {
-        console.log(selected)
-    }, [selected]);
-
-    const apply = async () => {
-        const url = `${API_BASE_URL}/lecture/apply`;
-
-        try {
-        const response = await axios.post(
-            url,
-            selected,
-            { params: { id: user.id } }
-        );
-        if (response.data.success) {
-            alert('등록 성공');
-            setSelected([])
-            fetchLectures();
-        } else {
-            alert('등록 성공');
-            setSelected([])
-            fetchLectures();
+    axios
+      .get(url, {
+        params: {
+          id: user.id
         }
-        } catch (error) {
+      })
+      .then((response) => {
+
+        setLectureList(response.data)
+        console.log(response.data)
+      })
+      .catch((error) => {
+        setLectureList([]);
+        console.error("status:", error.response?.status);
+        console.error("data:", error.response?.data);
+      })
+
+  }, [])
+
+  useEffect(() => {
+    fetchLectures();
+  }, [fetchLectures]);
+
+  useEffect(() => {
+    const url = `${API_BASE_URL}/lecture/mylist`;
+    axios
+      .get(url, {
+        params: {
+          userId: user.id
+        }
+      })
+      .then((response) => {
+        setMyLectureList(response.data)
+      })
+      .catch((error) => {
         const err = error.response;
         if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
+          alert('네트워크 오류가 발생하였습니다')
+          return;
         }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
-        }
-    };
+      })
 
-    const applyOne = async (lecId) => {
-        const url = `${API_BASE_URL}/lecture/applyOne`;
-        console.log(lecId)
-        try {
-        const response = await axios.post(
-            url,
-            Number(lecId),
-            { params: { id: user.id },
-              headers: { 'Content-Type': 'application/json' }
-          }
-        );
-        if (response.data.success) {
-            alert('등록 성공');           
-            fetchLectures();
-        } else {
-            alert('등록 성공');
-            fetchLectures();
-        }
-        } catch (error) {
+  }, [lectureList]);
+
+  useEffect(() => {
+    const url = `${API_BASE_URL}/major/all/list`;
+
+    axios
+      .get(url)
+      .then((response) => {
+        setMajorList(response.data)
+        console.log(response.data)
+      })
+      .catch((error) => {
         const err = error.response;
         if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
+          alert('네트워크 오류가 발생하였습니다')
+          return;
         }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
-        }
-    };
+      })
+  }, [])
 
-    const stautsRequest = async (id, status) => {
+
+
+  useEffect(() => {
+    if (!Array.isArray(lectureList)) return;
+    setLectureListSt(lectureList.filter(lec => lec.status === 'APPROVED'));
+  }, [lectureList]);
+
+  useEffect(() => {
+    if (!Array.isArray(myLectureList)) return;
+    setSubmitlecList(myLectureList.filter(lec => lec.status === 'SUBMITTED'))
+    setApprovedLecList(myLectureList.filter(lec => lec.status === 'PENDING'))
+  }, [myLectureList]);
+
+
+
+
+  const splitStartDate = (date) => {
+    const [yyyy, mm] = date.split("-");
+    const yaer = yyyy.slice(-2);
+    const m = Number(mm);
+    if (m >= 1 && m <= 2) return `${yaer}년도 겨울 계절학기`;
+    if (m >= 3 && m <= 6) return `${yaer}년도 1학기`;
+    if (m >= 7 && m <= 8) return `${yaer}년도 여름 계절학기`;
+    return `${yaer}년도 2학기`;
+  };
+
+  const typeMap = {
+    PENDING: "처리중",
+    APPROVED: "신청 가능",
+    REJECTED: "거부",
+    INPROGRESS: "개강",
+    COMPLETED: "종강"
+  };
+
+  const typeMap2 = {
+    MAJOR_REQUIRED: '전공 필수',
+    MAJOR_ELECTIVE: '전공 선택',
+    LIBERAL_REQUIRED: '교양 필수',
+    LIBERAL_ELECTIVE: '교양 선택',
+    GENERAL_ELECTIVE: ' 일반 선택'
+  };
+
+  const typeMap3 = {
+    APPROVED: "개강 대기",
+    REJECTED: "거부",
+    INPROGRESS: "개강",
+    COMPLETED: "종강",
+    SUBMITTED: "신청 완료"
+
+  };
+
+  const addSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+
+    setSelected(prev =>
+      checked
+        ? (prev.includes(value) ? prev : [...prev, value])
+        : prev.filter(v => v !== value)
+    );
+  };
+
+  useEffect(() => {
+    console.log(selected)
+  }, [selected]);
+
+  const apply = async () => {
+    const url = `${API_BASE_URL}/lecture/apply`;
+
+    try {
+      const response = await axios.post(
+        url,
+        selected,
+        { params: { id: user.id } }
+      );
+      if (response.data.success) {
+        alert('등록 성공');
+        setSelected([])
+        fetchLectures();
+      } else {
+        alert('등록 성공');
+        setSelected([])
+        fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+    }
+  };
+
+  const applyOne = async (lecId) => {
+    const url = `${API_BASE_URL}/lecture/applyOne`;
+    console.log(lecId)
+    try {
+      const response = await axios.post(
+        url,
+        Number(lecId),
+        {
+          params: { id: user.id },
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+      if (response.data.success) {
+        alert('등록 성공');
+        fetchLectures();
+      } else {
+        alert('등록 성공');
+        fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+    }
+  };
+
+  const stautsRequest = async (id, status) => {
 
     const url = `${API_BASE_URL}/courseReg/applyStatus`;
     try {
@@ -240,12 +241,12 @@ function App() {
       }
     } catch (error) {
       const err = error.response;
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
     }
   };
 
@@ -257,25 +258,25 @@ function App() {
         <Row className="g-2 mb-2 flex-wrap">
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학과(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMajor: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMajor: value }))
+              }}
             >
               <option value="">학과</option>
-              {majorList.map((major)=>(
+              {majorList.map((major) => (
                 <option
-                    key={major.id} value={major.id}
+                  key={major.id} value={major.id}
                 >{major.name}</option>
               ))}
             </Form.Select>
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="이수구분(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCompletionDiv: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCompletionDiv: value }))
+              }}
             >
               <option value="">이수구분</option>
               <option value="MAJOR_REQUIRED">전공  필수</option>
@@ -287,10 +288,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학년(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchLevel: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchLevel: value }))
+              }}
             >
               <option value="">학년</option>
               <option value={1}>1학년</option>
@@ -301,10 +302,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학점(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCredit: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCredit: value }))
+              }}
             >
               <option value="">학점</option>
               <option value={1}>1학점</option>
@@ -315,10 +316,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="검색조건(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMode: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMode: value }))
+              }}
             >
               <option value="">전체 검색</option>
               <option value="name">강의명</option>
@@ -327,11 +328,11 @@ function App() {
             </Form.Select>
           </Col>
           <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchKeyword: value}))
-                }}
+            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)"
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchKeyword: value }))
+              }}
             />
           </Col>
         </Row>
@@ -411,11 +412,11 @@ function App() {
                 <td className="text-center text-nowrap">자료</td>
                 <td className="text-center text-nowrap">{typeMap[lec.status]}</td>
                 <td className="text-center text-nowrap">
-                    <Button size="sm" variant="outline-primary" className="fw-semibold px-3"
-                      value={lec.id} onClick={() => applyOne(Number(lec.id))}
-                    >
+                  <Button size="sm" variant="outline-primary" className="fw-semibold px-3"
+                    value={lec.id} onClick={() => applyOne(Number(lec.id))}
+                  >
                     수강 신청
-                    </Button>
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -424,34 +425,34 @@ function App() {
 
         {/* ✅ 테이블 바로 아래, 오른쪽 정렬된 일괄 신청 버튼 */}
         <div className="d-flex justify-content-end mb-4">
-            <Button size="sm" variant="primary" className="fw-semibold px-3" onClick={apply}>
+          <Button size="sm" variant="primary" className="fw-semibold px-3" onClick={apply}>
             일괄 신청
-            </Button>
+          </Button>
         </div>
 
         {/* ───────── 수강신청 완료 목록: 필터/검색 UI (분리) ───────── */}
         <Row className="g-2 mb-2 flex-wrap">
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학과(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMajor: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMajor: value }))
+              }}
             >
               <option value="">학과</option>
-              {majorList.map((major)=>(
+              {majorList.map((major) => (
                 <option
-                    key={major.id} value={major.id}
+                  key={major.id} value={major.id}
                 >{major.name}</option>
               ))}
             </Form.Select>
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="이수구분(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCompletionDiv: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCompletionDiv: value }))
+              }}
             >
               <option value="">이수구분</option>
               <option value="MAJOR_REQUIRED">전공  필수</option>
@@ -463,10 +464,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학년(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchLevel: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchLevel: value }))
+              }}
             >
               <option value="">학년</option>
               <option value={1}>1학년</option>
@@ -477,10 +478,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학점(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCredit: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCredit: value }))
+              }}
             >
               <option value="">학점</option>
               <option value={1}>1학점</option>
@@ -491,10 +492,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="검색조건(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMode: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMode: value }))
+              }}
             >
               <option value="">전체 검색</option>
               <option value="name">강의명</option>
@@ -503,11 +504,11 @@ function App() {
             </Form.Select>
           </Col>
           <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchKeyword: value}))
-                }}
+            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)"
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchKeyword: value }))
+              }}
             />
           </Col>
         </Row>
@@ -617,25 +618,25 @@ function App() {
         <Row className="g-2 mb-2 flex-wrap">
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학과(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMajor: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMajor: value }))
+              }}
             >
               <option value="">학과</option>
-              {majorList.map((major)=>(
+              {majorList.map((major) => (
                 <option
-                    key={major.id} value={major.id}
+                  key={major.id} value={major.id}
                 >{major.name}</option>
               ))}
             </Form.Select>
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="이수구분(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCompletionDiv: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCompletionDiv: value }))
+              }}
             >
               <option value="">이수구분</option>
               <option value="MAJOR_REQUIRED">전공  필수</option>
@@ -647,10 +648,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학년(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchLevel: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchLevel: value }))
+              }}
             >
               <option value="">학년</option>
               <option value={1}>1학년</option>
@@ -661,10 +662,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="학점(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchCredit: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchCredit: value }))
+              }}
             >
               <option value="">학점</option>
               <option value={1}>1학점</option>
@@ -675,10 +676,10 @@ function App() {
           </Col>
           <Col xs={6} sm={4} md={2}>
             <Form.Select size="sm" aria-label="검색조건(가능)"
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchMode: value}))
-                }}
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchMode: value }))
+              }}
             >
               <option value="">전체 검색</option>
               <option value="name">강의명</option>
@@ -687,11 +688,11 @@ function App() {
             </Form.Select>
           </Col>
           <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-                onChange={(e)=>{
-                    const value = e.target.value
-                    setPaging((previous)=>({...previous, searchKeyword: value}))
-                }}
+            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)"
+              onChange={(e) => {
+                const value = e.target.value
+                setPaging((previous) => ({ ...previous, searchKeyword: value }))
+              }}
             />
           </Col>
         </Row>
@@ -767,20 +768,20 @@ function App() {
                 <td className="text-center text-nowrap">자료</td>
                 <td className="text-center text-nowrap">{typeMap3[lec.lecStatus]}</td>
                 <td className="text-center text-nowrap">
-                    <Button size="sm" variant="outline-danger" className="fw-semibold px-3">
+                  <Button size="sm" variant="outline-danger" className="fw-semibold px-3">
                     수강 취소
-                    </Button>   
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
         <div className="d-flex justify-content-end mb-4">
-            <Button size="sm" variant="danger" className="fw-semibold px-3">
+          <Button size="sm" variant="danger" className="fw-semibold px-3">
             일괄 취소
-            </Button>
+          </Button>
         </div>
-      
+
 
       </div>
     </>
