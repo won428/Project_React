@@ -23,9 +23,32 @@ function App() {
     useEffect(() => {
         const url = `${API_BASE_URL}/assign/specific`;
         axios.get(url, { params: { id: data, email: user.email } })
-            .then(res => setResData(res.data))
+            .then(res => {
+                setResData(res.data)
+                const submittedFiles = res.data.attachmentSubmittedDto || [];
+                if (res.data?.submittedOne) {
+                    setTitle(res.data.submittedOne.title);
+                    setContent(res.data.submittedOne.content);
+                }
+
+                setSubfiles(
+                    submittedFiles?.map(file => ({
+                        name: file.name,
+                        url: `${API_BASE_URL}/notice/files/download/${file.storedKey}`,
+                        type: file.contentType,
+                        size: file.sizeBytes,
+                    })));
+
+
+
+            })
             .catch(console.error);
+
+
+
+
     }, [data, user.email]);
+    console.log(subfiles);
 
     // 📤 과제 제출
     const SubmitAssign = async () => {
@@ -38,6 +61,7 @@ function App() {
         formData.append("content", content);
         subfiles.forEach(f => formData.append("files", f.file));
 
+
         try {
             const response = await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
             alert("등록에 성공하였습니다.");
@@ -48,6 +72,28 @@ function App() {
         }
     };
 
+    console.log(resdata);
+
+    const SubmitMod = async () => {
+        const url = `${API_BASE_URL}/assign/submit`;
+        const formData = new FormData();
+        formData.append("email", user.email);
+        formData.append("lectureId", lectureId);
+        formData.append("assignId", resdata.id);
+        formData.append("title", title);
+        formData.append("content", content);
+        subfiles.forEach(f => formData.append("files", f.file));
+
+        try {
+            const response = await axios.post(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
+            alert("등록에 성공하였습니다.");
+            setMod(false);
+            navigate("/asnlst");
+        } catch (err) {
+            alert("등록 실패");
+            console.error(err);
+        }
+    };
     // 📂 파일 선택 및 미리보기 관리
     const Fileselect = e => {
         const selectedFiles = Array.from(e.target.files);
@@ -56,12 +102,13 @@ function App() {
             fileRef.current.value = "";
             return;
         }
-        setSubfiles(selectedFiles.map(file => ({
+        const newFiles = (selectedFiles.map(file => ({
             file,
             name: file.name,
             type: file.type,
             url: URL.createObjectURL(file)
         })));
+        setSubfiles(newFiles);
     };
 
     const removeFile = name => {
@@ -123,7 +170,7 @@ function App() {
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>내용</Form.Label>
-                        <Form.Control as="textarea" rows={10} value={content} onChange={e => setContent(e.target.value)} placeholder="과제 내용" />
+                        <Form.Control as="textarea" rows={10} value={content} onChange={(evt) => setContent(evt.target.value)} placeholder="과제 내용" />
                     </Form.Group>
                     <Form.Group>
                         <Form.Label>파일 첨부</Form.Label>
@@ -152,6 +199,8 @@ function App() {
         if (resdata.submittedOne == null) {
             alert("이미 제출한 내용이 존재합니다.")
             navigate("/asnlst");
+        } else {
+
         }
 
         return (
@@ -159,7 +208,87 @@ function App() {
                 {mod ?
                     (
                         <>
+                            <Card>
+                                <CardBody>
+                                    <Form onSubmit={(e) => {
+                                        e.preventDefault();
+                                        SubmitMod();
+                                    }}>
+                                        <Form.Group>
+                                            <Form.Label >
+                                                ID
+                                            </Form.Label>
+                                            <Form.Control
+                                                value={resdata.id}
+                                                readOnly
+                                            />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>
+                                                이름
+                                            </Form.Label>
+                                            <Form.Control
+                                                value={resdata.username}
+                                                readOnly
+                                            />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>
+                                                제목
+                                            </Form.Label>
+                                            <Form.Control
+                                                value={title}
+                                                onChange={(e) => setTitle(e.target.value)}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>
+                                                내용
+                                            </Form.Label>
+                                            <Form.Control
+                                                as="textarea"
+                                                rows={5}
+                                                value={content}
+                                                onChange={(e) => setContent(e.target.value)}
+                                            />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>
+                                                작성날짜
+                                            </Form.Label>
+                                            <Form.Control
+                                                value={resdata.updateAt}
+                                                readOnly
+                                            />
+                                        </Form.Group>
+                                        <Form.Group>
+                                            <Form.Label>파일 첨부</Form.Label>
+                                            <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
+                                        </Form.Group>
+                                        <div className="d-flex flex-wrap gap-2 mt-2">
+                                            {subfiles.map((f, i) => (
+                                                <div
+                                                    key={i}
+                                                    style={{ position: "relative", width: "100px", textAlign: "center" }}
+                                                >
+                                                    {(f.type || "").startsWith("image/")
+                                                        ? <img src={f.url} alt="preview" width="100%" />
+                                                        : <div>{f.name}</div>}
 
+                                                    <Button
+                                                        variant="danger"
+                                                        size="sm"
+                                                        style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%' }}
+                                                        onClick={() => removeFile(f.name)}
+                                                    >
+                                                        X
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Form>
+                                </CardBody>
+                            </Card>
                         </>
                     )
                     :
