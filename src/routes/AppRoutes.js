@@ -1,3 +1,4 @@
+
 import PrivateRoute from "./PrivateRoute";
 import { Route, Routes } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
@@ -35,17 +36,12 @@ import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
 
 
-
 import NoticeIns from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeIns";
 import NoticeList from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeList";
 import NoticeListSpec from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeListSpec";
 import AssignUpload from "../_lecturePS/LectureRoomSpec/AssignUpload";
 import AssignSpec from "../_lecturePS/LectureRoomSpec/AssignSpec";
 import AssignList from "../_lecturePS/LectureRoomSpec/AssignList";
-
-
-
-
 
 import LecturePRO from '../_lecturePS/LectureRoomSpec/Lecture';
 import NoticePRO from '../_lecturePS/LectureRoomSpec/NoticeList/Notice';
@@ -64,9 +60,7 @@ import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
 import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 
 
-
 import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
-
 
 
 import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro';
@@ -161,7 +155,7 @@ function App() {
 
                     {/* Student Apply */}
                     <Route element={<LayoutStCon />}>
-                        
+
                         <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
                         <Route path='/user/insert_user' element={<Insert_User />}></Route>
                         <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
@@ -248,9 +242,9 @@ function App() {
 
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
-                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
                         <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
-                    
+                    </Route>
 
 
                     {/* Schedule Tab */}
@@ -266,36 +260,26 @@ function App() {
                     <Route path='/hp' element={<HomePRO />}></Route>
                     <Route element={<Layout_lecP />}>
 
+
                         <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
                         <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
-                        <Route path='/noticep' element={<NoticeIns />} ></Route>
-                        <Route path='/notionlist' element={<NoticeList />} ></Route>
+
+
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
-                        <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
                     </Route>
+
+
+
+
 
 
                     <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
                 </Route>
             </Route>
 
-                        <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
-                        <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
-                        <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
 
-
-                        <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
-                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
-                    </Route>
-
-
-
-
-
-
-                    <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
 
         </Routes>
 
