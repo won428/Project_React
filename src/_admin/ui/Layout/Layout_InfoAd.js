@@ -28,6 +28,7 @@ export const LayoutStInfo = () => {
                             onClick={() => navigate(`/etrcdt`)}
                             className="text-white"
                         >전체 성적 관리 </Nav.Link>
+
                         <Nav.Link
                             onClick={() => navigate(`/collist`)}
                             className="text-white"
@@ -44,6 +45,7 @@ export const LayoutStInfo = () => {
                             onClick={() => navigate(`/majorReg`)}
                             className="text-white"
                         >학과 등록</Nav.Link>
+
 
 
 

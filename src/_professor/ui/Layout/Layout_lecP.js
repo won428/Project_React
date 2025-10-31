@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStLecst = () => {
+export const Layout_lecP = () => {
     const navigate = useNavigate();
 
 
@@ -18,19 +18,25 @@ export const LayoutStLecst = () => {
                 <Container>
                     <Nav className="flex-column">
                         <Nav.Link
-                            onClick={() => navigate(`/LHome`)}
+                            onClick={() => navigate(`/Lecture_HomePro`)}
                             className="text-white">강의 홈</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/LRoom`)}
+                            onClick={() => navigate(`/LRoomPro`)}
                             className="text-white"
                         >강의실 </Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/ToDoList`)}
-                            className="text-white">TodoList</Nav.Link>
+                            onClick={() => navigate(`/LecRegisterPro`)}
+                            className="text-white">강의등록</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/courseRegistration`)}
-                            className="text-white">수강신청</Nav.Link>
-
+                            onClick={() => navigate(`/noticep`)}
+                            className="text-white">공지 등록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/notionlist`)}
+                            className="text-white">공지 목록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/lectureListPro`)}
+                            className="text-white">강의 목록</Nav.Link>
+                    
 
 
                     </Nav>
