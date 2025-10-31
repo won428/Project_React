@@ -4,12 +4,14 @@ import { API_BASE_URL } from "../../../public/config/config";
 import { useAuth } from "../../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useLectureStore } from "../store/lectureStore";
 
 function App() {
     const { user } = useAuth();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [subfiles, setSubfiles] = useState([]);
+    const { lectureId } = useLectureStore();
     const fileRef = useRef();
     const navigate = useNavigate();
 
@@ -26,6 +28,7 @@ function App() {
 
         const url = `${API_BASE_URL}/notice/insert`
         const formData = new FormData();
+        formData.append("id", lectureId);
         formData.append("email", user.email);
         formData.append("title", title);
         formData.append("content", content);
