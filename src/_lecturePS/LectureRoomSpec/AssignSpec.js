@@ -188,7 +188,7 @@ function App() {
                             </Table>
                             <div className="d-flex justify-content-end mt-3 gap-2">
                                 <Button
-                                    onClick={setMod(true)}
+                                    onClick={() => setMod(true)}
                                 >
                                     수정
                                 </Button>
