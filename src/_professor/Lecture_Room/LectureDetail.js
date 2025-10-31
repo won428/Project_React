@@ -67,7 +67,7 @@ function App() {
               </div>
             </Col>
             <Col xs="auto">
-              <Button variant="outline-secondary" size="sm" onClick={() => navigate('/lectureListPro')}>돌아가기</Button>
+              <Button variant="outline-secondary" size="sm" onClick={() => navigate('/LRoomPro')}>돌아가기</Button>
             </Col>
           </Row>
         </Card.Body>
