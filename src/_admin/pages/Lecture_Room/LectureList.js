@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
@@ -14,7 +14,7 @@ function App() {
   const [selected, setSelected] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchLectures = useCallback(async () => {
     const url = `${API_BASE_URL}/lecture/list`;
     axios
       .get(url)
@@ -28,6 +28,10 @@ function App() {
         console.error("data:", error.response?.data);
       });
   }, []);
+
+  useEffect(() => {
+    fetchLectures();
+  }, [fetchLectures]);
 
   useEffect(() => {
     if (!Array.isArray(lectureList)) return;
@@ -73,91 +77,60 @@ function App() {
     return splitDate;
   };
 
-  const approveRequest = async (e) => {
+  const stautsRequest = async (id, status) => {
     const url = `${API_BASE_URL}/lecture/request`;
-    const id = Number(e.target.value);
-
     try {
-      e.preventDefault();
       const response = await axios.put(url, null, {
         params: {
-          status: "APPROVED",
+          status: status,
           id: id,
         },
       });
       if (response.status === 200) {
-        alert("승인 완료");
-        navigate("/lectureList");
+        alert("처리 완료");
+        await fetchLectures();
       }
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response?.data);
     }
   };
-
-  const rejectRequest = async (e) => {
-    const url = `${API_BASE_URL}/lecture/request`;
-    const id = Number(e.target.value);
-
-    try {
-      e.preventDefault();
-      const response = await axios.put(url, null, {
-        params: {
-          status: "REJECTED",
-          id: id,
-        },
-      });
-      if (response.status === 200) {
-        alert("거절 완료");
-        navigate("/lectureList");
-      }
-    } catch (error) {
-      console.log(error.response.data);
-    }
-  };
-
-  
 
   const addSelect = (e) => {
-        const value = e.target.value;
-        const checked = e.target.checked;
+    const value = e.target.value;
+    const checked = e.target.checked;
 
-        setSelected(prev =>
-        checked
-            ? (prev.includes(value) ? prev : [...prev, value])
-            : prev.filter(v => v !== value)
-        );
-    };
-      
-    const lectureInprogress = async (e) =>{
-      e.preventDefault();
-      try {
-        const url = `${API_BASE_URL}/lecture/inprogress`
-        const response =  await axios.patch(url,selected,{
-          params:{
-            status:'INPROGRESS'
-          }
-        })
+    setSelected((prev) =>
+      checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
+    );
+  };
 
-        if(response.status === 200){
-          alert('성공')
-        } 
-
-      } catch (error) {
-        const err = error.response;
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
-        }
+  const lectureInprogress = async (e) => {
+    e.preventDefault();
+    try {
+      const url = `${API_BASE_URL}/lecture/inprogress`;
+      const response = await axios.patch(url, selected, {
+        params: {
+          status: "INPROGRESS",
+        },
+      });
+      if (response.status === 200) {
+        alert("선택하신 강의를 개강하였습니다.");
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
     }
+  };
 
   return (
     <>
       {/* ───────────────────── 목록별 테이블 (UI 전용) ───────────────────── */}
-      {/* 공통 폭: 체크 2.5rem / 버튼 6rem / 날짜·숫자는 컴팩트 / 텍스트 컬럼은 넉넉히 */}
-      {/* 더 촘촘하게: table-sm + small + inline fontSize */}
 
       {/* 승인 대기 목록 */}
       <div className="mb-4">
@@ -167,27 +140,26 @@ function App() {
             bordered
             hover
             size="sm"
-            className="align-middle table-sm small"
+            className="align-middle table-sm small mb-0"
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "6rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "5rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "4rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "8rem" }} /> {/* 담당교수 */}
-              <col style={{ width: "8rem" }} /> {/* 학기 */}
-              <col style={{ width: "8rem" }} /> {/* 개강일 */}
-              <col style={{ width: "8rem" }} /> {/* 종강일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "5rem" }} /> {/* 학점 */}
-              <col style={{ width: "5rem" }} /> {/* 자료 */}
-              <col style={{ width: "7rem" }} /> {/* 상태 */}
-              <col style={{ width: "7rem" }} /> {/* 기능 */}
-              <col style={{ width: "6rem" }} /> {/* 기능 */}
-
+              <col style={{ width: "8rem" }} />  {/* 담당교수 */}
+              <col style={{ width: "10rem" }} /> {/* 학기 */}
+              <col style={{ width: "8rem" }} />  {/* 개강일 */}
+              <col style={{ width: "8rem" }} />  {/* 종강일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "5rem" }} />  {/* 학점 */}
+              <col style={{ width: "5rem" }} />  {/* 자료 */}
+              <col style={{ width: "7rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 기능(승인) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(거부) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -212,12 +184,8 @@ function App() {
               {pendingLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                  <Form.Check
-                    type="checkbox"
-                    value={lec.id}
-                    onChange={addSelect}
-                  />
-                </td>
+                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                  </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
@@ -232,21 +200,35 @@ function App() {
                   <td className="text-center">자료</td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        const status = "APPROVED";
+                        stautsRequest(lec.id, status);
+                      }}
+                    >
                       승인
                     </Button>
                   </td>
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => {
+                        const status = "REJECTED";
+                        stautsRequest(lec.id, status);
+                      }}
+                    >
                       거부
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
-            {/* 하단 우측 버튼 영역 (UI만) */}
-            
           </Table>
+
+          {/* 하단 버튼: 표 아래 오른쪽 정렬, 간격/여백 통일 */}
           <div className="d-flex justify-content-end gap-2 mt-2">
             <Button size="sm" variant="primary">일괄수락</Button>
             <Button size="sm" variant="danger">일괄거부</Button>
@@ -262,26 +244,26 @@ function App() {
             bordered
             hover
             size="sm"
-            className="align-middle table-sm small"
+            className="align-middle table-sm small mb-0"
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "13rem" }} /> {/* 학기 */}
-              <col style={{ width: "8rem" }} /> {/* 개강일 */}
-              <col style={{ width: "8rem" }} /> {/* 종강일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "5rem" }} /> {/* 자료 */}
-              <col style={{ width: "4rem" }} />{/* 상태 */}
-              <col style={{ width: "6rem" }} /> {/* 기능 */}
-              <col style={{ width: "6rem" }} /> {/* 기능 */}
+              <col style={{ width: "8rem" }} />  {/* 개강일 */}
+              <col style={{ width: "8rem" }} />  {/* 종강일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "5rem" }} />  {/* 자료 */}
+              <col style={{ width: "4rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -306,12 +288,8 @@ function App() {
               {approvedLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                  <Form.Check
-                    type="checkbox"
-                    value={lec.id}
-                    onChange={addSelect}
-                  />
-                </td>
+                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                  </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
@@ -331,7 +309,14 @@ function App() {
                     </Button>
                   </td>
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => {
+                        const status = "REJECTED";
+                        stautsRequest(lec.id, status);
+                      }}
+                    >
                       폐강
                     </Button>
                   </td>
@@ -339,10 +324,9 @@ function App() {
               ))}
             </tbody>
           </Table>
+
           <div className="d-flex justify-content-end gap-2 mt-2">
-            <Button size="sm" variant="primary"
-              onClick={lectureInprogress}
-            >일괄 개강</Button>
+            <Button size="sm" variant="primary" onClick={lectureInprogress}>일괄 개강</Button>
             <Button size="sm" variant="danger">일괄거부</Button>
           </div>
         </div>
@@ -356,25 +340,26 @@ function App() {
             bordered
             hover
             size="sm"
-            className="align-middle table-sm small"
+            className="align-middle table-sm small mb-0"
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "15rem" }} /> {/* 학기 */}
-              <col style={{ width: "8rem" }} /> {/* 개강일 */}
-              <col style={{ width: "8rem" }} /> {/* 종강일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "5rem" }} /> {/* 자료 */}
-              <col style={{ width: "5rem" }} />{/* 상태 */}
-              <col style={{ width: "12rem" }} /> {/* 기능 */}
+              <col style={{ width: "8rem" }} />  {/* 개강일 */}
+              <col style={{ width: "8rem" }} />  {/* 종강일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "5rem" }} />  {/* 자료 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -399,12 +384,8 @@ function App() {
               {inprogressLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                  <Form.Check
-                    type="checkbox"
-                    value={lec.id}
-                    onChange={addSelect}
-                  />
-                </td>
+                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                  </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
@@ -418,15 +399,21 @@ function App() {
                   <td className="text-center">{lec.credit}</td>
                   <td className="text-center">자료</td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center" colSpan={2}>
+                  <td className="text-center">
                     <Button variant="outline-primary" size="sm">
-                      상세
+                      개강
+                    </Button>
+                  </td>
+                  <td className="text-center">
+                    <Button variant="outline-danger" size="sm">
+                      폐강
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+
           <div className="d-flex justify-content-end gap-2 mt-2">
             <Button size="sm" variant="primary">일괄수락</Button>
             <Button size="sm" variant="danger">일괄거부</Button>
@@ -442,29 +429,30 @@ function App() {
             bordered
             hover
             size="sm"
-            className="align-middle table-sm small"
+            className="align-middle table-sm small mb-0"
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "2.5rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "15rem" }} /> {/* 학기 */}
-              <col style={{ width: "8rem" }} /> {/* 개강일 */}
-              <col style={{ width: "8rem" }} /> {/* 종강일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "5rem" }} /> {/* 자료 */}
-              <col style={{ width: "5rem" }} />{/* 상태 */}
-              <col style={{ width: "12rem" }} /> {/* 기능 */}
+              <col style={{ width: "8rem" }} />  {/* 개강일 */}
+              <col style={{ width: "8rem" }} />  {/* 종강일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "5rem" }} />  {/* 자료 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
-                <th></th>
+                <th>체크</th>
                 <th className="text-start">강의명</th>
                 <th>이수구분</th>
                 <th>학년</th>
@@ -484,7 +472,7 @@ function App() {
             <tbody>
               {completedLec.map((lec) => (
                 <tr key={lec.id}>
-                  <td></td>
+                  <td className="text-center text-nowrap"></td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
@@ -498,9 +486,14 @@ function App() {
                   <td className="text-center">{lec.credit}</td>
                   <td className="text-center">자료</td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center" colSpan={2}>
+                  <td className="text-center">
                     <Button variant="outline-primary" size="sm">
-                      상세
+                      개강
+                    </Button>
+                  </td>
+                  <td className="text-center">
+                    <Button variant="outline-danger" size="sm">
+                      폐강
                     </Button>
                   </td>
                 </tr>
@@ -518,29 +511,30 @@ function App() {
             bordered
             hover
             size="sm"
-            className="align-middle table-sm small"
+            className="align-middle table-sm small mb-0"
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "2.5rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "15rem" }} /> {/* 학기 */}
-              <col style={{ width: "8rem" }} /> {/* 개강일 */}
-              <col style={{ width: "8rem" }} /> {/* 종강일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "5rem" }} /> {/* 자료 */}
-              <col style={{ width: "5rem" }} />{/* 상태 */}
-              <col style={{ width: "12rem" }} /> {/* 기능 */}
+              <col style={{ width: "8rem" }} />  {/* 개강일 */}
+              <col style={{ width: "8rem" }} />  {/* 종강일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "5rem" }} />  {/* 자료 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
-                <th></th>
+                <th>체크</th>
                 <th className="text-start">강의명</th>
                 <th>이수구분</th>
                 <th>학년</th>
@@ -560,7 +554,7 @@ function App() {
             <tbody>
               {rejectedLec.map((lec) => (
                 <tr key={lec.id}>
-                  <td></td>
+                  <td className="text-center text-nowrap"></td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
@@ -574,9 +568,15 @@ function App() {
                   <td className="text-center">{lec.credit}</td>
                   <td className="text-center">자료</td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center" colSpan={2}>
+                  {/* ✅ td 중첩 제거, 두 칸으로 분리 */}
+                  <td className="text-center">
                     <Button variant="outline-primary" size="sm">
-                      상세
+                      개강
+                    </Button>
+                  </td>
+                  <td className="text-center">
+                    <Button variant="outline-danger" size="sm">
+                      폐강
                     </Button>
                   </td>
                 </tr>

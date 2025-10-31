@@ -99,7 +99,7 @@ function App() {
 
             if (response.status === 200) {
                 alert('등록 성공');
-                navigate('/user/UserList')
+                navigate('/lectureList')
             }
         } catch (error) {
             alert('등록실패');
