@@ -32,7 +32,7 @@ function App() {
 
     }, [subfiles])
 
-    console.log(lectureId);
+    console.log("RENDERING?");
 
     const SubmitAssign = async (evt) => {
         const url = `${API_BASE_URL}/assign/insert`
@@ -127,7 +127,10 @@ function App() {
                                             row={10}
                                             placeholder="과제 내용"
                                             value={content}
-                                            onChange={(evt) => setContent(evt.target.value)}
+                                            onChange={(evt) => {
+                                                setContent(evt.target.value)
+                                                console.log("ONCHANGE?");
+                                            }}
                                         />
                                     </Form.Group>
                                     <Form.Group>
