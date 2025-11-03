@@ -219,6 +219,7 @@ function App() {
                                                 ID
                                             </Form.Label>
                                             <Form.Control
+
                                                 value={resdata.id}
                                                 readOnly
                                             />
@@ -237,6 +238,7 @@ function App() {
                                                 제목
                                             </Form.Label>
                                             <Form.Control
+                                                type="text"
                                                 value={title}
                                                 onChange={(e) => setTitle(e.target.value)}
                                             />
@@ -247,6 +249,7 @@ function App() {
                                             </Form.Label>
                                             <Form.Control
                                                 as="textarea"
+                                                type="text"
                                                 rows={5}
                                                 value={content}
                                                 onChange={(e) => setContent(e.target.value)}
