@@ -46,9 +46,9 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
 
-
-
+   
 
     // 권한 검사 통과하면 학생정보 API 호출 함수
     const fetchStudentInfo = async () => {
@@ -99,15 +99,15 @@ function App() {
     );
   }
 
-  // 1) 버튼 핸들러 추가
-  const handleGoChangeStatus = () => {
-    console.log('navigate userId', studentInfo?.userid);
-    if (!studentInfo?.userid) {
-      alert('학생 ID를 찾을 수 없습니다. 내 정보 페이지를 새로고침 후 다시 시도하세요.');
-      return;
-    }
-    navigate('/Change_Status', { state: { userId: studentInfo.userid } });
-  };
+   // 1) 버튼 핸들러 추가
+    const handleGoChangeStatus = () => {
+      console.log('navigate userId', studentInfo?.userid);
+      if (!studentInfo?.userid) {
+        alert('학생 ID를 찾을 수 없습니다. 내 정보 페이지를 새로고침 후 다시 시도하세요.');
+        return;
+      }
+      navigate('/Change_Status', { state: { userId: studentInfo.userid } });
+    };
 
   // 기존 디자인 유지하며 화면 렌더링
   return (
