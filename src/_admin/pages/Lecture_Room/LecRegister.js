@@ -29,7 +29,16 @@ function App() {
     const startRef = useRef(null);
     const endRef = useRef(null);
     const emptyRow = () => ({ day: '', startTime: '', endTime: '' });
-    
+    const [files, setFiles] = useState([]);
+    const fileRef = useRef(null);
+    const [percent, setPercent] = useState({
+
+      attendance: 20,
+      assignment: 20,  
+      midtermExam : 30,
+      finalExam: 30
+
+    })
 
     
     const navigate = useNavigate(); 
@@ -41,7 +50,7 @@ function App() {
             .get(url)
             .then((response) => {
 
-
+               
                 setCollegeList(response.data)
                 console.log(collegeList)
             })
@@ -94,11 +103,22 @@ function App() {
     
     const signup = async (e) => {
         try {
+
             e.preventDefault();
-            const url = `${API_BASE_URL}/lecture/admin/lectureRegister`;
-            const response = await axios.post(url, {lecture,schedule}
-              , { headers: { 'Content-Type': 'application/json' }}
-            );
+            const totalPercent = Number(percent.assignment) + Number(percent.attendance) + Number(percent.midtermExam) + Number(percent.finalExam)
+            if(totalPercent > 100){
+              alert('퍼센트 비율은 100을 넘을 수 없습니다.')
+              return;
+            }
+
+            const formData = new FormData();
+            formData.append("lecture",  new Blob([JSON.stringify(lecture)],  { type: "application/json" }));
+            formData.append("schedule", new Blob([JSON.stringify(schedule)], { type: "application/json" }));
+            formData.append("percent", new Blob([JSON.stringify(percent)], { type: "application/json" }))
+            files.forEach(file => formData.append("files", file, file.name)); // File은 그대로
+
+            const url = `${API_BASE_URL}/lecture/lectureRegister`;
+            const response = await axios.post(url, formData);
 
             if (response.status === 200) {
                 alert('등록 성공');
@@ -113,6 +133,13 @@ function App() {
 
 
     };
+
+    const selectFile = (e) =>{
+      const picked = Array.from(e.target.files || []);
+      setFiles((prev) => [...prev, ...picked]);
+      e.target.value = "";
+      console.log(files)
+   }
 
     return (
   <>
@@ -324,6 +351,97 @@ function App() {
           </Form.Group>
         </Col>
 
+        {/* 4-a) 성적 산출 비율 (출석/과제/중간/기말) — UI 전용 */}
+        <Col md={12}>
+          <Form.Group className="mt-2">
+            <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
+
+            {/* 한 줄 입력폼 */}
+            <Row className="g-2 align-items-center">
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">출석</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 20"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="attendance"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, attendance : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+                
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">과제</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 20"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="assignment"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, assignment : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">중간</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 30"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="midtermExam"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, midtermExam : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">기말</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 30"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="finalExam"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, finalExam : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+            </Row>
+
+            <div className="small text-muted mt-1">
+              합계가 100%가 되도록 입력해 주세요.
+              기본값은 20, 20, 30, 30입니다.
+            </div>
+          </Form.Group>
+        </Col>
+
         {/* 4-b) 수업일수 & 요일/시간 (UI만 추가) */}
         <Col md={12}>
           <Form.Group className="mt-2">
@@ -445,9 +563,41 @@ function App() {
         </Col>
 
         ))}
-        
+      
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label className="small fw-semibold me-2">강의 자료</Form.Label>
+            <Form.Control
+              size="sm"
+              type="file"
+              multiple
+              onChange={selectFile}
+              ref={fileRef}
+              className="d-none"            // ← 기본 표시 숨김
+            />
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={() => fileRef.current?.click()}
+            >
+              파일 선택
+            </Button>
 
-        {/* 5) 강의 설명 (넓게 한 줄) */}
+            {/* 상태 문구 */}
+            <div className="small mt-2 text-muted">
+              {files.length ? `${files.length}개 파일 선택됨` : '선택된 파일 없음'}
+            </div>
+
+            {files.length > 0 && (
+              <ul className="small mt-1">
+                {files.map((f, i) => (
+                  <li key={i}>{f.name}</li>
+                ))}
+              </ul>
+            )}
+          </Form.Group>
+        </Col>
+      
         <Col md={12}>
           <Form.Group>
             <Form.Label className="small fw-semibold">강의 설명</Form.Label>
@@ -462,7 +612,6 @@ function App() {
           </Form.Group>
         </Col>
 
-        {/* 6) 제출 버튼 */}
         <Col xs={12} className="mt-2">
           <Button size="sm" variant="primary" type="submit">
             등록하기
