@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Table, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
@@ -150,10 +150,12 @@ function App() {
 
     return (
         <Container style={{ marginTop: 24 }}>
-            <h3>성적 조회</h3>
-            <Button variant="primary" onClick={() => alert('이의제기 신청 클릭!')}>
-                이의제기 신청
-            </Button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3>성적 조회</h3>
+                <Button variant="primary" onClick={() => alert('이의제기 신청 클릭!')}>
+                    이의제기 신청
+                </Button>
+            </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>
                 <Col md={3} style={{ maxHeight: '60vh', overflowY: 'auto', borderRight: '1px solid #ddd' }}>
