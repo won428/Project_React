@@ -9,57 +9,58 @@ export const UserProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const token = sessionStorage.getItem("accessToken");
-
+        const token = localStorage.getItem("accessToken");
         if (token) {
-            const decoded = jwtDecode(token);
             try {
-
-                console.log(decoded);
-
+                const decoded = jwtDecode(token);
                 if (decoded.exp > Date.now() / 1000) {
-
                     setUser({
                         email: decoded.sub,
-                        id: decoded.uid ? Number(decoded.uid) : undefined, // ★ 추가
+                        id: decoded.uid ? Number(decoded.uid) : undefined,
                         roles: [decoded.role],
                         IsAuthenticated: true,
-                    })
-                }
-
-                else {
-                    sessionStorage.clear();
+                    });
+                } else {
+                    localStorage.clear();
                 }
             } catch (err) {
-                console.log("err : " + err);
+                console.log("JWT Decode Error:", err);
+            } finally {
+                // ✅ 토큰 처리(성공/실패) 끝난 후에 false 설정
+                setIsLoading(false);
             }
+        } else {
+            // ✅ 토큰 자체가 없으면 여기서 false 설정
+            setIsLoading(false);
         }
-        setIsLoading(false)
     }, [])
     const login = (newToken) => {
-        const decoded = jwtDecode(newToken);
-        console.log(decoded);
-
-        const token = sessionStorage.setItem("accessToken", newToken);
-        setUser({
-            email: decoded.sub,
-            id: decoded?.uid ? Number(decoded.uid) : undefined, // ★ 추가
-            roles: [decoded.role],
-            IsAuthenticated: true,
-        });
-        console.log(user);
-
-    }
+        try {
+            const decoded = jwtDecode(newToken);
+            localStorage.setItem("accessToken", newToken);
+            setUser({
+                email: decoded.sub,
+                id: decoded?.uid ? Number(decoded.uid) : undefined,
+                roles: [decoded.role],
+                IsAuthenticated: true,
+            });
+        } catch (e) {
+            console.error("login() decode error:", e);
+        } finally {
+            // ✅ user 세팅 후 isLoading false 처리
+            setIsLoading(false);
+        }
+    };
 
     const logout = () => {
-        sessionStorage.removeItem("accessToken");
+        localStorage.removeItem("accessToken");
         setUser(null);
     };
 
 
 
 
-    const value = { user, login, logout }
+    const value = { user, login, logout, isLoading }
     return (
         <UserContext.Provider value={value}>
             {children}

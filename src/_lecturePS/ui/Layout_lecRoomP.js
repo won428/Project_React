@@ -1,11 +1,12 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useLectureStore } from "../LectureRoomSpec/store/lectureStore";
 
 
 
 export const Layout_lecRoomP = () => {
     const navigate = useNavigate();
-
+    const { lectureId } = useLectureStore();
     return (
 
         <Row className="pt-0 mt-0 min-vh-100">
@@ -28,7 +29,7 @@ export const Layout_lecRoomP = () => {
                             onClick={() => navigate(`/Lpro`)}
                             className="text-white">강의</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/roomspec`)}
+                            onClick={() => navigate(`/lectureDetail/${lectureId}`, { state: lectureId })}
                             className="text-white">수강</Nav.Link>
                     </Nav>
                 </Container>

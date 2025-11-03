@@ -70,6 +70,7 @@ import LoginPage from '../public/pages/LoginPage';
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
 import ProPage from "../_professor/ui/ProPage";
+import EnPage from "../public/pages/EntireNotice/EntireNoticePage";
 import ProSpecPage from "../_lecturePS/ui/ProSpecPage";
 
 
@@ -87,6 +88,10 @@ import { Layout_lecRoomP } from '../_lecturePS/ui/Layout_lecRoomP';
 import FindPW from "../public/FindPW";
 import SetPW from "../public/SetPW";
 
+
+import NoticeInsertEn from "../public/pages/EntireNotice/NoticeInsAd";
+import NoticeSpecEn from "../public/pages/EntireNotice/NoticeSpec";
+import NoticeListEn from "../public/pages/EntireNotice/NoticeList";
 
 function App() {
     /**
@@ -107,7 +112,20 @@ function App() {
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 
-            {/* 재배치 라우터 목록 */}
+
+
+            {/* 학교 공통 */}
+            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
+                <Route element={<EnPage />}>
+
+                    <Route path='/EnNot' element={<NoticeInsertEn />} ></Route>
+                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
+                    <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
+                </Route>
+
+
+            </Route>
+
 
 
 
@@ -193,7 +211,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
-                
+
 
 
 

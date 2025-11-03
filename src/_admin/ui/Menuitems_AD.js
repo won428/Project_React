@@ -28,9 +28,21 @@ function App() {
                             <Nav.Link onClick={() => navigate(`/LHomeAD`)}>
                                 사이버 캠퍼스 관리
                             </Nav.Link>
+                            <Nav.Link onClick={() => {
+                                if (user && user.IsAuthenticated) {
+                                    window.open("http://localhost:3000/EnNotList", "_blank", "noopener,noreferrer")
+                                } else {
+                                    alert("로그인 정보가 없습니다. 다시 로그인하세요.");
+                                    navigate("/")
+                                }
+                            }
+                            }>
+                                공지 작성
+                            </Nav.Link>
                             <Nav.Link onClick={() => navigate(`/acschemod`)}>
                                 학사일정 관리
                             </Nav.Link>
+
 
                         </Nav>
                         <Nav>
