@@ -67,6 +67,17 @@ function App() {
         setResData({ ...resdata, [name]: value });
 
     }
+
+    const deleteFile = async (e) => {
+        e.preventDefault();
+        const url = `${API_BASE_URL}/notice/delete/${resdata.id}`;
+        const res = await axios.delete(url);
+        if (res.status === 200) {
+            alert("삭제 성공");
+            navigate("/notionlist")
+        }
+
+    }
     return (
         <>
             {mod ?
@@ -221,7 +232,7 @@ function App() {
                                         >수정</Button>
                                         <Button
                                             variant="danger"
-                                            onClick={""}
+                                            onClick={deleteFile}
                                         >삭제</Button>
                                     </>
                                 )}

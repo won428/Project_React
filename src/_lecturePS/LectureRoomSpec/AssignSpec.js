@@ -266,11 +266,13 @@ function App() {
         const url = `${API_BASE_URL}/assign/specific`;
         axios.get(url, { params: { id: data, email: user.email } })
             .then(res => {
-                setResData(res.data)
+                setResData(res.data);
                 console.log(res.data);
             })
             .catch(console.error);
     }, [data, user?.email]);
+
+
 
     // 1. 신규 제출 로직
     const SubmitAssign = async () => {
@@ -294,35 +296,30 @@ function App() {
         }
     };
 
-    // 2. 수정 제출 로직
+    // 2. 학생 제출 내역 수정 로직
     const SubmitMod = async () => {
-        /*
-          [!] 🚨 중요: 파일 수정 버그 🚨
-          이 로직은 'SubmitAssign'과 동일하여,
-          기존 파일(f.file이 없음)을 제외하고 '새로 추가한 파일(f.file이 있음)'만 전송합니다.
-          이대로 실행하면 기존 파일이 모두 삭제됩니다.
-          
-          백엔드와 협의하여,
-          - 새로 추가된 파일 (f.file이 있는 것)
-          - 삭제되지 않고 '유지'된 기존 파일의 식별자 (f.file이 없는 것)
-          를 구별하여 전송하도록 이 함수를 수정해야 합니다.
-        */
         const url = `${API_BASE_URL}/assign/update/${resdata.id}`;
+
         const formData = new FormData();
         formData.append("email", user.email);
         formData.append("lectureId", lectureId);
-        formData.append("assignId", resdata.id);
         formData.append("title", title);
         formData.append("content", content);
 
-        // 🚨 현재 로직: f.file이 없는 기존 파일은 'undefined'로 전송되어 누락됨
-        subfiles.forEach(f => formData.append("files", f.file));
+        if (subfiles && subfiles.length > 0) {
+            subfiles.forEach(f => {
+                if (f.file) formData.append("files", f.file);
+            });
+        }
 
         try {
-            await axios.put(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
-            alert("수정에 성공하였습니다.");
-            setMod(false);
-            navigate("/asnlst");
+            const res = await axios.put(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
+            console.log(url);
+            if (res.status === 200) {
+                alert("수정에 성공하였습니다.");
+                setMod(false);
+                navigate("/asnlst");
+            }
         } catch (err) {
             alert("수정 실패");
 
@@ -330,10 +327,10 @@ function App() {
         }
     };
 
-
+    // 교수 과제 공지 내역 수정
     const NoticeMod = async () => {
 
-        const url = `${API_BASE_URL}/assign/update/${resdata.id}`;
+        const url = `${API_BASE_URL}/assign/assignupdate/${resdata.id}`;
         const formData = new FormData();
         formData.append("email", user.email);
         formData.append("lectureId", lectureId);
@@ -342,16 +339,21 @@ function App() {
         formData.append("content", content);
 
         // 🚨 현재 로직: f.file이 없는 기존 파일은 'undefined'로 전송되어 누락됨
-        subfiles.forEach(f => formData.append("files", f.file));
+        if (subfiles && subfiles.length > 0) {
+            subfiles.forEach(f => {
+                if (f.file) formData.append("files", f.file);
+            });
+        }
 
         try {
-            await axios.put(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
-            alert("수정에 성공하였습니다.");
-            setMod(false);
-            navigate("/asnlst");
+            const res = await axios.put(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
+            if (res.status === 200) {
+                alert("수정에 성공하였습니다.");
+                setMod(false);
+                navigate("/asnlst");
+            }
         } catch (err) {
             alert("수정 실패");
-
             console.error(err);
         }
     };
@@ -370,7 +372,9 @@ function App() {
             type: file.type,
             url: URL.createObjectURL(file)
         })));
-        setSubfiles(newFiles);
+        if (newFiles) {
+            setSubfiles(prev => [...prev, ...newFiles]);
+        }
     };
 
     // 4. 파일 삭제 핸들러
@@ -379,8 +383,9 @@ function App() {
         if (fileToRemove) URL.revokeObjectURL(fileToRemove.url);
         setSubfiles(prev => prev.filter(f => f.name !== name));
         fileRef.current.value = "";
-    };
 
+    };
+    console.log("subfiles:", subfiles);
     // 6. 수정 모드 진입 핸들러
     const handleEdit = (e) => {
         if (resdata?.submittedOne) {
@@ -397,6 +402,8 @@ function App() {
                 // 'file' 속성이 없음! -> SubmitMod에서 문제 발생
             })));
         }
+        console.log("subfiles:", subfiles);
+
         setMod(true);
     };
     const handlePro = (e) => {
@@ -404,17 +411,35 @@ function App() {
             setTitle(resdata.title);
             setContent(resdata.content);
         }
-        const submittedFiles = resdata.attachmentDto || [];
-        setSubfiles(submittedFiles.map(file => ({
-            name: file.name,
-            url: `${API_BASE_URL}/notice/files/download/${file.storedKey}`,
-            type: file.contentType,
-            size: file.sizeBytes,
+        if (subfiles.length === 0 && resdata.attachmentDto) {
+            const submittedFiles = resdata.attachmentDto || [];
+            setSubfiles(submittedFiles.map(file => ({
+                name: file.name,
+                url: `${API_BASE_URL}/notice/files/download/${file.storedKey}`,
+                type: file.contentType,
+                size: file.sizeBytes,
 
-        })))
+            })))
+        }
         setMod(true)
     }
 
+
+
+    const deleteAssign = async (e) => {
+        const url = `${API_BASE_URL}/assign/delete/${resdata.id}`
+        const res = await axios.delete(url);
+
+        if (res.status === 200) {
+            alert("삭제 성공.")
+            setMod(false);
+            navigate("/asnlst");
+        } else {
+            alert("삭제에 실패하였습니다.")
+            return;
+        }
+
+    }
     // 🧩 메인 렌더링
     return (
         <Container style={{ maxWidth: "1000px", marginTop: "2rem" }}>
@@ -473,7 +498,7 @@ function App() {
                             {/* ✅ FIX 2: 누락되었던 "수정 완료" 및 "취소" 버튼 추가 */}
                             <div className="d-flex justify-content-end mt-3 gap-2">
                                 <Button type="submit">수정 완료</Button>
-                                <Button variant="secondary" onClick={() => setMod(false)}>취소</Button>
+                                <Button variant="secondary" onClick={() => navigate(-1)}>취소</Button>
                             </div>
                         </Form>
                     </CardBody>
@@ -520,7 +545,7 @@ function App() {
                                     <Button
                                         variant="danger"
                                         onClick={(e) => {
-                                            handlePro()
+                                            deleteAssign()
                                         }}
                                     >삭제</Button>
                                 </>
