@@ -40,9 +40,6 @@ export const LayoutStLec = () => {
                         <Nav.Link
                             onClick={() => navigate(`/lectureList`)}
                             className="text-white">강의 목록</Nav.Link>
-                            <Nav.Link
-                            onClick={() => navigate(`/lectureRequest`)}
-                            className="text-white">강의 등록 신청 목록</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/majorList`)}
                             className="text-white"
