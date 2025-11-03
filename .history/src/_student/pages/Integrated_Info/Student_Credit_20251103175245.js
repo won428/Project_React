@@ -157,8 +157,7 @@ function App() {
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
                 <Button
                     variant="primary"
-                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격    
-                    onClick={() => navigate('/CreditAppeal')}
+                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격                                    
                 >
                     이의제기 신청
                 </Button>

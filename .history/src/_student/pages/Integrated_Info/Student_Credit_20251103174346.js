@@ -3,13 +3,10 @@ import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
-import { useNavigate } from 'react-router-dom';
 
 function App() {
     const { user } = useAuth();
     const userId = user?.id;
-
-    const navigate = useNavigate();
 
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedSemester, setSelectedSemester] = useState(null);
@@ -153,12 +150,12 @@ function App() {
 
     return (
         <Container style={{ marginTop: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
                 <Button
                     variant="primary"
-                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격    
-                    onClick={() => navigate('/CreditAppeal')}
+                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격
+                    onClick={() => alert('이의제기 신청 클릭!')}
                 >
                     이의제기 신청
                 </Button>
@@ -185,10 +182,8 @@ function App() {
                         </Form.Select>
                     </Form>
                 </Col>
-            </Row>
 
-            <Row style={{ marginTop: 24 }}>
-                <Col md={12} style={{ overflowX: 'auto' }}>
+                <Col md={9} style={{ overflowX: 'auto' }}>
                     {lectures.length === 0 ? (
                         <div>선택한 학기에 수강한 강의가 없습니다.</div>
                     ) : (
@@ -213,6 +208,7 @@ function App() {
                                     });
                                     const grade = gradesByGradeId[gradeId] || {};
 
+                                    // 총점 계산
                                     const scoreKeys = ['aScore', 'asScore', 'tScore', 'ftScore'];
                                     const scores = scoreKeys.map(k => {
                                         const val = grade[k] ?? grade[k.toLowerCase()] ?? '0';
@@ -227,9 +223,9 @@ function App() {
                                             {metrics.map(metric => {
                                                 let value;
                                                 if (metric.key === 'totalScore') {
-                                                    value = total.toFixed(2);
+                                                    value = total.toFixed(2); // 총점
                                                 } else if (metric.key === 'lectureGrade') {
-                                                    value = average;
+                                                    value = average; // 학점
                                                 } else {
                                                     value = getGradeValue(grade, metric.key);
                                                     if (typeof value === 'number') value = value.toFixed(2);
@@ -239,12 +235,12 @@ function App() {
                                         </tr>
                                     );
                                 })}
+
                             </tbody>
                         </Table>
                     )}
                 </Col>
             </Row>
-
         </Container>
     );
 }
