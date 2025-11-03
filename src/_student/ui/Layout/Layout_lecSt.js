@@ -21,7 +21,7 @@ export const LayoutStLecst = () => {
                             onClick={() => navigate(`/LHome`)}
                             className="text-white">강의 홈</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/LRoom`)}
+                            onClick={() => navigate(`/leclist`)}
                             className="text-white"
                         >강의실 </Nav.Link>
                         <Nav.Link

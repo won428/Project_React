@@ -34,19 +34,23 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 import LectureList from '../_admin/pages/Lecture_Room/LectureList';
-import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
+
 import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
 import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
 
 
-import NoticeIns from "../_professor/Lecture_Room/LectureRoomSpec/NoticeIns";
-import NoticeList from "../_professor/Lecture_Room/LectureRoomSpec/NoticeList";
-import NoticeListSpec from "../_professor/Lecture_Room/LectureRoomSpec/NoticeListSpec";
+import NoticeIns from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeIns";
+import NoticeList from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeList";
+import NoticeListSpec from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeListSpec";
+import AssignUpload from "../_lecturePS/LectureRoomSpec/AssignUpload";
+import AssignSpec from "../_lecturePS/LectureRoomSpec/AssignSpec";
+import AssignList from "../_lecturePS/LectureRoomSpec/AssignList";
 
-import LecturePRO from '../_professor/Lecture_Room/LectureRoomSpec/Lecture';
-import NoticePRO from '../_professor/Lecture_Room/LectureRoomSpec/Notice';
-import ToDoListPRO from '../_professor/Lecture_Room/LectureRoomSpec/ToDoList';
+import LecturePRO from '../_lecturePS/LectureRoomSpec/Lecture';
+import NoticePRO from '../_lecturePS/LectureRoomSpec/NoticeList/Notice';
+import ToDoListPRO from '../_lecturePS/LectureRoomSpec/ToDoList';
+import Lecture_RoomSP from '../_lecturePS/LectureRoomSpec/Lecture_RoomSP';
 
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
@@ -60,7 +64,7 @@ import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
 import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 
 
-import SpecificRoom from '../_professor/Lecture_Room/LectureRoomSpec/SpecificRoom';
+import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
 
 
 import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro';
@@ -71,6 +75,7 @@ import LoginPage from '../public/pages/LoginPage';
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
 import ProPage from "../_professor/ui/ProPage";
+import ProSpecPage from "../_lecturePS/ui/ProSpecPage";
 
 
 import { LayoutStLec } from "../_admin/ui/Layout/Layout_lecAd";
@@ -82,7 +87,7 @@ import { LayoutStInfost } from "../_student/ui/Layout/Layout_InfoSt";
 
 
 import { Layout_lecP } from "../_professor/ui/Layout/Layout_lecP";
-import { Layout_lecRoomP } from '../_professor/ui/Layout/Layout_lecRoomP';
+import { Layout_lecRoomP } from '../_lecturePS/ui/Layout_lecRoomP';
 
 import FindPW from "../public/FindPW";
 import SetPW from "../public/SetPW";
@@ -117,7 +122,25 @@ function App() {
                 <Route path='/CollegeUpdate/:id' element={<MajorRegister />} ></Route>
                 <Route path='/CollegeUpdate/:id' element={<MajorUpdate />} ></Route> */}
 
-            <Route element={<PrivateRoute allowedRoles={['ADMIN', 'STUDENT']} />}>
+            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT']} />}>
+                <Route element={<ProSpecPage />}>
+                    <Route path='/leclist' element={<Lecture_RoomSP />} ></Route>
+                    <Route element={<Layout_lecRoomP />}>
+                        <Route path='/roomspec' element={<SpecificRoom />} ></Route>
+
+                        <Route path='/Lpro' element={<LecturePRO />} ></Route>
+                        <Route path='/Npro' element={<NoticePRO />} ></Route>
+                        <Route path='/TodoP' element={<ToDoListPRO />} ></Route>
+                        <Route path='/noticep' element={<NoticeIns />} ></Route>
+                        <Route path='/notionlist' element={<NoticeList />} ></Route>
+                        <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
+                        <Route path='/asn' element={<AssignUpload />} ></Route>
+                        <Route path='/asnlst' element={<AssignList />} ></Route>
+                        <Route path='/asnspec' element={<AssignSpec />} ></Route>
+                    </Route>
+                </Route>
+
+
 
             </Route>
 
@@ -174,7 +197,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
-                        <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
+                
 
 
 
@@ -186,6 +209,15 @@ function App() {
 
 
                 </Route>
+
+
+
+
+
+
+
+
+
             </Route>
 
 
@@ -217,7 +249,7 @@ function App() {
 
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
-                        <Route path='/LRoom' element={<Lecture_Room />} ></Route>
+                        {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
                         <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
                     </Route>
 
@@ -240,19 +272,11 @@ function App() {
                         <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
 
+
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
                     </Route>
 
-                    <Route element={<Layout_lecRoomP />}>
-                        <Route path='/roomspec' element={<SpecificRoom />} ></Route>
-                        <Route path='/Lpro' element={<LecturePRO />} ></Route>
-                        <Route path='/Npro' element={<NoticePRO />} ></Route>
-                        <Route path='/TodoP' element={<ToDoListPRO />} ></Route>
-                        <Route path='/noticep' element={<NoticeIns />} ></Route>
-                        <Route path='/notionlist' element={<NoticeList />} ></Route>
-                        <Route path='/notionlistspec' element={<NoticeListSpec />} ></Route>
-                    </Route>
 
 
 
