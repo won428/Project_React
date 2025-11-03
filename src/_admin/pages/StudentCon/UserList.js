@@ -273,7 +273,7 @@ function UsersSkeleton() {
             {userList.map((user) => (
               <tr key={user.user_code}>
                 <td>{user.u_name}</td>
-                <td>{user.gender === 'MALE' ? '남자' : '여자'}</td>
+                <td>{user.gender === '남자' ? '남자' : '여자'}</td>
                 <td>{user.birthdate}</td>
                 <td>{user.user_code}</td>
                 <td style={{ whiteSpace: "normal", wordBreak: "break-all", overflowWrap: "anywhere" }}>

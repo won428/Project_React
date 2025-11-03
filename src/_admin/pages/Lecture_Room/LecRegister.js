@@ -24,10 +24,11 @@ function App() {
         completionDiv:''
     });
     const [major, setMajor] = useState('');
+    const [schedule, setSchedule] = useState([]);
     
     const startRef = useRef(null);
     const endRef = useRef(null);
-    
+    const emptyRow = () => ({ day: '', startTime: '', endTime: '' });
     
 
     
@@ -95,7 +96,9 @@ function App() {
         try {
             e.preventDefault();
             const url = `${API_BASE_URL}/lecture/admin/lectureRegister`;
-            const response = await axios.post(url, lecture);
+            const response = await axios.post(url, {lecture,schedule}
+              , { headers: { 'Content-Type': 'application/json' }}
+            );
 
             if (response.status === 200) {
                 alert('등록 성공');
@@ -320,6 +323,129 @@ function App() {
             </div>
           </Form.Group>
         </Col>
+
+        {/* 4-b) 수업일수 & 요일/시간 (UI만 추가) */}
+        <Col md={12}>
+          <Form.Group className="mt-2">
+            <Form.Label className="small fw-semibold">수업 일수</Form.Label>
+            {/* 값/로직 바인딩 없음, 옵션 기본값만 1개 */}
+            <Form.Select size="sm"
+              onChange={(e)=>{
+                console.log(schedule)
+                const value = e.target.value;
+               setSchedule(Array.from({ length: value }, emptyRow));
+              }}
+            >
+              <option value={''}>선택</option>
+              <option value={1}>1일</option>
+              <option value={2}>2일</option>
+              <option value={3}>3일</option>
+              <option value={4}>4일</option>
+              <option value={5}>5일</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+        {/* ▼▼▼ 여기부터 "한 행" — 요일 / 시작시간 / 끝나는시간 ▼▼▼ */}
+        {schedule.map((row,i)=>(
+            <Col md={12} key={i}>
+          <Row className="g-2 align-items-end">
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label className="small fw-semibold">요일</Form.Label>
+                <Form.Select
+                  size="sm"
+                  value={row.day}
+                  onChange={e =>
+                    setSchedule(prev => {
+                      const next = prev.map((row, index) => {
+                        if (index === i) {
+                          return { ...row, day: e.target.value }; // 해당 행만 교체
+                        }
+                        return row; // 나머지는 그대로
+                      });
+                      return next;
+                    })
+                  }
+                >
+                  <option value="">선택</option>
+                  <option value="MONDAY">월요일</option>
+                  <option value="TUESDAY">화요일</option>
+                  <option value="WEDNESDAY">수요일</option>
+                  <option value="THURSDAY">목요일</option>
+                  <option value="FRIDAY">금요일</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label className="small fw-semibold">시작 시간</Form.Label>
+                {/* 옵션 기본값만 1개, 값/로직 바인딩 없음 */}
+                <Form.Select
+                  size="sm"
+                  value={row.startTime}
+                  onChange={e =>
+                    setSchedule(prev => {
+                      const next = prev.map((row, index) => {
+                        if (index === i) {
+                          return { ...row, startTime: e.target.value }; // 해당 행만 교체
+                        }
+                        return row; // 나머지는 그대로
+                      });
+                      return next;
+                    })
+                  }
+                >
+                  <option value={''}>선택</option>
+                  <option value={'10:00'}>1교시</option>
+                  <option value={'11:00'}>2교시</option>
+                  <option value={'12:00'}>3교시</option>
+                  <option value={'13:00'}>4교시</option>
+                  <option value={'14:00'}>5교시</option>
+                  <option value={'15:00'}>6교시</option>
+                  <option value={'16:00'}>7교시</option>
+                  <option value={'17:00'}>8교시</option>
+                  <option value={'18:00'}>9교시</option>
+                 </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label className="small fw-semibold">끝나는 시간</Form.Label>
+               {/* 옵션 기본값만 1개, 값/로직 바인딩 없음 */}
+                <Form.Select
+                  size="sm"
+                  value={row.endTime}
+                  onChange={e =>
+                    setSchedule(prev => {
+                      const next = prev.map((row, index) => {
+                        if (index === i) {
+                          return { ...row, endTime: e.target.value }; // 해당 행만 교체
+                        }
+                        return row; // 나머지는 그대로
+                      });
+                      return next;
+                    })
+                  }
+                >
+                  <option value={''}>선택</option>
+                  <option value={'11:00'}>1교시</option>
+                  <option value={'12:00'}>2교시</option>
+                  <option value={'13:00'}>3교시</option>
+                  <option value={'14:00'}>4교시</option>
+                  <option value={'15:00'}>5교시</option>
+                  <option value={'16:00'}>6교시</option>
+                  <option value={'17:00'}>7교시</option>
+                  <option value={'18:00'}>8교시</option>
+                  <option value={'19:00'}>9교시</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+          </Row>
+        </Col>
+
+        ))}
+        
 
         {/* 5) 강의 설명 (넓게 한 줄) */}
         <Col md={12}>
