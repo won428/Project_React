@@ -121,6 +121,7 @@ function App() {
                     <Route path='/EnNot' element={<NoticeInsertEn />} ></Route>
                     <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
                     <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
                 </Route>
 
 
@@ -150,6 +151,7 @@ function App() {
                         <Route path='/asn' element={<AssignUpload />} ></Route>
                         <Route path='/asnlst' element={<AssignList />} ></Route>
                         <Route path='/asnspec' element={<AssignSpec />} ></Route>
+
                     </Route>
                 </Route>
 
@@ -265,7 +267,7 @@ function App() {
 
 
                     {/* Schedule Tab */}
-                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
 
 
                 </Route>
@@ -289,10 +291,6 @@ function App() {
 
 
 
-
-
-
-                    <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
                 </Route>
             </Route>
 

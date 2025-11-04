@@ -20,9 +20,9 @@ function App() {
                         <Navbar.Brand onClick={() => navigate(`/`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/EnNotList`)}>
-                                학생관리
+                                전체 공지
                             </Nav.Link>
-                            <Nav.Link onClick={() => navigate(`/acschemod`)}>
+                            <Nav.Link onClick={() => navigate(`/acsche`)}>
                                 학사일정
                             </Nav.Link>
 

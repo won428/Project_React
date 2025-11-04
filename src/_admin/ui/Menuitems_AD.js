@@ -37,7 +37,7 @@ function App() {
                                 }
                             }
                             }>
-                                공지 작성
+                                공지 목록
                             </Nav.Link>
                             <Nav.Link onClick={() => navigate(`/acschemod`)}>
                                 학사일정 관리
