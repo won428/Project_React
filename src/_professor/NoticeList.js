@@ -2,35 +2,34 @@ import { useEffect, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Form, Button, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../public/config/config";
 import { useAuth } from "../public/context/UserContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function App() {
     const { user } = useAuth();
-    const [post, setPost] = useState([]);
+    const [post, setPost] = useState({});
     const navigate = useNavigate();
     useEffect(() => {
         const url = `${API_BASE_URL}/notice/List`
         axios.get(url, { params: { email: user.email } })
             .then((res) => {
-                setPost(res.data)
+                setPost({
+                    title: res?.data.title,
 
+                })
+                console.log(post);
 
             })
             .catch((e) => {
                 console.log(e);
+
             })
-    }, [user.email])
-    console.log(post);
 
 
-    const specificPage = (evt, item) => {
-        evt.preventDefault();
-
-        navigate("/notionlistspec/", { state: item })
 
 
-    }
+    }, [])
+
     return (
         <>
             <Container style={{ maxWidth: '600px', margin: '2rem auto' }} >
@@ -59,6 +58,13 @@ function App() {
                                     게시물이 존재하지 않습니다.
                                 </div>
                         }
+                        <Card>
+                            <CardBody>
+                                <Table>
+
+                                </Table>
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
             </Container>
