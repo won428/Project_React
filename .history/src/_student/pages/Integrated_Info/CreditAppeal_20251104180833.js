@@ -26,7 +26,7 @@ function CreditAppeal() {
     const [appealForm, setAppealForm] = useState({
         lectureId: '',
         sendingId: userId || '',
-        receiverId: 5,           // 담당 교수/관리자 ID
+        receiverId: '',           // 담당 교수/관리자 ID
         title: '',
         content: '',
         appealDate: new Date().toISOString().slice(0, 10),
@@ -52,14 +52,14 @@ function CreditAppeal() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setAppealForm(prev => ({ ...prev, lectureId: Number(value) }));
+        setAppealForm(prev => ({ ...prev, lectureId: value }));
     };
 
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!appealForm.lectureId) {
+        if (!appealForm.enrollmentId) {
             window.alert('강의를 선택해주세요.');
             return;
         }
@@ -95,7 +95,7 @@ function CreditAppeal() {
                         >
                             <option value="" disabled>강의를 선택하세요</option>
                             {lectures.map(lec => (
-                                <option key={lec.lectureId} value={lec.lectureId}>{lec.lectureName}</option>
+                                <option key={lec.Id} value={lec.Id}>{lec.lectureName}</option>
                             ))}
                         </Form.Select>
                     </Col>
@@ -119,11 +119,7 @@ function CreditAppeal() {
                     <Form.Control
                         name="title"
                         value={appealForm.title}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setAppealForm((pre) => ({ ...pre, title: value }))
-                            console.log(appealForm)
-                        }}
+                        onChange={handleChange}
                         placeholder="제목을 입력하세요"
                         required
                     />
@@ -136,9 +132,9 @@ function CreditAppeal() {
                         rows={5}
                         name="content"
                         value={appealForm.content}
-                        onChange={(e) => {
+                        onChange={(e)=>{
                             const value = e.target.value;
-                            setAppealForm((pre) => ({ ...pre, content: value }))
+                            setAppealForm((pre)=>({...pre}))
                         }}
                         placeholder="이의제기 내용을 입력하세요"
                         required

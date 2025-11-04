@@ -156,7 +156,13 @@ function App() {
         <Container style={{ marginTop: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
-
+                <Button
+                    variant="primary"
+                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격    
+                    onClick={() => navigate('/CreditAppeal')}
+                >
+                    이의제기 신청
+                </Button>
             </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>

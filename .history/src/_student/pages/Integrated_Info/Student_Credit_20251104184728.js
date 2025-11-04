@@ -156,7 +156,7 @@ function App() {
         <Container style={{ marginTop: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
-
+                
             </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>

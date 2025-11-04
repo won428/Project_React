@@ -24,9 +24,9 @@ function CreditAppeal() {
 
     // 기본 신청 상태
     const [appealForm, setAppealForm] = useState({
-        lectureId: '',
         sendingId: userId || '',
-        receiverId: 5,           // 담당 교수/관리자 ID
+        receiverId: '',           // 담당 교수/관리자 ID
+        enrollmentId: '',       // 선택 강의 ID
         title: '',
         content: '',
         appealDate: new Date().toISOString().slice(0, 10),
@@ -52,22 +52,14 @@ function CreditAppeal() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setAppealForm(prev => ({ ...prev, lectureId: Number(value) }));
+        setAppealForm(prev => ({ ...prev, [name]: value }));
     };
 
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!appealForm.lectureId) {
-            window.alert('강의를 선택해주세요.');
-            return;
-        }
+    const handleSubmit = () => {
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, appealForm)
-            .then(() => {
+            .then(res => {
                 window.alert('이의제기 신청이 완료되었습니다.');
-                navigate('/CreditAppealList'); // 완료 후 목록 페이지 이동
-
+                
             })
             .catch(err => {
                 console.error(err);
@@ -83,13 +75,13 @@ function CreditAppeal() {
             <Button variant="secondary" onClick={() => navigate('/CreditAppealList')}>
                 나의 이의신청 목록 보기
             </Button>
-            <Form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
+            <Form onSubmit={handleSubmit} style={{marginTop: 24}}>
                 <Row className="mb-3">
                     <Col md={6}>
                         <Form.Label>강의 선택</Form.Label>
                         <Form.Select
-                            name="lectureId"
-                            value={appealForm.lectureId}
+                            name="enrollmentId"
+                            value={appealForm.enrollmentId}
                             onChange={handleChange}
                             required
                         >
@@ -119,11 +111,7 @@ function CreditAppeal() {
                     <Form.Control
                         name="title"
                         value={appealForm.title}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setAppealForm((pre) => ({ ...pre, title: value }))
-                            console.log(appealForm)
-                        }}
+                        onChange={handleChange}
                         placeholder="제목을 입력하세요"
                         required
                     />
@@ -136,10 +124,7 @@ function CreditAppeal() {
                         rows={5}
                         name="content"
                         value={appealForm.content}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setAppealForm((pre) => ({ ...pre, content: value }))
-                        }}
+                        onChange={handleChange}
                         placeholder="이의제기 내용을 입력하세요"
                         required
                     />
@@ -156,7 +141,7 @@ function CreditAppeal() {
                 </Form.Group>
 
                 <Button type="submit" variant="primary" style={{ marginRight: 8 }}>신청 제출</Button>
-                <Button variant="secondary" onClick={() => navigate(-1)}>취소</Button>
+                <Button variant="secondary" >취소</Button>
             </Form>
         </Container>
     );

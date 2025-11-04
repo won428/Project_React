@@ -26,7 +26,7 @@ function CreditAppeal() {
     const [appealForm, setAppealForm] = useState({
         lectureId: '',
         sendingId: userId || '',
-        receiverId: 5,           // 담당 교수/관리자 ID
+        receiverId: ,           // 담당 교수/관리자 ID
         title: '',
         content: '',
         appealDate: new Date().toISOString().slice(0, 10),

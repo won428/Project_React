@@ -156,7 +156,13 @@ function App() {
         <Container style={{ marginTop: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
-
+                <Button
+                    variant="primary"
+                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격    
+                    onClick={() => navigate('/CreditAppeal')}
+                >
+                    이의제기 신청
+                </Button>
             </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>
@@ -188,65 +194,65 @@ function App() {
                         <div>선택한 학기에 수강한 강의가 없습니다.</div>
                     ) : (
                         <Table bordered hover size="sm" style={{ minWidth: 700 }}>
-                            <thead>
-                                <tr>
-                                    <th>강의명</th>
-                                    {metrics.map(metric => (
-                                        <th key={metric.key}>{metric.label}</th>
-                                    ))}
-                                    <th>이의제기</th> {/* 버튼 컬럼 추가 */}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {lectures.map(lecture => {
-                                    let gradeId = null;
-                                    Object.values(gradesByGradeId).some(grade => {
-                                        if (grade.lectureId === lecture.lectureId) {
-                                            gradeId = grade.id;
-                                            return true;
-                                        }
-                                        return false;
-                                    });
-                                    const grade = gradesByGradeId[gradeId] || {};
+    <thead>
+        <tr>
+            <th>강의명</th>
+            {metrics.map(metric => (
+                <th key={metric.key}>{metric.label}</th>
+            ))}
+            <th>이의제기</th> {/* 버튼 컬럼 추가 */}
+        </tr>
+    </thead>
+    <tbody>
+        {lectures.map(lecture => {
+            let gradeId = null;
+            Object.values(gradesByGradeId).some(grade => {
+                if (grade.lectureId === lecture.lectureId) {
+                    gradeId = grade.id;
+                    return true;
+                }
+                return false;
+            });
+            const grade = gradesByGradeId[gradeId] || {};
 
-                                    const scoreKeys = ['aScore', 'asScore', 'tScore', 'ftScore'];
-                                    const scores = scoreKeys.map(k => {
-                                        const val = grade[k] ?? grade[k.toLowerCase()] ?? '0';
-                                        return parseFloat(val);
-                                    });
-                                    const total = scores.reduce((sum, val) => sum + val, 0);
-                                    const average = (total / scores.length).toFixed(2);
+            const scoreKeys = ['aScore', 'asScore', 'tScore', 'ftScore'];
+            const scores = scoreKeys.map(k => {
+                const val = grade[k] ?? grade[k.toLowerCase()] ?? '0';
+                return parseFloat(val);
+            });
+            const total = scores.reduce((sum, val) => sum + val, 0);
+            const average = (total / scores.length).toFixed(2);
 
-                                    return (
-                                        <tr key={lecture.id}>
-                                            <td>{lecture.lecName}</td>
-                                            {metrics.map(metric => {
-                                                let value;
-                                                if (metric.key === 'totalScore') {
-                                                    value = total.toFixed(2);
-                                                } else if (metric.key === 'lectureGrade') {
-                                                    value = average;
-                                                } else {
-                                                    value = getGradeValue(grade, metric.key);
-                                                    if (typeof value === 'number') value = value.toFixed(2);
-                                                }
-                                                return <td key={metric.key}>{value}</td>;
-                                            })}
-                                            {/* 각 강의 끝에 이의제기 신청 버튼 추가 */}
-                                            <td>
-                                                <Button
-                                                    size="sm"
-                                                    variant="warning"
-                                                    onClick={() => navigate('/CreditAppeal', { state: { lectureId: lecture.lectureId } })}
-                                                >
-                                                    이의제기 신청
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </Table>
+            return (
+                <tr key={lecture.id}>
+                    <td>{lecture.lecName}</td>
+                    {metrics.map(metric => {
+                        let value;
+                        if (metric.key === 'totalScore') {
+                            value = total.toFixed(2);
+                        } else if (metric.key === 'lectureGrade') {
+                            value = average;
+                        } else {
+                            value = getGradeValue(grade, metric.key);
+                            if (typeof value === 'number') value = value.toFixed(2);
+                        }
+                        return <td key={metric.key}>{value}</td>;
+                    })}
+                    {/* 각 강의 끝에 이의제기 신청 버튼 추가 */}
+                    <td>
+                        <Button
+                            size="sm"
+                            variant="warning"
+                            onClick={() => navigate('/CreditAppeal', { state: { lectureId: lecture.lectureId } })}
+                        >
+                            이의제기 신청
+                        </Button>
+                    </td>
+                </tr>
+            );
+        })}
+    </tbody>
+</Table>
                     )}
                 </Col>
             </Row>

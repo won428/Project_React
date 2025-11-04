@@ -156,7 +156,13 @@ function App() {
         <Container style={{ marginTop: 24 }}>
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
                 <h3 style={{ margin: 0 }}>성적 조회</h3>
-
+                <Button
+                    variant="primary"
+                    style={{ marginLeft: 16 }} // 제목과 버튼 사이 간격    
+                    onClick={() => navigate('/CreditAppeal')}
+                >
+                    이의제기 신청
+                </Button>
             </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>
@@ -194,7 +200,6 @@ function App() {
                                     {metrics.map(metric => (
                                         <th key={metric.key}>{metric.label}</th>
                                     ))}
-                                    <th>이의제기</th> {/* 버튼 컬럼 추가 */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -232,16 +237,6 @@ function App() {
                                                 }
                                                 return <td key={metric.key}>{value}</td>;
                                             })}
-                                            {/* 각 강의 끝에 이의제기 신청 버튼 추가 */}
-                                            <td>
-                                                <Button
-                                                    size="sm"
-                                                    variant="warning"
-                                                    onClick={() => navigate('/CreditAppeal', { state: { lectureId: lecture.lectureId } })}
-                                                >
-                                                    이의제기 신청
-                                                </Button>
-                                            </td>
                                         </tr>
                                     );
                                 })}

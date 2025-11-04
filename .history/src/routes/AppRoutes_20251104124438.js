@@ -238,7 +238,6 @@ function App() {
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/Student_Credit' element={<This_Credit />} ></Route>
                         <Route path='/CreditAppeal' element={<CreditAppeal />} ></Route>
-                        <Route path='/CreditAppealList' element={<CreditAppealList />} ></Route>
                         
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
