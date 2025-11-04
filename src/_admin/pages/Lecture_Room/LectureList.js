@@ -11,7 +11,9 @@ function App() {
   const [rejectedLec, setRejectedLec] = useState([]);
   const [approvedLec, setApprovedLec] = useState([]);
   const [pendingLec, setPendingLec] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [inproSelected, setInproSelected] = useState([]);
+  const [approveSelected, setApproveSelected] = useState([]);
+  const [compleSelected, setCompleSelected] = useState([]);
   const navigate = useNavigate();
 
   const fetchLectures = useCallback(async () => {
@@ -95,11 +97,24 @@ function App() {
     }
   };
 
-  const addSelect = (e) => {
+  const addInproSelect = (e) => {
     const value = e.target.value;
     const checked = e.target.checked;
-
-    setSelected((prev) =>
+      setInproSelected((prev) =>
+      checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
+    );
+  };
+  const addAproSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+      setApproveSelected((prev) =>
+      checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
+    );
+  };
+  const addCompleSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+      setCompleSelected((prev) =>
       checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
     );
   };
@@ -108,13 +123,14 @@ function App() {
     e.preventDefault();
     try {
       const url = `${API_BASE_URL}/lecture/inprogress`;
-      const response = await axios.patch(url, selected, {
+      const response = await axios.patch(url, inproSelected, {
         params: {
           status: "INPROGRESS",
         },
       });
       if (response.status === 200) {
         alert("선택하신 강의를 개강하였습니다.");
+        setInproSelected([]);
         await fetchLectures();
       }
     } catch (error) {
@@ -127,6 +143,57 @@ function App() {
       alert(message);
     }
   };
+
+  const lectureApproved = async (e) => {
+    e.preventDefault();
+    try {
+      const url = `${API_BASE_URL}/lecture/status/admin`;
+      const response = await axios.patch(url, approveSelected, {
+        params: {
+          status: "APPROVED",
+        },
+      });
+      if (response.status === 200) {
+        alert("선택하신 강의를 승인하였습니다.");
+        setApproveSelected([])
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
+    }
+  };
+
+  const lectureCompleted = async (e) => {
+    e.preventDefault();
+    try {
+      const url = `${API_BASE_URL}/lecture/status/admin`;
+      const response = await axios.patch(url, compleSelected, {
+        params: {
+          status: "COMPLETED",
+        },
+      });
+      if (response.status === 200) {
+        alert("선택하신 강의를 종강하였습니다.");
+        setCompleSelected([]);
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
+    }
+  };
+
 
   return (
     <>
@@ -184,7 +251,7 @@ function App() {
               {pendingLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                    <Form.Check type="checkbox" value={lec.id} onChange={addAproSelect} />
                   </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
@@ -230,7 +297,9 @@ function App() {
 
           {/* 하단 버튼: 표 아래 오른쪽 정렬, 간격/여백 통일 */}
           <div className="d-flex justify-content-end gap-2 mt-2">
-            <Button size="sm" variant="primary">일괄수락</Button>
+            <Button size="sm" variant="primary"
+              onClick={lectureApproved}
+            >일괄승인</Button>
             <Button size="sm" variant="danger">일괄거부</Button>
           </div>
         </div>
@@ -288,7 +357,7 @@ function App() {
               {approvedLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                    <Form.Check type="checkbox" value={lec.id} onChange={addInproSelect} />
                   </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
@@ -384,7 +453,7 @@ function App() {
               {inprogressLec.map((lec) => (
                 <tr key={lec.id}>
                   <td className="text-center text-nowrap">
-                    <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                    <Form.Check type="checkbox" value={lec.id} onChange={addCompleSelect} />
                   </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
@@ -399,14 +468,10 @@ function App() {
                   <td className="text-center">{lec.credit}</td>
                   <td className="text-center">자료</td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
-                      개강
-                    </Button>
-                  </td>
-                  <td className="text-center">
+                  
+                  <td className="text-center" colSpan={2}>
                     <Button variant="outline-danger" size="sm">
-                      폐강
+                      종강
                     </Button>
                   </td>
                 </tr>
@@ -415,8 +480,9 @@ function App() {
           </Table>
 
           <div className="d-flex justify-content-end gap-2 mt-2">
-            <Button size="sm" variant="primary">일괄수락</Button>
-            <Button size="sm" variant="danger">일괄거부</Button>
+            <Button size="sm" variant="danger"
+              onClick={lectureCompleted}
+            >일괄종강</Button>
           </div>
         </div>
       </div>
