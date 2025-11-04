@@ -4,6 +4,7 @@ import { Card, Col, Row, Container, Spinner } from "react-bootstrap";
 import { API_BASE_URL } from "../../public/config/config";
 import { useAuth } from "../../public/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import "../ui/LectureSession.css";
 
 function LectureSession() {
     const { state } = useLocation(); // 이전 페이지에서 보낸 state 받기
@@ -93,22 +94,32 @@ function LectureSession() {
 
     return (
         <Container className="mt-3">
-            <div className="mb-2" >강의명 : <strong>{meta.name}</strong></div>
-            <div className="mb-2" >총 차시 : <strong>{preview.length}</strong></div>
+            <div className="mb-2" ><h3>강의명 : <strong>{meta.name}</strong></h3></div>
+            <div className="mb-2" ><h4>총 차시 : <strong>{preview.length} 차시</strong></h4></div>
             <Row xs={1} md={2} lg={12} className="g-3">
-                {preview.map((s) => (
-                    <Col key={s.date}>
-                        <Card className="h-100 shadow-sm">
-                            <Card.Body>
-                                <div className="fw-semibold">{s.weekNo}주차 · {dayName[s.dayOfWeek]}</div>
-                                <div className="text-muted small">{s.date}</div>
-                                <div className="mt-1">
-                                    {s.periodStart}~{s.periodEnd}교시 ({s.startTime}~{s.endTime})
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
+                {preview.map((s) => {
+                    // 오늘(로컬PC 기준) 'YYYY-MM-DD'
+                    const today = new Date().toLocaleDateString('en-CA'); // ex) 2025-11-04
+                    const isFuture = s.date > today;
+
+                    return (
+                        <Col key={s.date}>
+                            <Card
+                                className={`h-100 cursor-pointer ${isFuture ? 'opacity-50 pe-none' : 'card-hover'}`}
+                                onClick={!isFuture ? () => navigate(`/LectureDetail/${lectureId}`) : undefined}
+                            >
+                                <Card.Body>
+                                    <div className="fw-semibold">{s.weekNo}주차 · {dayName[s.dayOfWeek]}</div>
+                                    <div className="text-muted small">{s.date}</div>
+                                    <div className="mt-1">
+                                        {s.periodStart}~{s.periodEnd}교시 ({s.startTime}~{s.endTime})
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    );
+
+                })}
                 {preview.length === 0 && (
                     <Col><div className="text-muted">생성된 차시가 없습니다.</div></Col>
                 )}
