@@ -164,8 +164,8 @@ function App() {
                       }}
                     >
                       <option value={""}>선택</option>
-                      <option value={"MALE"}>남자</option>
-                      <option value={"FEMALE"}>여자</option>
+                      <option value={"남자"}>남자</option>
+                      <option value={"여자"}>여자</option>
                     </Form.Select>
                   </Form.Group>
 

@@ -20,6 +20,14 @@ function LectureSession() {
 
     const { user } = useAuth();
 
+    const dayName = {
+        MONDAY: "월요일",
+        TUESDAY: "화요일",
+        WEDNESDAY: "수요일",
+        THURSDAY: "목요일",
+        FRIDAY: "금요일"
+    };
+
     useEffect(() => {
         if (!lectureId) return;
 
@@ -34,7 +42,11 @@ function LectureSession() {
                 setMeta(metaRes.data);
                 setSchedule(schRes.data);
 
-                const days = [...new Set(schRes.data.map(s => s.day))]; // 요일 들어간 배열["TUESDAY, ""TURSDAY"]
+                console.log('schRes.data =', schRes.data);
+                const days = [...new Set((schRes.data ?? [])
+                    .map(s => s.day ?? s.dayOfWeek)   // 필드명 불일치 대비
+                    .filter(Boolean))];
+                console.log('days =', days); // 요일 들어간 배열["TUESDAY, ""TURSDAY"]
 
                 // 교시
                 const periodStart = schRes.data[0]?.periodStart ?? 1;
@@ -59,10 +71,8 @@ function LectureSession() {
                     },
                 });
                 // 백엔드가 엔벌로프(단일 객체)로 바뀌어도 깨지지 않도록 방어
-                const sessions = Array.isArray(prevRes.data)
-                    ? prevRes.data
-                    : prevRes.data.sessionLists;
-                setPreview(sessions);
+                const envelope = prevRes.data;
+                setPreview(envelope?.sessionLists ?? []);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -83,13 +93,14 @@ function LectureSession() {
 
     return (
         <Container className="mt-3">
-            <div className="mb-2">총 차시 : <strong>{preview.length}</strong></div>
-            <Row xs={1} md={2} lg={3} className="g-3">
+            <div className="mb-2" >강의명 : <strong>{meta.name}</strong></div>
+            <div className="mb-2" >총 차시 : <strong>{preview.length}</strong></div>
+            <Row xs={1} md={2} lg={12} className="g-3">
                 {preview.map((s) => (
                     <Col key={s.date}>
                         <Card className="h-100 shadow-sm">
                             <Card.Body>
-                                <div className="fw-semibold">{s.weekNo}주차 · {s.dayOfWeek}</div>
+                                <div className="fw-semibold">{s.weekNo}주차 · {dayName[s.dayOfWeek]}</div>
                                 <div className="text-muted small">{s.date}</div>
                                 <div className="mt-1">
                                     {s.periodStart}~{s.periodEnd}교시 ({s.startTime}~{s.endTime})
