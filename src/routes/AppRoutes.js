@@ -1,3 +1,4 @@
+
 import PrivateRoute from "./PrivateRoute";
 import { Route, Routes } from "react-router-dom";
 import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
@@ -29,7 +30,7 @@ import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 import LectureList from '../_admin/pages/Lecture_Room/LectureList';
-
+import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
 import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
 import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
@@ -193,7 +194,7 @@ function App() {
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
-                
+                        <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
 
 
 

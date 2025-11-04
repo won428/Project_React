@@ -1,17 +1,17 @@
 import { Badge, Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { useAuth } from "../../public/context/UserContext";
 import { useEffect, useState } from "react";
-import { API_BASE_URL } from "../../public/config/config";
+import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 function App() {
-
+  
   const [lecture, setLecture] = useState({});
   const [props, setProps] = useState({});
   const [studentList, setStudentList] = useState([]);
-  const { user } = useAuth;
-  const { id } = useParams();
-
+  const {user} = useAuth;
+  const { id } = useParams(); 
+  
   const navigate = useNavigate();
 
 

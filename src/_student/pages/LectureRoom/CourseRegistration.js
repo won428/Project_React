@@ -207,10 +207,12 @@ function App() {
           }
         );
         if (response.data.success) {
-            alert('등록 성공');           
+            alert('등록 성공');
+            setSelected([])           
             fetchLectures();
         } else {
             alert('등록 성공');
+            setSelected([]) 
             fetchLectures();
         }
         } catch (error) {

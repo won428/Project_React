@@ -35,6 +35,29 @@ function App() {
             <Container style={{ maxWidth: '600px', margin: '2rem auto' }} >
                 <Row>
                     <Col>
+
+                        {
+                            post.length > 0 ?
+                                (post?.map((item) =>
+
+                                    <Card onClick={(e) => specificPage(e, item)}>
+                                        <CardBody>
+                                            <Row>id : {item.id}</Row>
+                                            <Row>name : {item.username}</Row>
+                                            <Row>id : title :  {item.title}</Row>
+                                            <Row>created : {item.createdAt}</Row>
+
+
+
+
+                                        </CardBody>
+                                    </Card>)
+                                )
+                                :
+                                <div>
+                                    게시물이 존재하지 않습니다.
+                                </div>
+                        }
                         <Card>
                             <CardBody>
                                 <Table>
