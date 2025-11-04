@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../../../public/config/config";
 import { useAuth } from "../../../public/context/UserContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useLectureStore } from "../store/lectureStore";
 
 function App() {
     const { user } = useAuth();
@@ -11,6 +12,7 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
     const data = location?.state;
+    const { lectureId } = useLectureStore();
     const [mod, setMod] = useState(false);
     const [resdata, setResData] = useState({});
     const [title, setTitle] = useState("");

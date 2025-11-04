@@ -47,6 +47,7 @@ import LecturePRO from '../_lecturePS/LectureRoomSpec/Lecture';
 import NoticePRO from '../_lecturePS/LectureRoomSpec/NoticeList/Notice';
 import ToDoListPRO from '../_lecturePS/LectureRoomSpec/ToDoList';
 import Lecture_RoomSP from '../_lecturePS/LectureRoomSpec/Lecture_RoomSP';
+import LectureInsert from '../_lecturePS/LectureRoomSpec/LectureInsert';
 
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
@@ -62,8 +63,6 @@ import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 
 import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
 
-
-import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro';
 
 
 import LoginPage from '../public/pages/LoginPage';
@@ -123,6 +122,7 @@ function App() {
                     <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
                     <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
                     <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
                 </Route>
 
 
@@ -152,7 +152,7 @@ function App() {
                         <Route path='/asn' element={<AssignUpload />} ></Route>
                         <Route path='/asnlst' element={<AssignList />} ></Route>
                         <Route path='/asnspec' element={<AssignSpec />} ></Route>
-
+                        <Route path='/lecins' element={<LectureInsert />} ></Route>
                     </Route>
                 </Route>
 
