@@ -48,16 +48,11 @@ function CreditAppeal() {
 
     // 강의 정보 조회 -> professorId + lectureName 가져오기
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/api/appeals/lectures/${lectureId}`)
+        axios.get(`${API_BASE_URL}/api/lectures/${lectureId}`)
             .then(res => {
                 setLectureName(res.data.lecName);
                 setProfessorId(res.data.userId); // 강의 담당 교수의 userId
-                setProfessorName(res.data.userName);
-                setAppealForm(prev => ({
-                    ...prev,
-                    lectureId: lectureId,   // ★ 강의ID
-                    receiverId: res.data.userId // 교수ID
-                }));
+                setAppealForm(prev => ({ ...prev, receiverId: res.data.userId }));
             })
             .catch(err => console.error(err));
     }, [lectureId]);
@@ -65,7 +60,7 @@ function CreditAppeal() {
 
     useEffect(() => {
         if (professorId) {
-            axios.get(`${API_BASE_URL}/api/appeals/users/${professorId}`)
+            axios.get(`${API_BASE_URL}/api/users/${professorId}`)
                 .then(res => setProfessorName(res.data.name))
                 .catch(err => console.error(err));
         }
@@ -93,14 +88,19 @@ function CreditAppeal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!appealForm.lectureId) {
+            window.alert('강의를 선택해주세요.');
+            return;
+        }
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, appealForm)
             .then(() => {
-                alert('이의제기 신청이 완료되었습니다.');
-                navigate('/CreditAppealList');
+                window.alert('이의제기 신청이 완료되었습니다.');
+                navigate('/CreditAppealList'); // 완료 후 목록 페이지 이동
+
             })
             .catch(err => {
                 console.error(err);
-                alert('신청 제출 중 오류가 발생했습니다.');
+                window.alert('신청 제출 중 오류가 발생했습니다.');
             });
     };
 
@@ -108,28 +108,27 @@ function CreditAppeal() {
         <Container style={{ maxWidth: 720, marginTop: 24, marginBottom: 24 }}>
             <h3 style={{ marginBottom: 16 }}>성적 이의제기 신청</h3>
 
+            {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Button variant="secondary" onClick={() => navigate('/CreditAppealList')}>
                 나의 이의신청 목록 보기
             </Button>
-
             <Form onSubmit={handleSubmit} style={{ marginTop: 24 }}>
                 <Row className="mb-3">
                     <Col md={6}>
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}>강의명</Form.Label>
                             <Col sm={9}>
-                                <Form.Control type="text" readOnly value={lectureName} />
+                                <Form.Control type="text" readOnly value={lectureName || ''} />
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}>담당 교수</Form.Label>
                             <Col sm={9}>
-                                <Form.Control type="text" readOnly value={professorName} />
+                                <Form.Control type="text" readOnly value={professorName || `${professorId ?? ''}`} />
                             </Col>
                         </Form.Group>
                     </Col>
-
                     <Col md={6}>
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}>이의제기 유형</Form.Label>
@@ -154,7 +153,11 @@ function CreditAppeal() {
                     <Form.Control
                         name="title"
                         value={appealForm.title}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setAppealForm((pre) => ({ ...pre, title: value }))
+                            console.log(appealForm)
+                        }}
                         placeholder="제목을 입력하세요"
                         required
                     />
@@ -167,9 +170,22 @@ function CreditAppeal() {
                         rows={5}
                         name="content"
                         value={appealForm.content}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setAppealForm((pre) => ({ ...pre, content: value }))
+                        }}
                         placeholder="이의제기 내용을 입력하세요"
                         required
+                    />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                    <Form.Label>신청일</Form.Label>
+                    <Form.Control
+                        type="date"
+                        name="appealDate"
+                        value={appealForm.appealDate}
+                        readOnly
                     />
                 </Form.Group>
 

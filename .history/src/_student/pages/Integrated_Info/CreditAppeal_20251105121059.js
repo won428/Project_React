@@ -48,16 +48,11 @@ function CreditAppeal() {
 
     // 강의 정보 조회 -> professorId + lectureName 가져오기
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/api/appeals/lectures/${lectureId}`)
+        axios.get(`${API_BASE_URL}/api/lectures/${lectureId}`)
             .then(res => {
                 setLectureName(res.data.lecName);
                 setProfessorId(res.data.userId); // 강의 담당 교수의 userId
-                setProfessorName(res.data.userName);
-                setAppealForm(prev => ({
-                    ...prev,
-                    lectureId: lectureId,   // ★ 강의ID
-                    receiverId: res.data.userId // 교수ID
-                }));
+                setAppealForm(prev => ({ ...prev, receiverId: res.data.userId }));
             })
             .catch(err => console.error(err));
     }, [lectureId]);

@@ -3,7 +3,7 @@ import { Container, Row, Col, Table, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
     const { user } = useAuth();
@@ -234,17 +234,13 @@ function App() {
                                             })}
                                             {/* 각 강의 끝에 이의제기 신청 버튼 추가 */}
                                             <td>
-                                                <Link
-                                                    to={`/CreditAppeal/${lecture.lectureId}`}
-                                                    state={{
-                                                        lectureName: lecture.name,
-                                                        professorId: lecture.user,      // ✅ 교수 ID
-                                                        professorName: lecture.userName // ✅ 교수 이름 바로 전달
-                                                    }}
-
+                                                <Button
+                                                    size="sm"
+                                                    variant="warning"
+                                                    onClick={() => navigate('/CreditAppeal', { state: { lectureId: lecture.lectureId } })}
                                                 >
-                                                    <Button variant="primary">이의제기</Button>
-                                                </Link>
+                                                    이의제기 신청
+                                                </Button>
                                             </td>
                                         </tr>
                                     );

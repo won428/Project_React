@@ -13,7 +13,7 @@ function CreditAppealList() {
 
     useEffect(() => {
         if (!user?.id) return;
-        axios.get(`${API_BASE_URL}/api/appeals/mylist`, { params: { id: user.id } })
+        axios.get(`${API_BASE_URL}/api/appeals/my`, { params: { id: user.id } })
             .then(res => setAppealList(res.data))
             .catch(err => console.error(err));
     }, [user]);
@@ -68,7 +68,7 @@ function CreditAppealList() {
                                         {appeal.lectureName}
                                     </td>
                                     <td>{appeal.content}</td>
-                                    <td>{appeal.appealDate}</td>
+                                    <td>{appeal.appliedDate}</td>
                                     <td>{statusMap[appeal.status]}</td>
                                 </tr>
                             ))

@@ -236,11 +236,6 @@ function App() {
                                             <td>
                                                 <Link
                                                     to={`/CreditAppeal/${lecture.lectureId}`}
-                                                    state={{
-                                                        lectureName: lecture.name,
-                                                        professorId: lecture.user,      // ✅ 교수 ID
-                                                        professorName: lecture.userName // ✅ 교수 이름 바로 전달
-                                                    }}
 
                                                 >
                                                     <Button variant="primary">이의제기</Button>

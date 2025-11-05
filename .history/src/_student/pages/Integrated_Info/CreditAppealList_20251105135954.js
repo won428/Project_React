@@ -68,7 +68,7 @@ function CreditAppealList() {
                                         {appeal.lectureName}
                                     </td>
                                     <td>{appeal.content}</td>
-                                    <td>{appeal.appealDate}</td>
+                                    <td>{appeal.appliedDate}</td>
                                     <td>{statusMap[appeal.status]}</td>
                                 </tr>
                             ))
