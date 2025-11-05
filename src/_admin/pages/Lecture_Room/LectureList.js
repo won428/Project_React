@@ -3,7 +3,6 @@ import { Button, Form, Modal, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { isWednesday } from "date-fns";
 
 function App() {
   const [lectureList, setLectureList] = useState();
@@ -12,27 +11,23 @@ function App() {
   const [pendingLec, setPendingLec] = useState([]);
   const [inproSelected, setInproSelected] = useState([]);   // 승인목록 → 개강용 선택
   const [approveSelected, setApproveSelected] = useState([]); // 승인대기 → 일괄승인용
+  const [rejectedSelected, setRejectedSelected] = useState([]);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [modalId,setModalId] = useState('');
   const [modalLec,setModalLec] = useState({});
 
-
-
- 
-
   useEffect(() => {
-  if (!modalId) return;
-  const url = `${API_BASE_URL}/lecture/info`;
-  axios
-    .get(url, { params: { modalId: Number(modalId) } }) 
-    .then((res) => setModalLec(res.data))
-    .catch((err) => {
-      console.error(err.response.data);
-      alert('오류');
-    });
-}, [modalId]);
-
+    if (!modalId) return;
+    const url = `${API_BASE_URL}/lecture/info`;
+    axios
+      .get(url, { params: { modalId: Number(modalId) } }) 
+      .then((res) => setModalLec(res.data))
+      .catch((err) => {
+        console.error(err.response.data);
+        alert('오류');
+      });
+  }, [modalId]);
 
   const fetchLectures = useCallback(async () => {
     const url = `${API_BASE_URL}/lecture/list`;
@@ -137,7 +132,13 @@ function App() {
         await fetchLectures();
       }
     } catch (error) {
-      console.log(error.response?.data);
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
     }
   };
 
@@ -152,6 +153,13 @@ function App() {
     const value = e.target.value;
     const checked = e.target.checked;
     setApproveSelected((prev) =>
+      checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
+    );
+  };
+  const addRejecSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setRejectedSelected((prev) =>
       checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
     );
   };
@@ -179,11 +187,11 @@ function App() {
     }
   };
 
-  const lectureApproved = async (e) => {
+  const lectureApproved = async (e, selected) => {
     e.preventDefault();
     try {
       const url = `${API_BASE_URL}/lecture/status/admin`;
-      const response = await axios.patch(url, approveSelected, {
+      const response = await axios.patch(url, selected, {
         params: { status: "APPROVED" },
       });
       if (response.status === 200) {
@@ -201,6 +209,62 @@ function App() {
       alert(message);
     }
   };
+
+  const lectureRejected = async (e, selected) => {
+    e.preventDefault();
+    try {
+      const url = `${API_BASE_URL}/lecture/status/admin`;
+      const response = await axios.patch(url, selected, {
+        params: { status: "REJECTED" },
+      });
+      if (response.status === 200) {
+        alert("선택하신 강의를 거부하였습니다.");
+        setApproveSelected([]);
+        setInproSelected([]);
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
+    }
+  };
+
+  const downloadClick = (id) => {
+    const url = `${API_BASE_URL}/attachment/download/${id}`
+    axios
+      .get(url, {responseType: 'blob'})
+      .then((response)=>{
+          console.log(response.headers)
+          const cd = response.headers['content-disposition'] || '';
+          const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
+          const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
+          const filename = (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
+
+          const blob = new Blob(
+            [response.data],
+            {
+              type: response.headers['content-type'] || 'application/octet-stream',
+            }
+          );
+
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(a.href);
+      })
+      .catch((err)=>{
+        console.error(err.response.data);
+        alert('오류');
+      })
+  }
 
   return (
     <>
@@ -262,20 +326,21 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td> {/* 수업 요일 - 값 비움 */}
+                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td> {/* 수업 요일 */}
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
                   <td className="text-center">
                     <Button
                       size="sm"
+                      variant="outline-dark"
                       onClick={()=>{
                         setModalId(lec.id)
                         setOpen(true)}}
                     >
                       상세
                     </Button>
-                  </td> {/* 상세보기 - 값 비움 */}
+                  </td> {/* 상세보기 */}
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
                     <Button
@@ -307,8 +372,14 @@ function App() {
           </Table>
 
           <div className="d-flex justify-content-end gap-2 mt-2">
-            <Button size="sm" variant="primary" onClick={lectureApproved}>일괄승인</Button>
-            <Button size="sm" variant="danger">일괄거부</Button>
+            <Button size="sm" variant="primary" onClick={(e)=>{
+              lectureApproved(e, approveSelected)
+            }}>일괄승인</Button>
+            <Button size="sm" variant="danger"
+              onClick={(e)=>{
+                lectureRejected(e,approveSelected);
+              }}
+            >일괄거부</Button>
           </div>
         </div>
       </div>
@@ -371,14 +442,28 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center"></td> {/* 수업 요일 */}
+                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  <td className="text-center"></td> {/* 상세보기 */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={()=>{
+                        setModalId(lec.id)
+                        setOpen(true)}}
+                    >
+                      상세
+                    </Button>
+                  </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
+                    <Button variant="outline-primary" size="sm"
+                      onClick={()=>{
+                        stautsRequest(lec.id, "INPROGRESS")
+                      }}
+                    >
                       개강
                     </Button>
                   </td>
@@ -401,7 +486,11 @@ function App() {
 
           <div className="d-flex justify-content-end gap-2 mt-2">
             <Button size="sm" variant="primary" onClick={lectureInprogress}>일괄 개강</Button>
-            <Button size="sm" variant="danger">일괄거부</Button>
+            <Button size="sm" variant="danger"
+              onClick={(e)=>{
+                lectureRejected(e, inproSelected)
+              }}
+            >일괄거부</Button>
           </div>
         </div>
       </div>
@@ -455,38 +544,57 @@ function App() {
             <tbody>
               {rejectedLec.map((lec) => (
                 <tr key={lec.id}>
-                  <td className="text-center text-nowrap"></td>
+                  <td className="text-center text-nowrap">
+                    <Form.Check type="checkbox" value={lec.id} onChange={addRejecSelect} />
+                  </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center"></td> {/* 수업 요일 */}
+                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  <td className="text-center"></td> {/* 상세보기 */}
-                  <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
-                      개강
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={()=>{
+                        setModalId(lec.id)
+                        setOpen(true)}}
+                    >
+                      상세
                     </Button>
                   </td>
-                  <td className="text-center">
-                    <Button variant="outline-danger" size="sm">
-                      폐강
+                  <td className="text-center">{typeMap[lec.status]}</td>
+                  <td className="text-center" colSpan={2}>
+                    <Button variant="outline-primary" size="sm"
+                      onClick={()=>{
+                        stautsRequest(lec.id, "APPROVED")
+                      }}
+                    >
+                      재승인
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+          <div className="d-flex justify-content-end gap-2 mt-2">
+            <Button size="sm" variant="primary" onClick={
+              (e)=>{
+                 lectureApproved(e, rejectedSelected)
+              }}>
+                일괄 재승인</Button>
+          </div>
+          
         </div>
         
       </div>
 
-      {/* ───────── 상세 모달 UI (데이터는 바인딩만 추가하면 됨) ───────── */}
+      {/* ───────── 상세 모달 UI ───────── */}
       <Modal
         show={open}
         onHide={() => setOpen(false)}
@@ -495,14 +603,12 @@ function App() {
         aria-labelledby="lecture-detail-title"
       >
         <Modal.Header closeButton>
-          {/* 강의명(제목) */}
           <Modal.Title id="lecture-detail-title" className="fs-5">
             {modalLec.name}
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          {/* 상세 시간표 */}
           <div className="mb-3">
             <div className="text-muted small mb-2">상세 시간표</div>
             <div className="table-responsive">
@@ -552,8 +658,8 @@ function App() {
           <div className="text-muted small mb-2">첨부파일</div>
 
          <div className="d-flex align-items-center justify-content-between">
-  <div className="text-muted w-100"> {/* ← 폭 100% */}
-    <ul className="mb-0 w-100">      {/* ← 폭 100% */}
+  <div className="text-muted w-100">
+    <ul className="mb-0 w-100">
       {modalLec?.attachmentDtos?.length > 0 ? (
         modalLec.attachmentDtos.map((lecFile) => (
           <li key={lecFile.id} className="mb-1">
@@ -564,6 +670,10 @@ function App() {
                 variant="outline-secondary"
                 className="ms-auto flex-shrink-0"
                 disabled={!modalLec?.attachmentDtos?.length}
+                onClick={()=>{
+                  downloadClick(lecFile.id)
+                  console.log(lecFile.id)
+                }}
               >
                 다운로드
               </Button>

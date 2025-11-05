@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Form, Table } from "react-bootstrap";
+import { Button, Form, Modal, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,26 @@ function App() {
   const [inprogressLec, setInprogressLec] = useState([]);
   const [completedLec, setCompletedLec] = useState([]);
   const [compleSelected, setCompleSelected] = useState([]); // 개강 목록 → 종강용
+  const [rejecSelected, setrejecSelected] = useState([]);
   const navigate = useNavigate();
+
+  // ───── 모달 상태 (추가) ─────
+  const [open, setOpen] = useState(false);
+  const [modalId, setModalId] = useState("");
+  const [modalLec, setModalLec] = useState({});
+
+  // ───── 모달 상세 조회 (추가) ─────
+  useEffect(() => {
+    if (!modalId) return;
+    const url = `${API_BASE_URL}/lecture/info`;
+    axios
+      .get(url, { params: { modalId: Number(modalId) } })
+      .then((res) => setModalLec(res.data))
+      .catch((err) => {
+        console.error(err.response?.data);
+        alert("오류");
+      });
+  }, [modalId]);
 
   const fetchLectures = useCallback(async () => {
     const url = `${API_BASE_URL}/lecture/list`;
@@ -53,6 +72,39 @@ function App() {
     GENERAL_ELECTIVE: " 일반 선택",
   };
 
+  // ───── 요일/교시 매핑 (추가) ─────
+  const typeMap3 = {
+    MONDAY: "월",
+    TUESDAY: "화",
+    WEDNESDAY: "수",
+    THURSDAY: "목",
+    FRIDAY: "금",
+  };
+
+  const typeMap4 = {
+    "9:00": "1교시",
+    "10:00": "2교시",
+    "11:00": "3교시",
+    "12:00": "4교시",
+    "13:00": "5교시",
+    "14:00": "6교시",
+    "15:00": "7교시",
+    "16:00": "8교시",
+    "17:00": "9교시",
+  };
+
+  const typeMap5 = {
+    "10:00": "1교시",
+    "11:00": "2교시",
+    "12:00": "3교시",
+    "13:00": "4교시",
+    "14:00": "5교시",
+    "15:00": "6교시",
+    "16:00": "7교시",
+    "17:00": "8교시",
+    "18:00": "9교시",
+  };
+
   const splitStartDate = (date) => {
     const [yyyy, mm] = date.split("-");
     const yaer = yyyy.slice(-2);
@@ -74,6 +126,13 @@ function App() {
     const value = e.target.value;
     const checked = e.target.checked;
     setCompleSelected((prev) =>
+      checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
+    );
+  };
+   const addRejectSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setrejecSelected((prev) =>
       checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
     );
   };
@@ -101,6 +160,81 @@ function App() {
     }
   };
 
+  const lectureInprogress = async (e, selected) => {
+    e.preventDefault();
+    try {
+      const url = `${API_BASE_URL}/lecture/inprogress`;
+      const response = await axios.patch(url, selected, {
+        params: { status: "INPROGRESS" },
+      });
+      if (response.status === 200) {
+        alert("선택하신 강의를 개강하였습니다.");
+        setCompleSelected([]);
+        setrejecSelected([]);
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
+    }
+  };
+
+  const stautsRequest = async (id, status) => {
+    const url = `${API_BASE_URL}/lecture/request`;
+    try {
+      const response = await axios.put(url, null, {
+        params: { status: status, id: id },
+      });
+      if (response.status === 200) {
+        alert("처리 완료");
+        await fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) {
+        alert("네트워크 오류가 발생하였습니다");
+        return;
+      }
+      const message = err.data?.message ?? "오류 발생";
+      alert(message);
+    }
+  };
+
+  // ───── 다운로드 함수 (추가) ─────
+  const downloadClick = (id) => {
+    const url = `${API_BASE_URL}/attachment/download/${id}`;
+    axios
+      .get(url, { responseType: "blob" })
+      .then((response) => {
+        console.log(response.headers);
+        const cd = response.headers["content-disposition"] || "";
+        const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
+        const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
+        const filename = (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
+
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"] || "application/octet-stream",
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+      })
+      .catch((err) => {
+        console.error(err.response?.data);
+        alert("오류");
+      });
+  };
+
   return (
     <>
       {/* ───────── 개강 목록 ───────── */}
@@ -115,21 +249,21 @@ function App() {
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} />   {/* 체크박스 */}
-              <col style={{ width: "16rem" }} />  {/* 강의명 */}
-              <col style={{ width: "7rem" }} />   {/* 이수구분 */}
-              <col style={{ width: "3rem" }} />   {/* 학년 */}
-              <col style={{ width: "12rem" }} />  {/* 과이름 */}
-              <col style={{ width: "7rem" }} />   {/* 담당교수 */}
-              <col style={{ width: "15rem" }} />  {/* 학기 */}
-              <col style={{ width: "9rem" }} />   {/* 수업 요일 */}
-              <col style={{ width: "5rem" }} />   {/* 총원 */}
-              <col style={{ width: "5rem" }} />   {/* 현재원 */}
-              <col style={{ width: "4rem" }} />   {/* 학점 */}
-              <col style={{ width: "7rem" }} />   {/* 상세보기 */}
-              <col style={{ width: "5rem" }} />   {/* 상태 */}
-              <col style={{ width: "6rem" }} />   {/* 기능(개강) */}
-              <col style={{ width: "6rem" }} />   {/* 기능(폐강) */}
+              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "16rem" }} /> {/* 강의명 */}
+              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
+              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "12rem" }} /> {/* 과이름 */}
+              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "15rem" }} /> {/* 학기 */}
+              <col style={{ width: "9rem" }} /> {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} /> {/* 총원 */}
+              <col style={{ width: "5rem" }} /> {/* 현재원 */}
+              <col style={{ width: "4rem" }} /> {/* 학점 */}
+              <col style={{ width: "7rem" }} /> {/* 상세보기 */}
+              <col style={{ width: "5rem" }} /> {/* 상태 */}
+              <col style={{ width: "6rem" }} /> {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} /> {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -161,14 +295,31 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center"></td> {/* 수업 요일 */}
+                  {/* ─ 수업 요일 (추가) ─ */}
+                  <td className="text-center">{lec.lectureSchedules.map((s) => typeMap3[s.day])}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  <td className="text-center"></td> {/* 상세보기 */}
+                  {/* ─ 상세보기 버튼 (추가) ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={() => {
+                        setModalId(lec.id);
+                        setOpen(true);
+                      }}
+                    >
+                      상세
+                    </Button>
+                  </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center" colSpan={2}>
-                    <Button variant="outline-danger" size="sm">
+                    <Button variant="outline-danger" size="sm"
+                      onClick={()=>{
+                        stautsRequest(lec.id, "COMPLETED")
+                      }}
+                    >
                       종강
                     </Button>
                   </td>
@@ -197,21 +348,21 @@ function App() {
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} />   {/* 체크박스 */}
-              <col style={{ width: "16rem" }} />  {/* 강의명 */}
-              <col style={{ width: "7rem" }} />   {/* 이수구분 */}
-              <col style={{ width: "3rem" }} />   {/* 학년 */}
-              <col style={{ width: "12rem" }} />  {/* 과이름 */}
-              <col style={{ width: "7rem" }} />   {/* 담당교수 */}
-              <col style={{ width: "15rem" }} />  {/* 학기 */}
-              <col style={{ width: "9rem" }} />   {/* 수업 요일 */}
-              <col style={{ width: "5rem" }} />   {/* 총원 */}
-              <col style={{ width: "5rem" }} />   {/* 현재원 */}
-              <col style={{ width: "4rem" }} />   {/* 학점 */}
-              <col style={{ width: "7rem" }} />   {/* 상세보기 */}
-              <col style={{ width: "5rem" }} />   {/* 상태 */}
-              <col style={{ width: "6rem" }} />   {/* 기능(개강) */}
-              <col style={{ width: "6rem" }} />   {/* 기능(폐강) */}
+              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "16rem" }} /> {/* 강의명 */}
+              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
+              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "12rem" }} /> {/* 과이름 */}
+              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "15rem" }} /> {/* 학기 */}
+              <col style={{ width: "9rem" }} /> {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} /> {/* 총원 */}
+              <col style={{ width: "5rem" }} /> {/* 현재원 */}
+              <col style={{ width: "4rem" }} /> {/* 학점 */}
+              <col style={{ width: "7rem" }} /> {/* 상세보기 */}
+              <col style={{ width: "5rem" }} /> {/* 상태 */}
+              <col style={{ width: "6rem" }} /> {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} /> {/* 기능(폐강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -234,35 +385,174 @@ function App() {
             <tbody>
               {completedLec.map((lec) => (
                 <tr key={lec.id}>
-                  <td className="text-center text-nowrap"></td>
+                  <td className="text-center text-nowrap">
+                    <Form.Check type="checkbox" value={lec.id} onChange={addRejectSelect} />
+                  </td>
                   <td className="text-start">{lec.name}</td>
                   <td className="text-center">{typeMap2[lec.completionDiv]}</td>
                   <td className="text-center">{lec.level}</td>
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center"></td> {/* 수업 요일 */}
+                  {/* ─ 수업 요일 (추가) ─ */}
+                  <td className="text-center">{lec.lectureSchedules.map((s) => typeMap3[s.day])}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  <td className="text-center"></td> {/* 상세보기 */}
-                  <td className="text-center">{typeMap[lec.status]}</td>
+                  {/* ─ 상세보기 버튼 (추가) ─ */}
                   <td className="text-center">
-                    <Button variant="outline-primary" size="sm">
-                      개강
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={() => {
+                        setModalId(lec.id);
+                        setOpen(true);
+                      }}
+                    >
+                      상세
                     </Button>
                   </td>
-                  <td className="text-center">
-                    <Button variant="outline-danger" size="sm">
-                      폐강
+                  <td className="text-center">{typeMap[lec.status]}</td>
+                  <td className="text-center" colSpan={2}>
+                    <Button variant="outline-primary" size="sm"
+                      onClick={()=>{
+                        stautsRequest(lec.id, "INPROGRESS")
+                      }}
+                    >
+                      재개강
                     </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+           <div className="d-flex justify-content-end gap-2 mt-2">
+              <Button size="sm" variant="primary" onClick={(e)=>{
+                  lectureInprogress(e, rejecSelected)
+              }}>
+                일괄 재개강
+              </Button>
+            </div>
         </div>
       </div>
+
+      {/* ───────── 상세 모달 UI (추가) ───────── */}
+      <Modal
+        show={open}
+        onHide={() => setOpen(false)}
+        centered
+        backdrop="static"
+        aria-labelledby="lecture-detail-title"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="lecture-detail-title" className="fs-5">
+            {modalLec.name}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="mb-3">
+            <div className="text-muted small mb-2">상세 시간표</div>
+            <div className="table-responsive">
+              <Table
+                size="sm"
+                bordered
+                hover
+                className="align-middle mb-0"
+                style={{ fontSize: "0.9rem" }}
+              >
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: "6rem" }} className="text-center">
+                      요일
+                    </th>
+                    <th style={{ width: "7rem" }} className="text-center">
+                      시작
+                    </th>
+                    <th style={{ width: "7rem" }} className="text-center">
+                      종료
+                    </th>
+                    <th>시간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(modalLec?.lectureSchedules ?? []).map((schedule, idx) => (
+                    <tr key={idx}>
+                      <td className="text-center">{typeMap3[schedule.day] ?? schedule.day}</td>
+                      <td className="text-center">
+                        {typeMap4[schedule.startTime] ?? schedule.startTime}
+                      </td>
+                      <td className="text-center">
+                        {typeMap5[schedule.endTime] ?? schedule.endTime}
+                      </td>
+                      <td className="text-nowrap">
+                        {schedule.startTime}~{schedule.endTime}
+                      </td>
+                    </tr>
+                  ))}
+                  {(modalLec?.lectureSchedules ?? []).length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="text-center text-muted">
+                        시간표 없음
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+           
+              
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <div className="text-muted small mb-2">강의설명</div>
+            <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+              {modalLec.description}
+            </div>
+          </div>
+
+          {/* ─ 첨부파일 + 다운로드 (추가) ─ */}
+          <div>
+            <div className="text-muted small mb-2">첨부파일</div>
+
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="text-muted w-100">
+                <ul className="mb-0 w-100">
+                  {modalLec?.attachmentDtos?.length > 0 ? (
+                    modalLec.attachmentDtos.map((lecFile) => (
+                      <li key={lecFile.id} className="mb-1">
+                        <div className="d-flex align-items-center w-100">
+                          <span className="text-truncate me-2 flex-grow-1">{lecFile.name}</span>
+                          <Button
+                            size="sm"
+                            variant="outline-secondary"
+                            className="ms-auto flex-shrink-0"
+                            disabled={!modalLec?.attachmentDtos?.length}
+                            onClick={() => {
+                              downloadClick(lecFile.id);
+                              console.log(lecFile.id);
+                            }}
+                          >
+                            다운로드
+                          </Button>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-muted">첨부된 파일이 없습니다.</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer className="d-flex justify-content-end">
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
