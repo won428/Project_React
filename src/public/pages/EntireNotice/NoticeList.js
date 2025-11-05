@@ -1,62 +1,62 @@
-import { useEffect, useState } from "react";
-import { Card, CardBody, Col, Container, Row, Button, Pagination } from "react-bootstrap";
-import { API_BASE_URL } from "../../public/config/config";
-import { useAuth } from "../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/UserContext";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
-import { useLectureStore } from "./store/lectureStore";
+import { Button, Card, CardBody, Col, Container, Pagination, Row } from "react-bootstrap";
+
+
+
+
 
 function App() {
-    const { user } = useAuth();
+    const { user, login } = useAuth();
+    const navigate = useNavigate();
     const [post, setPost] = useState([]); // content
     const [page, setPage] = useState(1);
     const [pageInfo, setPageInfo] = useState(null);
-
-    const { lectureId } = useLectureStore();
-    const navigate = useNavigate();
-    const pageRange = 10; // 한 번에 표시할 페이지 수
+    const pageRange = 10;
 
     useEffect(() => {
-        const url = `${API_BASE_URL}/assign/List`;
+        const url = `${API_BASE_URL}/Entire/List`;
+        const parameter = {
+            page: page - 1, // Spring은 0부터 시작!
+            size: 10
+        }
+
         axios.get(url, {
-            params: {
-                id: lectureId,
-                page: page - 1, // Spring은 0부터 시작!
-                size: 10
-            }
+            params: parameter
+
         })
             .then((res) => {
                 setPost(res.data.content);
                 setPageInfo(res.data);
+
             })
             .catch(console.error);
+
     }, [page, user.email]);
-
-    console.log(post);
-
     if (!pageInfo) return null;
 
-    const specificPage = (item) => navigate("/asnspec", { state: item.id });
+    const specificPage = (item) => navigate("/EnNotSpec", { state: item.id });
 
     const totalPages = pageInfo.totalPages;
 
     const startPage = Math.max(1, page - Math.floor(pageRange / 2));
     const endPage = Math.min(totalPages, startPage + pageRange - 1);
-
-
+    console.log(post);
 
     return (
         <Container style={{ maxWidth: "700px", marginTop: "2rem" }}>
 
             {/* 상단 타이틀 */}
             <Row className="mb-3 align-items-center">
-                <Col><h4>과제</h4></Col>
-                {user.roles.includes("PROFESSOR") && (
-                    <Col xs="auto">
-                        <Button variant="primary" onClick={() => navigate("/asn")}>
-                            과제 작성
-                        </Button>
-                    </Col>)}
+                <Col><h4>공지사항</h4></Col>
+                {user.roles.includes("ADMIN") && (<Col xs="auto">
+                    <Button variant="primary" onClick={() => navigate("/EnNot")}>
+                        공지 작성
+                    </Button>
+                </Col>)}
             </Row>
 
             {/* 게시글 목록 */}
@@ -74,7 +74,7 @@ function App() {
                                     <h5 className="fw-bold mb-2">{item.title}</h5>
                                     <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
                                         <span>{item.username}</span>
-                                        <span>{new Date(item.createAt).toLocaleDateString()}</span>
+                                        <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                                     </div>
                                 </CardBody>
                             </Card>
@@ -130,5 +130,4 @@ function App() {
         </Container>
     );
 }
-
 export default App;

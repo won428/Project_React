@@ -9,7 +9,13 @@ import "../ui/LectureSession.css";
 function LectureSession() {
     const { state } = useLocation(); // 이전 페이지에서 보낸 state 받기
     const { id: paramId } = useParams(); // URL의 :Id 받기
-    const lectureId = state?.lectureId ?? Number(paramId);
+
+    const lectureId = (() => {
+        if (typeof state === "number") return state;                 // state가 숫자로 온 경우
+        if (state && typeof state === "object" && "lectureId" in state) return state.lectureId; // { lectureId }
+        const n = Number(paramId);
+        return Number.isFinite(n) ? n : undefined;
+    })();
 
     const [meta, setMeta] = useState(null);
     const [schedule, setSchedule] = useState([]);
@@ -30,12 +36,16 @@ function LectureSession() {
     };
 
     useEffect(() => {
-        if (!lectureId) return;
+        if (!lectureId) {
+            setLoading(false);
+            console.warn("lectureId가 없어 세션 조회를 건너뜁니다.");
+            return;
+        };
 
         (async () => {
             try {
                 // 강의 메타조회(강의 시작일, 강의 종료일)
-                const metaRes = await axios.get(`${API_BASE_URL}/lecture/detail/${lectureId}`);
+                const metaRes = await axios.get(`${API_BASE_URL}/lecture/detailLecture/${lectureId}`);
 
                 // 강의 시간표 조회(요일, 시작시간, 끝시간)
                 const schRes = await axios.get(`${API_BASE_URL}/lecture/${lectureId}/schedule`);

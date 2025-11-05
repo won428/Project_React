@@ -41,7 +41,7 @@ function LectureList() {
                 {lecRoom.length > 0 ? (
                     lecRoom.map((item) => (
                         <Col key={item.id}>
-                            <Card className="lecture-card" onClick={() => navigate(`/lectureSession/${item.id}`, { state: item.id })}>
+                            <Card className="lecture-card" onClick={() => navigate(`/roomspec`, { state: item.id })}>
                                 <Card.Body>
                                     <div className="lecture-name">{item.name}</div>
                                     <div className="lecture-info text-muted">

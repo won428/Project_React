@@ -55,10 +55,11 @@ function App() {
 
   // 학생정보
   useEffect(() => {
-    const url = `${API_BASE_URL}/lecture/detail/studentList/${lectureId}`;
+    const url = `${API_BASE_URL}/lecture/detail/enrolledStudentList/${lectureId}`;
     axios
       .get(url)
       .then((response) => {
+        console.log(response.data)
         setStudentList(response.data)
       })
       .catch((error) => {
@@ -74,7 +75,7 @@ function App() {
   // 전체 일괄 선택
   const fillAll = (status) => {
     const next = {};
-    studentList.forEach(s => { next[s.userId] = status; });
+    studentList.forEach(s => { next[s.id] = status; });
     setAttendance(next);
   };
 
@@ -84,8 +85,8 @@ function App() {
   };
 
   // 학생 출결상태(라디오)를 바꿨을때 호출되는 핸들러, 출결상태 업데이트용
-  const onSelect = (userId, status) => {
-    setAttendance(prev => ({ ...prev, [userId]: status }));
+  const onSelect = (id, status) => {
+    setAttendance(prev => ({ ...prev, [id]: status }));
   };
 
   // 선택된 학생 수, 일괄저장 카운트에 사용
@@ -100,7 +101,7 @@ function App() {
     }
 
     // 미선택 검사
-    const unselected = studentList.filter(s => !attendance[s.userId]);
+    const unselected = studentList.filter(s => !attendance[s.id]);
     if (unselected.length > 0) {
       alert(`미선택 ${unselected.lentg}명: ${unselected.slice(0, 3).map(s => s.name).join(",")}${unselected.length > 3 ? " 외" : ""}`);
       return;
@@ -108,9 +109,9 @@ function App() {
 
     // payload 생성
     const payload = studentList.map(s => ({
-      userId: s.userId,
+      userId: s.id,
       attendanceDate: sessionDate,
-      attendStudent: attendance[s.userId],
+      attendStudent: attendance[s.id],
     }));
     try {
       setSavingAll(true);
@@ -204,7 +205,7 @@ function App() {
             </thead>
             <tbody>
               {studentList.map((student) => {
-                const studentId = student.userId;
+                const studentId = student.id;
                 const selected = attendance[studentId];
 
                 return (

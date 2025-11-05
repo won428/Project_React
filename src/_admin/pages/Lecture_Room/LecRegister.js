@@ -2,7 +2,7 @@ import { use, useEffect, useRef, useState } from "react";
 
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, CloseButton, Col, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 function App() {
 
@@ -169,7 +169,9 @@ function App() {
     console.log(files)
   }
 
-
+  const removeFile = (i) => {
+    setFiles(files.filter((_, idx) => idx !== i));
+  };
 
   return (
     <>
@@ -638,9 +640,26 @@ function App() {
               </div>
 
               {files.length > 0 && (
-                <ul className="small mt-1">
+                // 점(•) 유지 + 들여쓰기
+                <ul className="small mt-1 mb-0 ps-4" style={{ listStyle: 'disc' }}>
                   {files.map((f, i) => (
-                    <li key={i}>{f.name}</li>
+                    // li는 display:list-item 그대로 두어 점이 나오도록 함
+                    <li key={i}>
+                      {/* 이름 바로 옆에 X가 붙도록 인라인 배치 */}
+                      <span className="me-1">{f.name}</span>
+                      <Button
+                        size="sm"
+                        variant="outline-secondary"
+                        className="p-0 ms-1 align-baseline border-0 bg-transparent shadow-none"
+                        onClick={() => {
+                          removeFile(i);
+                        }}
+                        aria-label={`${f.name} 삭제`}
+                        title="삭제"
+                      >
+                        ×
+                      </Button>
+                    </li>
                   ))}
                 </ul>
               )}
