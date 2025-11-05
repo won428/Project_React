@@ -48,6 +48,7 @@ import LecturePRO from '../_lecturePS/LectureRoomSpec/Lecture';
 import NoticePRO from '../_lecturePS/LectureRoomSpec/NoticeList/Notice';
 import ToDoListPRO from '../_lecturePS/LectureRoomSpec/ToDoList';
 import Lecture_RoomSP from '../_lecturePS/LectureRoomSpec/Lecture_RoomSP';
+import LectureInsert from '../_lecturePS/LectureRoomSpec/LectureInsert';
 
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
@@ -62,16 +63,15 @@ import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 
 
 import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
-
-
-import Academic_SchedulePro from '../public/pages/Schedule/Academic_SchedulePro';
-
+import LectureSpec from '../_lecturePS/LectureRoomSpec/LectureSpec';
+import Lecture from '../_lecturePS/LectureRoomSpec/Lecture';
 
 import LoginPage from '../public/pages/LoginPage';
 
 import StPage from "../_student/ui/StPage";
 import AdPage from "../_admin/ui/AdPage";
 import ProPage from "../_professor/ui/ProPage";
+import EnPage from "../public/pages/EntireNotice/EntireNoticePage";
 import ProSpecPage from "../_lecturePS/ui/ProSpecPage";
 
 
@@ -89,6 +89,10 @@ import { Layout_lecRoomP } from '../_lecturePS/ui/Layout_lecRoomP';
 import FindPW from "../public/FindPW";
 import SetPW from "../public/SetPW";
 
+
+import NoticeInsertEn from "../public/pages/EntireNotice/NoticeInsAd";
+import NoticeSpecEn from "../public/pages/EntireNotice/NoticeSpec";
+import NoticeListEn from "../public/pages/EntireNotice/NoticeList";
 
 function App() {
     /**
@@ -109,7 +113,22 @@ function App() {
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
 
 
-            {/* 재배치 라우터 목록 */}
+
+
+            {/* 학교 공통 */}
+            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
+                <Route element={<EnPage />}>
+
+                    <Route path='/EnNot' element={<NoticeInsertEn />} ></Route>
+                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
+                    <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
+                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
+                </Route>
+
+
+            </Route>
+
 
 
 
@@ -134,6 +153,9 @@ function App() {
                         <Route path='/asn' element={<AssignUpload />} ></Route>
                         <Route path='/asnlst' element={<AssignList />} ></Route>
                         <Route path='/asnspec' element={<AssignSpec />} ></Route>
+                        <Route path='/lecins' element={<LectureInsert />} ></Route>
+                        <Route path='/Lec' element={<Lecture />} ></Route>
+                        <Route path='/LecSpec' element={<LectureSpec />} ></Route>
                     </Route>
                 </Route>
 
@@ -250,7 +272,7 @@ function App() {
 
 
                     {/* Schedule Tab */}
-                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+
 
 
                 </Route>
@@ -274,10 +296,6 @@ function App() {
 
 
 
-
-
-
-                    <Route path='/acsche/p' element={<Academic_SchedulePro />} ></Route>
                 </Route>
             </Route>
 

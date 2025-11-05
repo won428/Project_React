@@ -106,7 +106,11 @@ function App() {
                         <Card>
                             <CardBody>
                                 <Form>
-                                    <Form.Group className="mb-3" onSubmit={() => SubmitAssign}>
+                                    <Form.Group className="mb-3" onSubmit={(e) => {
+                                        e.preventDefault();
+                                        SubmitAssign()
+                                    }
+                                    }>
                                         <Form.Label>
                                             제목
                                         </Form.Label>
