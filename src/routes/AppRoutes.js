@@ -34,6 +34,7 @@ import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
 import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
 import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
+import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
 
 
 import NoticeIns from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeIns";
@@ -217,6 +218,7 @@ function App() {
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
                         <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
+                        <Route path='/inprolecList' element={<InproLecList />} ></Route>
 
 
 
