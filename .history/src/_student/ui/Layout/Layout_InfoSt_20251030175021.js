@@ -19,7 +19,7 @@ export const LayoutStInfost = () => {
                         <Nav.Link
                             onClick={() => navigate(`/InfoHome`)}
                             className="text-white"
-                        >학생 정보</Nav.Link>
+                        >홈페이지</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/Student_Credit`)}
                             className="text-white"

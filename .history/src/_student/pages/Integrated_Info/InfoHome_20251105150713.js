@@ -9,14 +9,14 @@ function App() {
   // 학생 기본 정보 상태
   const [studentInfo, setStudentInfo] = useState({
     userid: null,
-    userCode: '',
+    userCode: null,
     name: '',
     password: '',
     birthDate: '',
     email: '',
     phone: '',
     gender: '',
-    major: '',
+    major: null,
     type: '',
   });
 
@@ -39,42 +39,59 @@ function App() {
 
   // 에러 및 로딩 상태
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // 인증 상태 및 네비게이트 훅
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-  if (!user) {
-    alert('로그인이 필요한 서비스입니다.');
-    navigate('/');
-    return;
-  }
 
-  axios.get(`${API_BASE_URL}/student/info`,{params: { userId: user?.id }})
-    .then(res => {
-      if (res.data.type === 'STUDENT') {
-        setStudentInfo(res.data.studentInfo);
-        setStatusRecords(res.data.statusRecords);
-        setError(null);
-      } else {
+
+
+
+    // 권한 검사 통과하면 학생정보 API 호출 함수
+    const fetchStudentInfo = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/student/info`, {
+          headers: { Authorization: `Bearer ${sessionStorage.getItem("accessToken")}` }
+        });
+
+        if (response.data.type === 'STUDENT') {
+          setStudentInfo(response.data.studentInfo);
+          setStatusRecords(response.data.statusRecords);
+          setError(null);
+        } else {
+          setStudentInfo(null);
+          setStatusRecords(null);
+          setError('학생 정보만 조회할 수 있습니다.');
+        }
+      } catch (e) {
+        console.error(e);
+        if (e.response && e.response.status === 401) {
+          alert('로그인이 필요한 서비스입니다.');
+          navigate('/');
+        } else {
+          alert('데이터 불러오는 중 오류가 발생했습니다.');
+          navigate(-1);
+        }
+        setError('데이터 불러오기에 실패했습니다.');
         setStudentInfo(null);
         setStatusRecords(null);
-        setError('학생 정보만 조회할 수 있습니다.');
+      } finally {
+        setLoading(false);
       }
-    })
-    .catch(err => {
-      console.error(err);
-      setStudentInfo(null);
-      setStatusRecords(null);
-      alert('데이터 불러오는 중 오류가 발생했습니다.');
-      setError('데이터 불러오기에 실패했습니다.');
-    })
-    
-}, [user, navigate]);
+    };
 
+    fetchStudentInfo();
 
-  
+  }, [user, navigate]);
+
+  if (loading) {
+    return (
+      <Container><div>Loading...</div></Container>
+    );
+  }
 
   if (error) {
     return (
@@ -109,7 +126,7 @@ function App() {
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>전화번호</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.phone}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>생년월일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.birthDate}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>성별</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.gender}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>소속학과</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.major || ''}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>소속학과</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.major?.name || ''}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>사용자 유형</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.type}</td></tr>
         </tbody>
       </table>

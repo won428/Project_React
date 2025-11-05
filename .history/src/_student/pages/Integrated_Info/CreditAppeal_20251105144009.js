@@ -23,7 +23,7 @@ function CreditAppeal() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const userId = user?.id;
-    const { lectureId } = useParams();
+    const { userId } = useParams();
 
     const [lectureName, setLectureName] = useState('');
     const [professorId, setProfessorId] = useState('');
