@@ -2,9 +2,11 @@ import { use, useEffect, useRef, useState } from "react";
 
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
-import { Button, CloseButton, Col, Form, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Button, Col, Form, Row } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
 function App() {
+
+     const { id } = useParams()
 
     const [collegeList, setCollegeList] = useState([])
     const [professorList, setProfessorList] = useState([])
@@ -21,7 +23,7 @@ function App() {
         major:'',
         status:'',
         totalStudent:'',
-        completionDiv:''
+        completionDiv:'',
     });
     const [major, setMajor] = useState('');
     const [schedule, setSchedule] = useState([]);
@@ -42,7 +44,27 @@ function App() {
 
     
     const navigate = useNavigate(); 
+    
+    useEffect(()=>{
+      const url = `${API_BASE_URL}/lecture/findOne/${id}`;
+      axios
+        .get(url)
+        .then((response)=>{
+          console.log(response.data)
+          setSchedule(response.data.lectureSchedules)
+          setLecture(response.data)
+          setPercent(response.data.weightsDto)
+          setCollege(response.data.college)
+          setMajor(response.data.major)
+          setFiles(response.data.attachmentDtos)
+        })
+        .catch((error)=>{
+          console.error("status:", error.response?.status);
+          console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+        })
 
+    },
+    [])
 
     useEffect(() => {
         const url = `${API_BASE_URL}/college/list`
@@ -132,7 +154,9 @@ function App() {
 
             }
 
-            
+            console.log(lecture);
+            console.log(schedule);
+            console.log(percent);
 
             const formData = new FormData();
             formData.append("lecture",  new Blob([JSON.stringify(lecture)],  { type: "application/json" }));
@@ -140,8 +164,8 @@ function App() {
             formData.append("percent", new Blob([JSON.stringify(percent)], { type: "application/json" }))
             files.forEach(file => formData.append("files", file, file.name)); // File은 그대로
 
-            const url = `${API_BASE_URL}/lecture/lectureRegister`;
-            const response = await axios.post(url, formData);
+            const url = `${API_BASE_URL}/lecture/lectureUpdate`;
+            const response = await axios.patch(url, formData);
 
             if (response.status === 200) {
               alert("등록 완료");
@@ -168,10 +192,10 @@ function App() {
       e.target.value = "";
       console.log(files)
    }
-   
-   const removeFile = (i) => {
-  setFiles(files.filter((_, idx) => idx !== i));
-  };
+    const removeFile = (i) => {
+    setFiles(files.filter((_, idx) => idx !== i));
+    };   
+
 
     return (
   <>
@@ -184,10 +208,12 @@ function App() {
           <Form.Group>
             <Form.Label className="small fw-semibold">학년</Form.Label>
             <Form.Select size="sm"
+              value={lecture.level}
               onChange={(e) => {
                 const value = e.target.value;
                 setLecture(prev => ({ ...prev, level: Number(value) }))
                 console.log(e.target.value)
+                console.log(lecture);
               }}>
               <option value={'0'}>선택</option>
               <option value={'1'}>1학년</option>
@@ -202,6 +228,7 @@ function App() {
           <Form.Group>
             <Form.Label className="small fw-semibold">학점</Form.Label>
             <Form.Select size="sm"
+              value={lecture.credit}
               onChange={(e) => {
                 const value = e.target.value;
                 setLecture(prev => ({ ...prev, credit: value }))
@@ -220,6 +247,7 @@ function App() {
           <Form.Group>
             <Form.Label className="small fw-semibold">상태</Form.Label>
             <Form.Select size="sm"
+              value={lecture.status}
               onChange={(e) => {
                 const value = e.target.value;
                 setLecture(prev => ({ ...prev, status: value }))
@@ -244,6 +272,9 @@ function App() {
                 const value = e.target.value
                 setCollege(value)
                 console.log(value)
+                setLecture((pre)=>({
+                  ...pre, major: '', user: ''
+                }))
               }}>
               <option value={''}>단과 대학을 선택해주세요</option>
               {collegeList.map(c => (
@@ -261,7 +292,7 @@ function App() {
               onChange={(e) => {
                 const value = e.target.value
                 setMajor(value)
-                setLecture((previous)=>({...previous, major: value}))
+                setLecture((previous)=>({...previous, major: value , user: ''}))
                 console.log(e.target.value)
               }}>
               <option value={''}>소속 학과를 선택해주세요</option>
@@ -309,6 +340,7 @@ function App() {
           <Form.Group>
             <Form.Label className="small fw-semibold">이수 구분</Form.Label>
             <Form.Select size="sm"
+              value={lecture.completionDiv}
               onChange={(e) => {
                 const value = e.target.value;
                 setLecture(prev => ({ ...prev, completionDiv: value }))
@@ -399,6 +431,7 @@ function App() {
                   <span className="input-group-text">출석</span>
                   <Form.Control
                     type="number"
+                    value={percent.attendance}
                     placeholder="예: 20"
                     min="0"
                     max="100"
@@ -418,6 +451,7 @@ function App() {
                   <span className="input-group-text">과제</span>
                   <Form.Control
                     type="number"
+                    value={percent.assignment}
                     placeholder="예: 20"
                     min="0"
                     max="100"
@@ -437,6 +471,7 @@ function App() {
                   <span className="input-group-text">중간</span>
                   <Form.Control
                     type="number"
+                    value={percent.midtermExam}
                     placeholder="예: 30"
                     min="0"
                     max="100"
@@ -456,6 +491,7 @@ function App() {
                   <span className="input-group-text">기말</span>
                   <Form.Control
                     type="number"
+                    value={percent.finalExam}
                     placeholder="예: 30"
                     min="0"
                     max="100"
@@ -485,6 +521,7 @@ function App() {
             {/* 값/로직 바인딩 없음, 옵션 기본값만 1개 */}
            <Form.Select
               size="sm"
+              value={schedule.length}
               onChange={(e) => {
                 console.log(schedule)
                 const count = Number(e.target.value) || 0;
