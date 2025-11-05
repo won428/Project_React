@@ -135,11 +135,30 @@ function App() {
 
   // 초기 진입 시 잠금여부 조회 - 라디오 비활성화 영구화
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/lecture/${lectureId}/attendance/finalized`, {
-      params: { date: sessionDate }
-    })
-      .then(res => setIsFinalized(Boolean(res.data?.finalized)))
-      .catch(() => { })
+    if (!lectureId || !sessionDate) return;
+
+    (async () => {
+      try {
+        const finRes = await axios.get(`${API_BASE_URL}/lecture/${lectureId}/attendance/finalized`, {
+          params: { date: sessionDate },
+        });
+        const fin = Boolean(finRes.data?.finalized);
+        setIsFinalized(fin);
+
+        if (fin) {
+          const res = await axios.get(`${API_BASE_URL}/lecture/${lectureId}/attendance`, {
+            params: { date: sessionDate },
+          });
+          const next = {};
+          (res.data ?? []).forEach(r => {
+            next[r.userId] = r.attendStudent;   // 저장된 상태를 그대로 복원
+          });
+          setAttendance(next);
+        }
+      } catch (e) {
+        // noop
+      }
+    })();
   }, [lectureId, sessionDate]);
 
   return (
