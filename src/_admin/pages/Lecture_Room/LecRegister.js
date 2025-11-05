@@ -24,11 +24,21 @@ function App() {
         completionDiv:''
     });
     const [major, setMajor] = useState('');
+    const [schedule, setSchedule] = useState([]);
     
     const startRef = useRef(null);
     const endRef = useRef(null);
-    
-    
+    const emptyRow = () => ({ day: null, startTime: null, endTime: null});
+    const [files, setFiles] = useState([]);
+    const fileRef = useRef(null);
+    const [percent, setPercent] = useState({
+
+      attendance: 20,
+      assignment: 20,  
+      midtermExam : 30,
+      finalExam: 30
+
+    })
 
     
     const navigate = useNavigate(); 
@@ -40,7 +50,7 @@ function App() {
             .get(url)
             .then((response) => {
 
-
+               
                 setCollegeList(response.data)
                 console.log(collegeList)
             })
@@ -93,23 +103,73 @@ function App() {
     
     const signup = async (e) => {
         try {
+
             e.preventDefault();
-            const url = `${API_BASE_URL}/lecture/admin/lectureRegister`;
-            const response = await axios.post(url, lecture);
+            const totalPercent = Number(percent.assignment) + Number(percent.attendance) + Number(percent.midtermExam) + Number(percent.finalExam)
+            if(totalPercent > 100){
+              alert('퍼센트 비율은 100을 넘을 수 없습니다.')
+              return;
+            }else if(totalPercent !== 100){
+              alert('퍼센트 비율의 합이 100이 되어야합니다.')
+              return;
+            }
+
+            if(lecture.completionDiv === null || lecture.completionDiv === ''){
+              alert('이수 구분을 선택해주세요')
+              return;
+            }
+
+            if(lecture.status === null || lecture.status === ''){
+              alert('상태를 선택해주세요.')
+              return;
+            }
+            if(college === null){
+              alert('소속 단과대학을 선택해주세요.')
+              return;
+            }
+
+            if(lecture.startDate.length){
+
+            }
+
+            
+
+            const formData = new FormData();
+            formData.append("lecture",  new Blob([JSON.stringify(lecture)],  { type: "application/json" }));
+            formData.append("schedule", new Blob([JSON.stringify(schedule)], { type: "application/json" }));
+            formData.append("percent", new Blob([JSON.stringify(percent)], { type: "application/json" }))
+            files.forEach(file => formData.append("files", file, file.name)); // File은 그대로
+
+            const url = `${API_BASE_URL}/lecture/lectureRegister`;
+            const response = await axios.post(url, formData);
 
             if (response.status === 200) {
-                alert('등록 성공');
-                navigate('/lectureList')
+              alert("등록 완료");
+              navigate('/lectureList');
             }
+            
         } catch (error) {
-            alert('등록실패');
-            console.error("status:", error.response?.status);
-            console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+             const err = error.response;
+        if (!err) {
+            alert('네트워크 오류가 발생하였습니다');
+            return;
+        }
+        const message = err.data?.message ?? '오류 발생';
+        alert(message);
 
         }
 
 
     };
+
+    const selectFile = (e) =>{
+      const picked = Array.from(e.target.files || []);
+      setFiles((prev) => [...prev, ...picked]);
+      e.target.value = "";
+      console.log(files)
+   }
+   
+
 
     return (
   <>
@@ -127,7 +187,7 @@ function App() {
                 setLecture(prev => ({ ...prev, level: Number(value) }))
                 console.log(e.target.value)
               }}>
-              <option value={''}>선택</option>
+              <option value={'0'}>선택</option>
               <option value={'1'}>1학년</option>
               <option value={'2'}>2학년</option>
               <option value={'3'}>3학년</option>
@@ -287,6 +347,8 @@ function App() {
                 placeholder="YYYY-MM-DD"
                 name="birthdate"
                 value={lecture.startDate}
+                min="0001-01-01"
+                max="9999-12-31" 
                 onChange={(event) => {
                   setLecture(previous => ({ ...previous, startDate: event.target.value }))
                   console.log(event.target.value)
@@ -309,6 +371,8 @@ function App() {
                 placeholder="YYYY-MM-DD"
                 name="birthdate"
                 value={lecture.endDate}
+                min="0001-01-01"
+                max="9999-12-31" 
                 onChange={(event) => {
                   setLecture(previous => ({ ...previous, endDate: event.target.value }))
                   console.log(event.target.value)
@@ -321,7 +385,268 @@ function App() {
           </Form.Group>
         </Col>
 
-        {/* 5) 강의 설명 (넓게 한 줄) */}
+        {/* 4-a) 성적 산출 비율 (출석/과제/중간/기말) — UI 전용 */}
+        <Col md={12}>
+          <Form.Group className="mt-2">
+            <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
+
+            {/* 한 줄 입력폼 */}
+            <Row className="g-2 align-items-center">
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">출석</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 20"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="attendance"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, attendance : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+                
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">과제</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 20"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="assignment"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, assignment : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">중간</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 30"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="midtermExam"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, midtermExam : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+
+              <Col md={3}>
+                <div className="input-group input-group-sm">
+                  <span className="input-group-text">기말</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="예: 30"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="finalExam"
+                    onChange={(e)=>{
+                      const value = e.target.value;
+                      setPercent((previous)=>({...previous, finalExam : value}))
+                    }}
+                  />
+                  <span className="input-group-text">%</span>
+                </div>
+              </Col>
+            </Row>
+
+            <div className="small text-muted mt-1">
+              합계가 100%가 되도록 입력해 주세요.
+              기본값은 20, 20, 30, 30입니다.
+            </div>
+          </Form.Group>
+        </Col>
+
+        {/* 4-b) 수업일수 & 요일/시간 (UI만 추가) */}
+        <Col md={12}>
+          <Form.Group className="mt-2">
+            <Form.Label className="small fw-semibold">수업 일수</Form.Label>
+            {/* 값/로직 바인딩 없음, 옵션 기본값만 1개 */}
+           <Form.Select
+              size="sm"
+              onChange={(e) => {
+                console.log(schedule)
+                const count = Number(e.target.value) || 0;
+                setSchedule(prev => {
+                  // 1) 기존값 보존 (앞에서부터 count개)
+                  const next = prev.slice(0, count).map(r => r ?? emptyRow());
+                  // 2) 모자라면 빈 행을 뒤에 채움
+                  while (next.length < count) next.push(emptyRow());
+                  return next;
+                });
+              }}
+            >
+              <option value={''}>선택</option>
+              <option value={1}>1일</option>
+              <option value={2}>2일</option>
+              <option value={3}>3일</option>
+              <option value={4}>4일</option>
+              <option value={5}>5일</option>
+            </Form.Select>
+          </Form.Group>
+        </Col>
+
+                    {schedule.map((row, i) => {
+              // 현재 행(i)을 제외한 다른 행들이 고른 요일들
+              const usedByOthers = new Set(
+                schedule
+                  .filter((_, idx) => idx !== i)
+                  .map(r => r.day)
+                  .filter(Boolean)
+              );
+
+              return (
+                <Col md={12} key={i}>
+                  <Row className="g-2 align-items-end">
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="small fw-semibold">요일</Form.Label>
+                        <Form.Select
+                          size="sm"
+                          value={row.day}
+                          onChange={e =>
+                            setSchedule(prev => {
+                              const next = prev.map((row, index) => {
+                                if (index === i) {
+                                  return { ...row, day: e.target.value || null}; // 해당 행만 교체
+                                }
+                                return row; // 나머지는 그대로
+                              });
+                              return next;
+                            })
+                          }
+                        >
+                          <option value="">선택</option>
+                          <option value="MONDAY" disabled={usedByOthers.has('MONDAY')}>월요일</option>
+                          <option value="TUESDAY" disabled={usedByOthers.has('TUESDAY')}>화요일</option>
+                          <option value="WEDNESDAY" disabled={usedByOthers.has('WEDNESDAY')}>수요일</option>
+                          <option value="THURSDAY" disabled={usedByOthers.has('THURSDAY')}>목요일</option>
+                          <option value="FRIDAY" disabled={usedByOthers.has('FRIDAY')}>금요일</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="small fw-semibold">시작 시간</Form.Label>
+                        <Form.Select
+                          size="sm"
+                          value={row.startTime}
+                          onChange={e =>
+                            setSchedule(prev => {
+                              const next = prev.map((row, index) => {
+                                if (index === i) {
+                                  return { ...row, startTime: e.target.value || null }; // 해당 행만 교체
+                                }
+                                return row; // 나머지는 그대로
+                              });
+                              return next;
+                            })
+                          }
+                        >
+                          <option value={''}>선택</option>
+                          <option value={'10:00'}>1교시</option>
+                          <option value={'11:00'}>2교시</option>
+                          <option value={'12:00'}>3교시</option>
+                          <option value={'13:00'}>4교시</option>
+                          <option value={'14:00'}>5교시</option>
+                          <option value={'15:00'}>6교시</option>
+                          <option value={'16:00'}>7교시</option>
+                          <option value={'17:00'}>8교시</option>
+                          <option value={'18:00'}>9교시</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label className="small fw-semibold">끝나는 시간</Form.Label>
+                        <Form.Select
+                          size="sm"
+                          value={row.endTime}
+                          onChange={e =>
+                            setSchedule(prev => {
+                              const next = prev.map((row, index) => {
+                                if (index === i) {
+                                  return { ...row, endTime: e.target.value || null }; // 해당 행만 교체
+                                }
+                                return row; // 나머지는 그대로
+                              });
+                              return next;
+                            })
+                          }
+                        >
+                          <option value={''}>선택</option>
+                          <option value={'11:00'}>1교시</option>
+                          <option value={'12:00'}>2교시</option>
+                          <option value={'13:00'}>3교시</option>
+                          <option value={'14:00'}>4교시</option>
+                          <option value={'15:00'}>5교시</option>
+                          <option value={'16:00'}>6교시</option>
+                          <option value={'17:00'}>7교시</option>
+                          <option value={'18:00'}>8교시</option>
+                          <option value={'19:00'}>9교시</option>
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Col>
+              );
+            })}
+      
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label className="small fw-semibold me-2">강의 자료</Form.Label>
+            <Form.Control
+              size="sm"
+              type="file"
+              multiple
+              onChange={selectFile}
+              ref={fileRef}
+              className="d-none"            // ← 기본 표시 숨김
+            />
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={() => fileRef.current?.click()}
+            >
+              파일 선택
+            </Button>
+
+            {/* 상태 문구 */}
+            <div className="small mt-2 text-muted">
+              {files.length ? `${files.length}개 파일 선택됨` : '선택된 파일 없음'}
+            </div>
+
+            {files.length > 0 && (
+              <ul className="small mt-1">
+                {files.map((f, i) => (
+                  <li key={i}>{f.name}</li>
+                ))}
+              </ul>
+            )}
+          </Form.Group>
+        </Col>
+      
         <Col md={12}>
           <Form.Group>
             <Form.Label className="small fw-semibold">강의 설명</Form.Label>
@@ -336,7 +661,6 @@ function App() {
           </Form.Group>
         </Col>
 
-        {/* 6) 제출 버튼 */}
         <Col xs={12} className="mt-2">
           <Button size="sm" variant="primary" type="submit">
             등록하기

@@ -4,15 +4,15 @@ import { Navigate, Outlet } from "react-router-dom"; import { useEffect } from "
 ;
 
 const PrivateRoute = ({ allowedRoles }) => {
-    const { user, isloading } = useAuth();
+    const { user, isLoading } = useAuth();
     console.log(user);
     console.log(allowedRoles);
 
 
-    if (isloading) { return <div>Loading...</div>; }
+    if (isLoading) { return <div>Loading...</div>; }
     if (!user) { return <Navigate to="/" replace />; }
-    if (!user.isAuthenticated && sessionStorage.getItem("accessToken")) {
-        if (!sessionStorage.getItem("accessToken")) {
+    if (!user.isAuthenticated && localStorage.getItem("accessToken")) {
+        if (!localStorage.getItem("accessToken")) {
             return <Navigate to="/" replace />;
         }
     }

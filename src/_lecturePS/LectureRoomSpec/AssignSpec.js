@@ -339,12 +339,18 @@ function App() {
         formData.append("content", content);
 
         // 🚨 현재 로직: f.file이 없는 기존 파일은 'undefined'로 전송되어 누락됨
-        if (subfiles && subfiles.length > 0) {
+
+        if (subfiles != null && subfiles.length > 0) {
             subfiles.forEach(f => {
-                if (f.file) formData.append("files", f.file);
+                if (f.file) {
+                    // (A) "새로 추가된 파일" (File 객체)
+                    formData.append("files", f.file);
+                } else if (f.storedKey) {
+                    // (B) "유지해야 할 기존 파일" (고유 키)
+                    formData.append("existingFileKeys", f.storedKey);
+                }
             });
         }
-
         try {
             const res = await axios.put(url, formData, { headers: { "Content-Type": "multipart/form-data" } });
             if (res.status === 200) {
@@ -361,7 +367,8 @@ function App() {
     // 3. 파일 선택 핸들러
     const Fileselect = e => {
         const selectedFiles = Array.from(e.target.files);
-        if (selectedFiles.length > 3) {
+        const totalFiles = subfiles.length + selectedFiles.length;
+        if (totalFiles > 3) {
             alert("3개까지만 첨부할 수 있습니다.");
             fileRef.current.value = "";
             return;
@@ -370,7 +377,7 @@ function App() {
             file,
             name: file.name,
             type: file.type,
-            url: URL.createObjectURL(file)
+            url: URL.createObjectURL(file),
         })));
         if (newFiles) {
             setSubfiles(prev => [...prev, ...newFiles]);
@@ -380,9 +387,11 @@ function App() {
     // 4. 파일 삭제 핸들러
     const removeFile = name => {
         const fileToRemove = subfiles.find(f => f.name === name);
-        if (fileToRemove) URL.revokeObjectURL(fileToRemove.url);
+        if (fileToRemove && fileToRemove.file) URL.revokeObjectURL(fileToRemove.url);
         setSubfiles(prev => prev.filter(f => f.name !== name));
-        fileRef.current.value = "";
+        if (fileRef.current) { // (fileRef.current가 null일 수 있으니 체크)
+            fileRef.current.value = "";
+        }
 
     };
     console.log("subfiles:", subfiles);
@@ -399,6 +408,7 @@ function App() {
                 url: `${API_BASE_URL}/notice/files/download/${file.storedKey}`,
                 type: file.contentType,
                 size: file.sizeBytes,
+                storedKey: file.storedKey
                 // 'file' 속성이 없음! -> SubmitMod에서 문제 발생
             })));
         }
@@ -418,7 +428,7 @@ function App() {
                 url: `${API_BASE_URL}/notice/files/download/${file.storedKey}`,
                 type: file.contentType,
                 size: file.sizeBytes,
-
+                storedKey: file.storedKey
             })))
         }
         setMod(true)
@@ -440,6 +450,8 @@ function App() {
         }
 
     }
+    console.log(subfiles);
+
     // 🧩 메인 렌더링
     return (
         <Container style={{ maxWidth: "1000px", marginTop: "2rem" }}>
