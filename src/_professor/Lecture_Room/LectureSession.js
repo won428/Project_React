@@ -106,7 +106,7 @@ function LectureSession() {
                         <Col key={s.date}>
                             <Card
                                 className={`h-100 cursor-pointer ${isFuture ? 'opacity-50 pe-none' : 'card-hover'}`}
-                                onClick={!isFuture ? () => navigate(`/LectureDetail/${lectureId}`) : undefined}
+                                onClick={!isFuture ? () => navigate(`/LectureDetail/${lectureId}?date=${encodeURIComponent(s.date)}`, { state: { lectureId, sessionDate: s.date }, }) : undefined}
                             >
                                 <Card.Body>
                                     <div className="fw-semibold">{s.weekNo}주차 · {dayName[s.dayOfWeek]}</div>
