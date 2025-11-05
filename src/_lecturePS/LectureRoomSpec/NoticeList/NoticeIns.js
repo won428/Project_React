@@ -104,18 +104,7 @@ function App() {
                                             onChange={(evt) => setTitle(evt.target.value)}
                                         />
 
-                                    </Form.Group>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label>
-                                            내용
-                                        </Form.Label>
-                                        <Form.Control
-                                            as="textarea"
-                                            row={10}
-                                            placeholder="내용을 입력하세요"
-                                            value={content}
-                                            onChange={(evt) => setContent(evt.target.value)}
-                                        />
+
                                     </Form.Group>
                                     <Form.Group>
                                         <Form.Label>Files</Form.Label>

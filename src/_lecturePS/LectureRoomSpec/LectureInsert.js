@@ -100,6 +100,7 @@ function App() {
 
 
 
+
     return (
         <>
             <Container style={{ maxWidth: "800px", marginTop: "2rem" }}>
@@ -114,6 +115,10 @@ function App() {
                                     제목
                                 </Form.Label>
                                 <Form.Control
+                                    type="text"
+                                    placeholder="제목을 입력하세요"
+                                    value={title}
+                                    onChange={(evt) => setTitle(evt.target.value)}
                                 />
                             </Form.Group>
                             <Form.Group>

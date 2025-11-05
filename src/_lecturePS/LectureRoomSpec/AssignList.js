@@ -43,6 +43,8 @@ function App() {
     const startPage = Math.max(1, page - Math.floor(pageRange / 2));
     const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
+
+
     return (
         <Container style={{ maxWidth: "700px", marginTop: "2rem" }}>
 

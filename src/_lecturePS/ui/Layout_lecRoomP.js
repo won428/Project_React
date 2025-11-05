@@ -26,7 +26,7 @@ export const Layout_lecRoomP = () => {
                             onClick={() => navigate(`/asnlst`)}
                             className="text-white">과제</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/lecins`)}
+                            onClick={() => navigate(`/Lec`)}
                             className="text-white">강의</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/lectureDetail/${lectureId}`, { state: lectureId })}

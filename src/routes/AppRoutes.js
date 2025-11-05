@@ -62,8 +62,8 @@ import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 
 
 import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
-
-
+import LectureSpec from '../_lecturePS/LectureRoomSpec/LectureSpec';
+import Lecture from '../_lecturePS/LectureRoomSpec/Lecture';
 
 import LoginPage from '../public/pages/LoginPage';
 
@@ -153,6 +153,8 @@ function App() {
                         <Route path='/asnlst' element={<AssignList />} ></Route>
                         <Route path='/asnspec' element={<AssignSpec />} ></Route>
                         <Route path='/lecins' element={<LectureInsert />} ></Route>
+                        <Route path='/Lec' element={<Lecture />} ></Route>
+                        <Route path='/LecSpec' element={<LectureSpec />} ></Route>
                     </Route>
                 </Route>
 
