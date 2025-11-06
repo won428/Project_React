@@ -4,7 +4,6 @@ import { Button, Container } from 'react-bootstrap';
 import axios from 'axios';
 import { useAuth } from '../../../public/context/UserContext'; // 임포트 경로를 실제에 맞게 조정하세요
 import { API_BASE_URL } from "../../../public/config/config";
-import { useAuth } from "../../../public/context/UserContext";
 
 function App() {
     // 학생 기본 정보 상태
@@ -54,11 +53,14 @@ function App() {
 
         axios.get(`${API_BASE_URL}/student/info`, { params: { userId: user?.id } })
             .then(res => {
-                if (res.data.type === 'STUDENT') {
+                if (res.data.studentInfo.type === 'STUDENT') {
+                    console.log(res.data);
+
                     setStudentInfo(res.data.studentInfo);
                     setStatusRecords(res.data.statusRecords);
                     setError(null);
                 } else {
+                    console.log(res.data);
                     setStudentInfo(null);
                     setStatusRecords(null);
                     setError('학생 정보만 조회할 수 있습니다.');
