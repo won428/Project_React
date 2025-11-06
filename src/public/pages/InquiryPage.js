@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -22,6 +22,7 @@ export default function PostViewUI() {
     userId : user.id,
     postId : id
   })
+  const [commentList, setCommentList] = useState([]);
 
    const typeMap2 = {
     'LECTURE': "[강의]",
@@ -29,17 +30,31 @@ export default function PostViewUI() {
     "OTHERS": "[기타]",
   };
 
-  useEffect(() => {
-    const url = `${API_BASE_URL}/inquiry/page/${id}`;
-    axios
-      .get(url)
-      .then((res) => {
-        setPage(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  const loadPost = useCallback(async () => {
+    try {
+      const url = `${API_BASE_URL}/inquiry/page/${id}`;
+      const { data } = await axios.get(url);
+      setPage(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [id]);
+
+  const loadComments = useCallback(async () => {
+    try {
+      const url = `${API_BASE_URL}/inquiry/comment/list/${id}`;
+      const { data } = await axios.get(url);
+      setCommentList(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [id]);
+
+  useEffect(()=>{
+    loadPost();
+    loadComments();
+  },[loadPost, loadComments])
+
 
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`;
@@ -74,12 +89,19 @@ export default function PostViewUI() {
     e.preventDefault();
 
     try {
+        if(comment.content === null || comment.content === ''){
+          alert('댓글 내용을 입력하셔야 합니다.')
+          return;
+        }
+
         const url = `${API_BASE_URL}/inquiry/write/comment`;
         const response = await axios.post(url,comment,
             {headers: { 'Content-Type': 'application/json' }}
         )
     if (response.status === 200) {
               alert("댓글 등록 완료");
+              setComment((pre)=>({...pre, content: ''}));
+              await loadComments();
             }    
     } catch (error) {
              const err = error.response;
@@ -150,36 +172,40 @@ export default function PostViewUI() {
 
       <div className="d-flex justify-content-end mb-2">
         <Button variant="secondary" size="sm"
-            onClick={()=> navigate(`/inquiryBoard`)}
+            onClick={()=> navigate(-1)}
         >돌아가기</Button>
       </div>
 
       <Card className="mb-5">
         <Card.Header className="py-2">댓글</Card.Header>
 
-        <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0">
-          <div className="d-flex gap-3">
-            <div
-              className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
-              style={{ width: 40, height: 40 }}
-            >
-              <span className="small">닉</span>
-            </div>
-            <div className="border rounded w-100 p-3">
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <span className="fw-semibold">닉네임</span>
-                <span className="text-muted small">YYYY.MM.DD HH:mm</span>
+        {commentList.map((comment)=>(
+          <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={comment.postId}>
+            <div className="d-flex gap-3">
+              <div
+                className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 40, height: 40 }}
+              >
+               <span className="small">{(comment?.userName ?? '').trim().slice(0, 1)}</span>
               </div>
-              <div style={{ whiteSpace: "pre-wrap" }}>
-                댓글 내용 예시(한 개만).
+              <div className="border rounded w-100 p-3">
+                <div className="d-flex align-items-center gap-2 mb-2">
+                  <span className="fw-semibold">{comment.userName}</span>
+                  <span className="text-muted small">{comment.createdAt}</span>
+                </div>
+                <div style={{ whiteSpace: "pre-wrap" }}>
+                  {comment.content}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+))}
+        
 
         <Card.Body>
           <div className="position-relative">
             <Form.Control
+              value={comment.content}
               as="textarea"
               rows={3}
               placeholder="댓글을 남겨보세요"

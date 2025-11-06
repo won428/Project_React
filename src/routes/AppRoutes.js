@@ -37,6 +37,7 @@ import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration
 import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
 import LecUpdateAd from '../_admin/pages/Lecture_Room/LecUpdateAd'
 import CourseRegHistory from '../_student/pages/LectureRoom/CourseRegHistory'
+import InquiryForAd from '../_admin/pages/StudentCon/InquiryForAd';
 
 
 import NoticeIns from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeIns";
@@ -196,6 +197,7 @@ function App() {
                         <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
+                        <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
                     </Route>
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
