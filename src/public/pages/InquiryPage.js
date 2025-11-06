@@ -187,7 +187,7 @@ export default function PostViewUI() {
               style={{ resize: "none" }}
               onChange={(e)=>{
                 const value = e.target.value;
-                setComment(value)
+                setComment((pre)=>({...pre, content : value}))
                 console.log(value)
               }}
             />
