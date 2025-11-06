@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, Col, Row, Container, Spinner } from "react-bootstrap";
 import { API_BASE_URL } from "../../public/config/config";
 import { useAuth } from "../../public/context/UserContext";
-import "../ui/LectureList.css"; // 스타일 분리 추천
+import "../ui/LectureList.css";
 import { useNavigate } from "react-router-dom";
 
 function LectureList() {
