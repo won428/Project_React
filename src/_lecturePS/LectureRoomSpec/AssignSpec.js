@@ -67,42 +67,49 @@ const ProfessorSubmitTable = ({ resdata, API_BASE_URL }) => (
 const StudentSubmitForm = ({
     SubmitAssign, title, setTitle, content, setContent,
     fileRef, Fileselect, subfiles, removeFile, navigate
-}) => (
-    <Card>
-        <CardBody>
-            {/* ✅ FIX 1: e.preventDefault()를 추가하여 등록 시 새로고침 방지 */}
-            <Form onSubmit={e => {
-                e.preventDefault();
-                SubmitAssign();
-            }}>
-                <Form.Group className="mb-3">
-                    <Form.Label>제목</Form.Label>
-                    <Form.Control value={title} onChange={e => setTitle(e.target.value)} placeholder="과제 제목" />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>내용</Form.Label>
-                    <Form.Control as="textarea" rows={10} value={content} onChange={(evt) => setContent(evt.target.value)} placeholder="과제 내용" />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>파일 첨부</Form.Label>
-                    <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
-                </Form.Group>
-                <div className="d-flex flex-wrap gap-2 mt-2">
-                    {subfiles.map((f, i) => (
-                        <div key={i} style={{ position: "relative", width: "100px", textAlign: "center" }}>
-                            {(f.type || "").startsWith("image/") ? <img src={f.url} alt="preview" width="100%" /> : <div>{f.name}</div>}
-                            <Button variant="danger" size="sm" style={{ position: 'absolute', top: '0', right: '0', borderRadius: '50%' }} onClick={() => removeFile(f.name)}>X</Button>
-                        </div>
-                    ))}
-                </div>
-                <div className="d-flex justify-content-end mt-3 gap-2">
-                    <Button type="submit">등록</Button>
-                    <Button variant="secondary" onClick={() => navigate("/asnlst")}>취소</Button>
-                </div>
-            </Form>
-        </CardBody>
-    </Card>
-);
+}) => {
+
+    const currentDate = new Date();
+    return (
+        <Card>
+            <CardBody>
+                {/* ✅ FIX 1: e.preventDefault()를 추가하여 등록 시 새로고침 방지 */}
+                <Form onSubmit={e => {
+                    e.preventDefault();
+                    SubmitAssign();
+                }}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>제목</Form.Label>
+                        <Form.Control value={title} onChange={e => setTitle(e.target.value)} placeholder="과제 제목" />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>내용</Form.Label>
+                        <Form.Control as="textarea" rows={10} value={content} onChange={(evt) => setContent(evt.target.value)} placeholder="과제 내용" />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>파일 첨부</Form.Label>
+                        <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
+                    </Form.Group>
+                    <div className="d-flex flex-wrap gap-2 mt-2">
+                        {subfiles.map((f, i) => (
+                            <div key={i} style={{ position: "relative", width: "100px", textAlign: "center" }}>
+                                {(f.type || "").startsWith("image/") ? <img src={f.url} alt="preview" width="100%" /> : <div>{f.name}</div>}
+                                <Button variant="danger" size="sm" style={{ position: 'absolute', top: '0', right: '0', borderRadius: '50%' }} onClick={() => removeFile(f.name)}>X</Button>
+                            </div>
+                        ))}
+                    </div>
+                    {/* {currentDate>
+                        ? <div className="d-flex justify-content-end mt-3 gap-2">
+                            <Button type="submit">등록</Button>
+                            <Button variant="secondary" onClick={() => navigate("/asnlst")}>취소</Button>
+                        </div> :
+                            <></>
+                    } */}
+                </Form>
+            </CardBody>
+        </Card>
+    );
+}
 
 /**
  * 7. (학생용) 과제 수정 폼 (mod === true)
@@ -338,8 +345,6 @@ function App() {
         formData.append("title", title);
         formData.append("content", content);
 
-        // 🚨 현재 로직: f.file이 없는 기존 파일은 'undefined'로 전송되어 누락됨
-
         if (subfiles != null && subfiles.length > 0) {
             subfiles.forEach(f => {
                 if (f.file) {
@@ -409,7 +414,6 @@ function App() {
                 type: file.contentType,
                 size: file.sizeBytes,
                 storedKey: file.storedKey
-                // 'file' 속성이 없음! -> SubmitMod에서 문제 발생
             })));
         }
         console.log("subfiles:", subfiles);
@@ -435,7 +439,7 @@ function App() {
     }
 
 
-
+    //disable 설정 현재 날짜에 맞춰 확인 back에 전달 제출 block 
     const deleteAssign = async (e) => {
         const url = `${API_BASE_URL}/assign/delete/${resdata.id}`
         const res = await axios.delete(url);
