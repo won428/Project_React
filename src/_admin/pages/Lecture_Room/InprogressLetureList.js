@@ -129,7 +129,7 @@ function App() {
       checked ? (prev.includes(value) ? prev : [...prev, value]) : prev.filter((v) => v !== value)
     );
   };
-   const addRejectSelect = (e) => {
+  const addRejectSelect = (e) => {
     const value = e.target.value;
     const checked = e.target.checked;
     setrejecSelected((prev) =>
@@ -249,21 +249,21 @@ function App() {
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "15rem" }} /> {/* 학기 */}
-              <col style={{ width: "9rem" }} /> {/* 수업 요일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "7rem" }} /> {/* 상세보기 */}
-              <col style={{ width: "5rem" }} /> {/* 상태 */}
-              <col style={{ width: "6rem" }} /> {/* 기능(개강) */}
-              <col style={{ width: "6rem" }} /> {/* 기능(폐강) */}
+              <col style={{ width: "9rem" }} />  {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "7rem" }} />  {/* 상세보기 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 수정 (추가) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(종강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -280,7 +280,8 @@ function App() {
                 <th>학점</th>
                 <th>상세보기</th>
                 <th>상태</th>
-                <th colSpan={2}>기능</th>
+                <th>수정</th> {/* 추가 */}
+                <th>기능</th> {/* 종강 하나만 사용하므로 colSpan 제거 */}
               </tr>
             </thead>
             <tbody>
@@ -300,7 +301,7 @@ function App() {
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  {/* ─ 상세보기 버튼 (추가) ─ */}
+                  {/* ─ 상세보기 버튼 ─ */}
                   <td className="text-center">
                     <Button
                       size="sm"
@@ -314,10 +315,25 @@ function App() {
                     </Button>
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center" colSpan={2}>
-                    <Button variant="outline-danger" size="sm"
-                      onClick={()=>{
-                        stautsRequest(lec.id, "COMPLETED")
+                  {/* ─ 수정 버튼 (추가) ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-secondary"
+                      onClick={() => {
+                        navigate(`/lecupdateAd/${lec.id}`);
+                      }}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                  {/* ─ 종강 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => {
+                        stautsRequest(lec.id, "COMPLETED");
                       }}
                     >
                       종강
@@ -348,21 +364,21 @@ function App() {
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-              <col style={{ width: "3rem" }} /> {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
               <col style={{ width: "16rem" }} /> {/* 강의명 */}
-              <col style={{ width: "7rem" }} /> {/* 이수구분 */}
-              <col style={{ width: "3rem" }} /> {/* 학년 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
               <col style={{ width: "12rem" }} /> {/* 과이름 */}
-              <col style={{ width: "7rem" }} /> {/* 담당교수 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
               <col style={{ width: "15rem" }} /> {/* 학기 */}
-              <col style={{ width: "9rem" }} /> {/* 수업 요일 */}
-              <col style={{ width: "5rem" }} /> {/* 총원 */}
-              <col style={{ width: "5rem" }} /> {/* 현재원 */}
-              <col style={{ width: "4rem" }} /> {/* 학점 */}
-              <col style={{ width: "7rem" }} /> {/* 상세보기 */}
-              <col style={{ width: "5rem" }} /> {/* 상태 */}
-              <col style={{ width: "6rem" }} /> {/* 기능(개강) */}
-              <col style={{ width: "6rem" }} /> {/* 기능(폐강) */}
+              <col style={{ width: "9rem" }} />  {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "7rem" }} />  {/* 상세보기 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 수정 (추가) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(재개강) */}
             </colgroup>
             <thead className="table-light text-center">
               <tr>
@@ -379,7 +395,8 @@ function App() {
                 <th>학점</th>
                 <th>상세보기</th>
                 <th>상태</th>
-                <th colSpan={2}>기능</th>
+                <th>수정</th> {/* 추가 */}
+                <th>기능</th> {/* 재개강 하나만 사용 */}
               </tr>
             </thead>
             <tbody>
@@ -394,12 +411,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  {/* ─ 수업 요일 (추가) ─ */}
+                  {/* ─ 수업 요일 ─ */}
                   <td className="text-center">{lec.lectureSchedules.map((s) => typeMap3[s.day])}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
-                  {/* ─ 상세보기 버튼 (추가) ─ */}
+                  {/* ─ 상세보기 버튼 ─ */}
                   <td className="text-center">
                     <Button
                       size="sm"
@@ -413,10 +430,25 @@ function App() {
                     </Button>
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
-                  <td className="text-center" colSpan={2}>
-                    <Button variant="outline-primary" size="sm"
-                      onClick={()=>{
-                        stautsRequest(lec.id, "INPROGRESS")
+                  {/* ─ 수정 버튼 (추가) ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-secondary"
+                      onClick={() => {
+                        navigate(`/lecupdateAd/${lec.id}`);
+                      }}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                  {/* ─ 재개강 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        stautsRequest(lec.id, "INPROGRESS");
                       }}
                     >
                       재개강
@@ -426,13 +458,17 @@ function App() {
               ))}
             </tbody>
           </Table>
-           <div className="d-flex justify-content-end gap-2 mt-2">
-              <Button size="sm" variant="primary" onClick={(e)=>{
-                  lectureInprogress(e, rejecSelected)
-              }}>
-                일괄 재개강
-              </Button>
-            </div>
+          <div className="d-flex justify-content-end gap-2 mt-2">
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={(e) => {
+                lectureInprogress(e, rejecSelected);
+              }}
+            >
+              일괄 재개강
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -499,8 +535,6 @@ function App() {
                   )}
                 </tbody>
               </Table>
-           
-              
             </div>
           </div>
 
