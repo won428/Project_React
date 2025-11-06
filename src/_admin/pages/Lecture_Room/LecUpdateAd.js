@@ -123,10 +123,16 @@ function App() {
    
     
     
+
+    
     const signup = async (e) => {
         try {
-
             e.preventDefault();
+            
+            const isRealFile = v => v instanceof File || v instanceof Blob; // 파일이나 blob일때 true를 던지는 필터
+            const existingDtos = files.filter(v => !isRealFile(v)); // 기존 파일들 객체형태
+            const newFiles = files.filter(isRealFile)
+            
             const totalPercent = Number(percent.assignment) + Number(percent.attendance) + Number(percent.midtermExam) + Number(percent.finalExam)
             if(totalPercent > 100){
               alert('퍼센트 비율은 100을 넘을 수 없습니다.')
@@ -157,12 +163,14 @@ function App() {
             console.log(lecture);
             console.log(schedule);
             console.log(percent);
+            console.log(files);
 
             const formData = new FormData();
             formData.append("lecture",  new Blob([JSON.stringify(lecture)],  { type: "application/json" }));
             formData.append("schedule", new Blob([JSON.stringify(schedule)], { type: "application/json" }));
             formData.append("percent", new Blob([JSON.stringify(percent)], { type: "application/json" }))
-            files.forEach(file => formData.append("files", file, file.name)); // File은 그대로
+            formData.append("existingDtos", new Blob([JSON.stringify(existingDtos)], { type: "application/json" }))
+            newFiles.forEach(f => formData.append('files', f, f.name));
 
             const url = `${API_BASE_URL}/lecture/lectureUpdate`;
             const response = await axios.patch(url, formData);
@@ -174,6 +182,7 @@ function App() {
             
         } catch (error) {
              const err = error.response;
+             console.log(error)
         if (!err) {
             alert('네트워크 오류가 발생하였습니다');
             return;
