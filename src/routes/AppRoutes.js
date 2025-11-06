@@ -96,6 +96,10 @@ import SetPW from "../public/SetPW";
 import NoticeInsertEn from "../public/pages/EntireNotice/NoticeInsAd";
 import NoticeSpecEn from "../public/pages/EntireNotice/NoticeSpec";
 import NoticeListEn from "../public/pages/EntireNotice/NoticeList";
+import InquiryBoard from "../public/pages/InquiryBoard";
+import { LayoutStInfoPublic }from "../public/ui/LayoutStInfoPublic";
+import CreatePost from "../public/pages/CreatePost";
+import InquiryPage from "../public/pages/InquiryPage";
 
 function App() {
     /**
@@ -117,20 +121,25 @@ function App() {
 
 
 
-
+            
             {/* 학교 공통 */}
-            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
-                <Route element={<EnPage />}>
+                <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
+                    <Route element={<EnPage />}>
+                    
+                    <Route path='/EnNot' element={<NoticeInsertEn />} />
+                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} />
+                    <Route path='/EnNotList' element={<NoticeListEn />} />
+                    <Route path='/acsche' element={<Academic_Schedule />} />
 
-                    <Route path='/EnNot' element={<NoticeInsertEn />} ></Route>
-                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
-                    <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
-                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+                    
+                    <Route element={<LayoutStInfoPublic />}>
+                        <Route path='/inquiryBoard' element={<InquiryBoard />} />
+                        <Route path='/createPost' element={<CreatePost />} />
+                        <Route path='/inquiryPage/:id' element={<InquiryPage />} />
+                    </Route>
 
+                    </Route>
                 </Route>
-
-
-            </Route>
 
 
 

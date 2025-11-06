@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStInfost = () => {
+export const LayoutStInfoPublic = () => {
     const navigate = useNavigate();
 
     return (
