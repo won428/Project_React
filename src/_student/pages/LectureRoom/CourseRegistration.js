@@ -70,7 +70,9 @@ function App() {
     const url = `${API_BASE_URL}/major/all/list`;
     axios
       .get(url)
-      .then((response)=>{ setMajorList(response.data); console.log(response.data) })
+      .then((response)=>{ 
+        setMajorList(response.data); 
+        console.log(response.data) })
       .catch((error)=>{
         const err = error.response;
         if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
@@ -205,7 +207,11 @@ function App() {
     const url = `${API_BASE_URL}/lecture/info`;
     axios
       .get(url, { params: { modalId: Number(modalId) } })
-      .then((res) => setModalLec(res.data))
+      .then(
+        (res) =>{
+          setModalLec(res.data)
+          console.log(res.data)
+      })
       .catch((err) => {
         console.error(err.response?.data || err.message);
         alert('오류');

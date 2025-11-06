@@ -573,7 +573,7 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td>
+                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day].join(", "))}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
