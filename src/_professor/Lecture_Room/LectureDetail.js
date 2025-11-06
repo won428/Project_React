@@ -37,6 +37,7 @@ function App() {
     axios
       .get(url)
       .then((response) => {
+        console.log(response.data)
         setStudentList(response.data)
       })
       .catch((error) => {

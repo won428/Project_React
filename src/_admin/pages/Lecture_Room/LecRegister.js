@@ -481,11 +481,18 @@ function App() {
           <Form.Group className="mt-2">
             <Form.Label className="small fw-semibold">수업 일수</Form.Label>
             {/* 값/로직 바인딩 없음, 옵션 기본값만 1개 */}
-            <Form.Select size="sm"
-              onChange={(e)=>{
+           <Form.Select
+              size="sm"
+              onChange={(e) => {
                 console.log(schedule)
-                const value = e.target.value;
-               setSchedule(Array.from({ length: value }, emptyRow));
+                const count = Number(e.target.value) || 0;
+                setSchedule(prev => {
+                  // 1) 기존값 보존 (앞에서부터 count개)
+                  const next = prev.slice(0, count).map(r => r ?? emptyRow());
+                  // 2) 모자라면 빈 행을 뒤에 채움
+                  while (next.length < count) next.push(emptyRow());
+                  return next;
+                });
               }}
             >
               <option value={''}>선택</option>

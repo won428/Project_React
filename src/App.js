@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import { Link } from "react-router-dom"; // Link 사용
 
 import AppRoutes from './routes/AppRoutes'
 
@@ -20,6 +21,8 @@ function App() {
 
   return (
 
+
+    
     <AppRoutes />
 
   );
