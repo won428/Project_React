@@ -1,0 +1,17 @@
+/* LectureSession.css */
+.card-hover {
+    /* 기본은 그림자 없음(또는 아주 약하게) */
+    box-shadow: none !important;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.card-hover:hover {
+    /* 호버 시 확실하게 차이 나게 */
+    box-shadow: var(--bs-box-shadow-lg) !important;
+    transform: translateY(-2px);
+}
+
+.card-hover:active {
+    transform: translateY(0);
+    box-shadow: var(--bs-box-shadow) !important;
+}
