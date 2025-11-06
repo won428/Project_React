@@ -188,7 +188,6 @@ function App() {
             </Form.Group>
           </Col>
 
-<<<<<<< HEAD
           <Col md={4}>
             <Form.Group>
               <Form.Label className="small fw-semibold">학점</Form.Label>
@@ -206,27 +205,10 @@ function App() {
                 <option value={"2"}>2학점</option>
                 <option value={"3"}>3학점</option>
                 <option value={"4"}>4학점</option>
-=======
-        <Col md={4}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">상태</Form.Label>
-            <Form.Select size="sm"
-              onChange={(e) => {
-                const value = e.target.value;
-                setLecture(prev => ({ ...prev, status: value }))
-                console.log(e.target.value)
-              }}>
-              <option value={''}>선택</option>
-              <option value={'PENDING'}>승인 대기</option>
-              <option value={'APPROVED'}>승인</option>
-              {/* <option value={'INPROGRESS'}>수강중</option>
-              <option value={'COMPLETED'}>종강</option> */}
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
               </Form.Select>
             </Form.Group>
           </Col>
 
-<<<<<<< HEAD
           <Col md={4}>
             <Form.Group>
               <Form.Label className="small fw-semibold">상태</Form.Label>
@@ -244,28 +226,10 @@ function App() {
                 <option value={"APPROVED"}>승인</option>
                 {/* <option value={'INPROGRESS'}>수강중</option>
                 <option value={'COMPLETED'}>종강</option> */}
-=======
-          {/* 2) 소속(단과대/학과) · 담당교수 */}
-          <Col md={4}>
-            <Form.Group>
-              <Form.Label className="small fw-semibold">소속 단과 대학</Form.Label>
-              <Form.Select size="sm"
-                value={college}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setCollege(value)
-                  console.log(value)
-                }}>
-                <option value={''}>단과 대학을 선택해주세요</option>
-                {collegeList.map(c => (
-                  <option key={c.id} value={c.id}>{c.type}</option>
-                ))}
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
               </Form.Select>
             </Form.Group>
           </Col>
 
-<<<<<<< HEAD
           {/* 2) 소속(단과대/학과) · 담당교수 */}
           <Col md={4}>
             <Form.Group>
@@ -284,22 +248,6 @@ function App() {
                   <option key={c.id} value={c.id}>
                     {c.type}
                   </option>
-=======
-          <Col md={4}>
-            <Form.Group>
-              <Form.Label className="small fw-semibold">소속 학과</Form.Label>
-              <Form.Select size="sm"
-                value={lecture.major}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setMajor(value)
-                  setLecture((previous) => ({ ...previous, major: value }))
-                  console.log(e.target.value)
-                }}>
-                <option value={''}>소속 학과를 선택해주세요</option>
-                {majorList.map(m => (
-                  <option key={m.id} value={m.id}>{m.m_name}</option>
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                 ))}
               </Form.Select>
             </Form.Group>
@@ -307,7 +255,6 @@ function App() {
 
           <Col md={4}>
             <Form.Group>
-<<<<<<< HEAD
               <Form.Label className="small fw-semibold">소속 학과</Form.Label>
               <Form.Select
                 size="sm"
@@ -324,25 +271,11 @@ function App() {
                   <option key={m.id} value={m.id}>
                     {m.m_name}
                   </option>
-=======
-              <Form.Label className="small fw-semibold">담당 교수</Form.Label>
-              <Form.Select size="sm"
-                value={lecture.user}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setLecture((previous) => ({ ...previous, user: value }))
-                  console.log(value)
-                }}>
-                <option value={''}>담당 교수를 선택해주세요</option>
-                {professorList.map(p => (
-                  <option key={p.id} value={p.id}>{p.u_name}</option>
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                 ))}
               </Form.Select>
             </Form.Group>
           </Col>
 
-<<<<<<< HEAD
           <Col md={4}>
             <Form.Group>
               <Form.Label className="small fw-semibold">담당 교수</Form.Label>
@@ -372,34 +305,20 @@ function App() {
               <Form.Control
                 size="sm"
                 type="text"
-=======
-          {/* 3) 강의 기본정보: 이름 · 이수구분 · 총원 */}
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label className="small fw-semibold">강의 이름</Form.Label>
-              <Form.Control size="sm" type="text"
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                 placeholder="강의 이름을 입력해주세요."
                 name="name"
                 value={lecture.name}
                 onChange={(event) => {
-<<<<<<< HEAD
                   setLecture((previous) => ({ ...previous, name: event.target.value }));
                   console.log(event.target.value);
                 }}
               />
-=======
-                  setLecture((previous) => ({ ...previous, name: event.target.value }))
-                  console.log(event.target.value)
-                }} />
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
             </Form.Group>
           </Col>
 
           <Col md={3}>
             <Form.Group>
               <Form.Label className="small fw-semibold">이수 구분</Form.Label>
-<<<<<<< HEAD
               <Form.Select
                 size="sm"
                 value={lecture.completionDiv}
@@ -415,20 +334,6 @@ function App() {
                 <option value={"LIBERAL_REQUIRED"}>교양 필수</option>
                 <option value={"LIBERAL_ELECTIVE"}>교양 선택</option>
                 <option value={"GENERAL_ELECTIVE"}>일반 선택</option>
-=======
-              <Form.Select size="sm"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setLecture(prev => ({ ...prev, completionDiv: value }))
-                  console.log(e.target.value)
-                }}>
-                <option value={''}>선택</option>
-                <option value={'MAJOR_REQUIRED'}>전공 필수</option>
-                <option value={'MAJOR_ELECTIVE'}>전공 선택</option>
-                <option value={'LIBERAL_REQUIRED'}>교양 필수</option>
-                <option value={'LIBERAL_ELECTIVE'}>교양 선택</option>
-                <option value={'GENERAL_ELECTIVE'}>일반 선택</option>
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
               </Form.Select>
             </Form.Group>
           </Col>
@@ -436,18 +341,13 @@ function App() {
           <Col md={3}>
             <Form.Group>
               <Form.Label className="small fw-semibold">총원</Form.Label>
-<<<<<<< HEAD
               <Form.Control
                 size="sm"
                 type="number"
-=======
-              <Form.Control size="sm" type="number"
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                 placeholder="강의 총원을 입력해주세요."
                 name="totalStudent"
                 value={lecture.totalStudent}
                 onChange={(event) => {
-<<<<<<< HEAD
                   setLecture((previous) => ({ ...previous, totalStudent: event.target.value }));
                   console.log(event.target.value);
                 }}
@@ -456,25 +356,12 @@ function App() {
           </Col>
 
           {/* 4) 기간 */}
-=======
-                  setLecture((previous) => ({ ...previous, totalStudent: event.target.value }))
-                  console.log(event.target.value)
-                }} />
-            </Form.Group>
-          </Col>
-
-          {/* 4) 기간: 시작일 · 종료일 (버튼 포함 가로 배치 유지) */}
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
           <Col md={6}>
             <Form.Group>
               <Form.Label className="small fw-semibold">시작 날짜</Form.Label>
               <div className="d-flex gap-2">
-<<<<<<< HEAD
                 <Form.Control
                   size="sm"
-=======
-                <Form.Control size="sm"
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                   ref={startRef}
                   type="date"
                   placeholder="YYYY-MM-DD"
@@ -483,7 +370,6 @@ function App() {
                   min="0001-01-01"
                   max="9999-12-31"
                   onChange={(event) => {
-<<<<<<< HEAD
                     setLecture((previous) => ({ ...previous, startDate: event.target.value }));
                     console.log(event.target.value);
                   }}
@@ -493,13 +379,6 @@ function App() {
                   variant="outline-secondary"
                   onClick={() => startRef.current?.showPicker?.() || startRef.current?.focus()}
                 >
-=======
-                    setLecture(previous => ({ ...previous, startDate: event.target.value }))
-                    console.log(event.target.value)
-                  }} />
-                <Button size="sm" variant="outline-secondary"
-                  onClick={() => startRef.current?.showPicker?.() || startRef.current?.focus()}>
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                   달력
                 </Button>
               </div>
@@ -510,12 +389,8 @@ function App() {
             <Form.Group>
               <Form.Label className="small fw-semibold">종료 날짜</Form.Label>
               <div className="d-flex gap-2">
-<<<<<<< HEAD
                 <Form.Control
                   size="sm"
-=======
-                <Form.Control size="sm"
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                   ref={endRef}
                   type="date"
                   placeholder="YYYY-MM-DD"
@@ -524,7 +399,6 @@ function App() {
                   min="0001-01-01"
                   max="9999-12-31"
                   onChange={(event) => {
-<<<<<<< HEAD
                     setLecture((previous) => ({ ...previous, endDate: event.target.value }));
                     console.log(event.target.value);
                   }}
@@ -534,32 +408,16 @@ function App() {
                   variant="outline-secondary"
                   onClick={() => endRef.current?.showPicker?.() || endRef.current?.focus()}
                 >
-=======
-                    setLecture(previous => ({ ...previous, endDate: event.target.value }))
-                    console.log(event.target.value)
-                  }} />
-                <Button size="sm" variant="outline-secondary"
-                  onClick={() => endRef.current?.showPicker?.() || endRef.current?.focus()}>
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                   달력
                 </Button>
               </div>
             </Form.Group>
           </Col>
 
-<<<<<<< HEAD
           {/* 4-a) 성적 산출 비율 */}
           <Col md={12}>
             <Form.Group className="mt-2">
               <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
-=======
-          {/* 4-a) 성적 산출 비율 (출석/과제/중간/기말) — UI 전용 */}
-          <Col md={12}>
-            <Form.Group className="mt-2">
-              <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
-
-              {/* 한 줄 입력폼 */}
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
               <Row className="g-2 align-items-center">
                 <Col md={3}>
                   <div className="input-group input-group-sm">
@@ -573,49 +431,7 @@ function App() {
                       name="attendance"
                       onChange={(e) => {
                         const value = e.target.value;
-<<<<<<< HEAD
                         setPercent((previous) => ({ ...previous, attendance: value }));
-=======
-                        setPercent((previous) => ({ ...previous, attendance: value }))
-                      }}
-                    />
-                    <span className="input-group-text">%</span>
-                  </div>
-                </Col>
-
-                <Col md={3}>
-                  <div className="input-group input-group-sm">
-                    <span className="input-group-text">과제</span>
-                    <Form.Control
-                      type="number"
-                      placeholder="예: 20"
-                      min="0"
-                      max="100"
-                      step="1"
-                      name="assignment"
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setPercent((previous) => ({ ...previous, assignment: value }))
-                      }}
-                    />
-                    <span className="input-group-text">%</span>
-                  </div>
-                </Col>
-
-                <Col md={3}>
-                  <div className="input-group input-group-sm">
-                    <span className="input-group-text">중간</span>
-                    <Form.Control
-                      type="number"
-                      placeholder="예: 30"
-                      min="0"
-                      max="100"
-                      step="1"
-                      name="midtermExam"
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setPercent((previous) => ({ ...previous, midtermExam: value }))
->>>>>>> 34f2d2205519b399d0c19ccad3cc595dad331573
                       }}
                     />
                     <span className="input-group-text">%</span>
