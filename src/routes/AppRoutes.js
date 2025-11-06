@@ -62,6 +62,7 @@ import HomePRO from '../_professor/ui/HomePRO';
 import LecRegisterPro from '../_professor/Lecture_Room/LecRegisterPro';
 import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
 import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
+import LectureSession from '../_professor/Lecture_Room/LectureSession';
 
 
 import SpecificRoom from '../_lecturePS/LectureRoomSpec/SpecificRoom';
@@ -296,6 +297,7 @@ function App() {
 
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
+                        <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
                     </Route>
 
 

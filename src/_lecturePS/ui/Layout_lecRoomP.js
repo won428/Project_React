@@ -29,7 +29,7 @@ export const Layout_lecRoomP = () => {
                             onClick={() => navigate(`/Lec`)}
                             className="text-white">강의</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/lectureDetail/${lectureId}`, { state: lectureId })}
+                            onClick={() => navigate(`/lectureSession/${lectureId}`, { state: { lectureId } })}
                             className="text-white">수강</Nav.Link>
                     </Nav>
                 </Container>

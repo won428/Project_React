@@ -230,387 +230,225 @@ function App() {
               <option value={'APPROVED'}>승인</option>
               {/* <option value={'INPROGRESS'}>수강중</option>
               <option value={'COMPLETED'}>종강</option> */}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+              </Form.Select>
+            </Form.Group>
+          </Col>
 
-        {/* 2) 소속(단과대/학과) · 담당교수 */}
-        <Col md={4}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">소속 단과 대학</Form.Label>
-            <Form.Select size="sm"
-              value={college}
-              onChange={(e) => {
-                const value = e.target.value
-                setCollege(value)
-                console.log(value)
-              }}>
-              <option value={''}>단과 대학을 선택해주세요</option>
-              {collegeList.map(c => (
-                <option key={c.id} value={c.id}>{c.type}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+          {/* 2) 소속(단과대/학과) · 담당교수 */}
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">소속 단과 대학</Form.Label>
+              <Form.Select size="sm"
+                value={college}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setCollege(value)
+                  console.log(value)
+                }}>
+                <option value={''}>단과 대학을 선택해주세요</option>
+                {collegeList.map(c => (
+                  <option key={c.id} value={c.id}>{c.type}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
 
-        <Col md={4}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">소속 학과</Form.Label>
-            <Form.Select size="sm"
-              value={lecture.major}
-              onChange={(e) => {
-                const value = e.target.value
-                setMajor(value)
-                setLecture((previous)=>({...previous, major: value}))
-                console.log(e.target.value)
-              }}>
-              <option value={''}>소속 학과를 선택해주세요</option>
-              {majorList.map(m => (
-                <option key={m.id} value={m.id}>{m.m_name}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">소속 학과</Form.Label>
+              <Form.Select size="sm"
+                value={lecture.major}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setMajor(value)
+                  setLecture((previous) => ({ ...previous, major: value }))
+                  console.log(e.target.value)
+                }}>
+                <option value={''}>소속 학과를 선택해주세요</option>
+                {majorList.map(m => (
+                  <option key={m.id} value={m.id}>{m.m_name}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
 
-        <Col md={4}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">담당 교수</Form.Label>
-            <Form.Select size="sm"
-              value={lecture.user}
-              onChange={(e) => {
-                const value = e.target.value
-                setLecture((previous)=>({...previous, user: value}))
-                console.log(value)
-              }}>
-              <option value={''}>담당 교수를 선택해주세요</option>
-              {professorList.map(p => (
-                <option key={p.id} value={p.id}>{p.u_name}</option>
-              ))}
-            </Form.Select>
-          </Form.Group>
-        </Col>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">담당 교수</Form.Label>
+              <Form.Select size="sm"
+                value={lecture.user}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setLecture((previous) => ({ ...previous, user: value }))
+                  console.log(value)
+                }}>
+                <option value={''}>담당 교수를 선택해주세요</option>
+                {professorList.map(p => (
+                  <option key={p.id} value={p.id}>{p.u_name}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
 
-        {/* 3) 강의 기본정보: 이름 · 이수구분 · 총원 */}
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">강의 이름</Form.Label>
-            <Form.Control size="sm" type="text"
-              placeholder="강의 이름을 입력해주세요."
-              name="name"
-              value={lecture.name}
-              onChange={(event) => {
-                setLecture((previous)=>({...previous, name: event.target.value}))
-                console.log(event.target.value)
-              }} />
-          </Form.Group>
-        </Col>
-
-        <Col md={3}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">이수 구분</Form.Label>
-            <Form.Select size="sm"
-              onChange={(e) => {
-                const value = e.target.value;
-                setLecture(prev => ({ ...prev, completionDiv: value }))
-                console.log(e.target.value)
-              }}>
-              <option value={''}>선택</option>
-              <option value={'MAJOR_REQUIRED'}>전공 필수</option>
-              <option value={'MAJOR_ELECTIVE'}>전공 선택</option>
-              <option value={'LIBERAL_REQUIRED'}>교양 필수</option>
-              <option value={'LIBERAL_ELECTIVE'}>교양 선택</option>
-              <option value={'GENERAL_ELECTIVE'}>일반 선택</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-
-        <Col md={3}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">총원</Form.Label>
-            <Form.Control size="sm" type="number"
-              placeholder="강의 총원을 입력해주세요."
-              name="totalStudent"
-              value={lecture.totalStudent}
-              onChange={(event) => {
-                setLecture((previous)=>({...previous, totalStudent: event.target.value}))
-                console.log(event.target.value)
-              }} />
-          </Form.Group>
-        </Col>
-
-        {/* 4) 기간: 시작일 · 종료일 (버튼 포함 가로 배치 유지) */}
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">시작 날짜</Form.Label>
-            <div className="d-flex gap-2">
-              <Form.Control size="sm"
-                ref={startRef}
-                type="date"
-                placeholder="YYYY-MM-DD"
-                name="birthdate"
-                value={lecture.startDate}
-                min="0001-01-01"
-                max="9999-12-31" 
+          {/* 3) 강의 기본정보: 이름 · 이수구분 · 총원 */}
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">강의 이름</Form.Label>
+              <Form.Control size="sm" type="text"
+                placeholder="강의 이름을 입력해주세요."
+                name="name"
+                value={lecture.name}
                 onChange={(event) => {
-                  setLecture(previous => ({ ...previous, startDate: event.target.value }))
+                  setLecture((previous) => ({ ...previous, name: event.target.value }))
                   console.log(event.target.value)
                 }} />
-              <Button size="sm" variant="outline-secondary"
-                onClick={() => startRef.current?.showPicker?.() || startRef.current?.focus()}>
-                달력
-              </Button>
-            </div>
-          </Form.Group>
-        </Col>
+            </Form.Group>
+          </Col>
 
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="small fw-semibold">종료 날짜</Form.Label>
-            <div className="d-flex gap-2">
-              <Form.Control size="sm"
-                ref={endRef}
-                type="date"
-                placeholder="YYYY-MM-DD"
-                name="birthdate"
-                value={lecture.endDate}
-                min="0001-01-01"
-                max="9999-12-31" 
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">이수 구분</Form.Label>
+              <Form.Select size="sm"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setLecture(prev => ({ ...prev, completionDiv: value }))
+                  console.log(e.target.value)
+                }}>
+                <option value={''}>선택</option>
+                <option value={'MAJOR_REQUIRED'}>전공 필수</option>
+                <option value={'MAJOR_ELECTIVE'}>전공 선택</option>
+                <option value={'LIBERAL_REQUIRED'}>교양 필수</option>
+                <option value={'LIBERAL_ELECTIVE'}>교양 선택</option>
+                <option value={'GENERAL_ELECTIVE'}>일반 선택</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">총원</Form.Label>
+              <Form.Control size="sm" type="number"
+                placeholder="강의 총원을 입력해주세요."
+                name="totalStudent"
+                value={lecture.totalStudent}
                 onChange={(event) => {
-                  setLecture(previous => ({ ...previous, endDate: event.target.value }))
+                  setLecture((previous) => ({ ...previous, totalStudent: event.target.value }))
                   console.log(event.target.value)
                 }} />
-              <Button size="sm" variant="outline-secondary"
-                onClick={() => endRef.current?.showPicker?.() || endRef.current?.focus()}>
-                달력
-              </Button>
-            </div>
-          </Form.Group>
-        </Col>
+            </Form.Group>
+          </Col>
 
-        {/* 4-a) 성적 산출 비율 (출석/과제/중간/기말) — UI 전용 */}
-        <Col md={12}>
-          <Form.Group className="mt-2">
-            <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
+          {/* 4) 기간: 시작일 · 종료일 (버튼 포함 가로 배치 유지) */}
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">시작 날짜</Form.Label>
+              <div className="d-flex gap-2">
+                <Form.Control size="sm"
+                  ref={startRef}
+                  type="date"
+                  placeholder="YYYY-MM-DD"
+                  name="birthdate"
+                  value={lecture.startDate}
+                  min="0001-01-01"
+                  max="9999-12-31"
+                  onChange={(event) => {
+                    setLecture(previous => ({ ...previous, startDate: event.target.value }))
+                    console.log(event.target.value)
+                  }} />
+                <Button size="sm" variant="outline-secondary"
+                  onClick={() => startRef.current?.showPicker?.() || startRef.current?.focus()}>
+                  달력
+                </Button>
+              </div>
+            </Form.Group>
+          </Col>
 
-            {/* 한 줄 입력폼 */}
-            <Row className="g-2 align-items-center">
-              <Col md={3}>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text">출석</span>
-                  <Form.Control
-                    type="number"
-                    placeholder="예: 20"
-                    min="0"
-                    max="100"
-                    step="1"
-                    name="attendance"
-                    onChange={(e)=>{
-                      const value = e.target.value;
-                      setPercent((previous)=>({...previous, attendance : value}))
-                    }}
-                  />
-                  <span className="input-group-text">%</span>
-                </div>
-              </Col>
-                
-              <Col md={3}>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text">과제</span>
-                  <Form.Control
-                    type="number"
-                    placeholder="예: 20"
-                    min="0"
-                    max="100"
-                    step="1"
-                    name="assignment"
-                    onChange={(e)=>{
-                      const value = e.target.value;
-                      setPercent((previous)=>({...previous, assignment : value}))
-                    }}
-                  />
-                  <span className="input-group-text">%</span>
-                </div>
-              </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="small fw-semibold">종료 날짜</Form.Label>
+              <div className="d-flex gap-2">
+                <Form.Control size="sm"
+                  ref={endRef}
+                  type="date"
+                  placeholder="YYYY-MM-DD"
+                  name="birthdate"
+                  value={lecture.endDate}
+                  min="0001-01-01"
+                  max="9999-12-31"
+                  onChange={(event) => {
+                    setLecture(previous => ({ ...previous, endDate: event.target.value }))
+                    console.log(event.target.value)
+                  }} />
+                <Button size="sm" variant="outline-secondary"
+                  onClick={() => endRef.current?.showPicker?.() || endRef.current?.focus()}>
+                  달력
+                </Button>
+              </div>
+            </Form.Group>
+          </Col>
 
-              <Col md={3}>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text">중간</span>
-                  <Form.Control
-                    type="number"
-                    placeholder="예: 30"
-                    min="0"
-                    max="100"
-                    step="1"
-                    name="midtermExam"
-                    onChange={(e)=>{
-                      const value = e.target.value;
-                      setPercent((previous)=>({...previous, midtermExam : value}))
-                    }}
-                  />
-                  <span className="input-group-text">%</span>
-                </div>
-              </Col>
+          {/* 4-a) 성적 산출 비율 (출석/과제/중간/기말) — UI 전용 */}
+          <Col md={12}>
+            <Form.Group className="mt-2">
+              <Form.Label className="small fw-semibold">성적 산출 비율</Form.Label>
 
-              <Col md={3}>
-                <div className="input-group input-group-sm">
-                  <span className="input-group-text">기말</span>
-                  <Form.Control
-                    type="number"
-                    placeholder="예: 30"
-                    min="0"
-                    max="100"
-                    step="1"
-                    name="finalExam"
-                    onChange={(e)=>{
-                      const value = e.target.value;
-                      setPercent((previous)=>({...previous, finalExam : value}))
-                    }}
-                  />
-                  <span className="input-group-text">%</span>
-                </div>
-              </Col>
-            </Row>
+              {/* 한 줄 입력폼 */}
+              <Row className="g-2 align-items-center">
+                <Col md={3}>
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text">출석</span>
+                    <Form.Control
+                      type="number"
+                      placeholder="예: 20"
+                      min="0"
+                      max="100"
+                      step="1"
+                      name="attendance"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setPercent((previous) => ({ ...previous, attendance: value }))
+                      }}
+                    />
+                    <span className="input-group-text">%</span>
+                  </div>
+                </Col>
 
-            <div className="small text-muted mt-1">
-              합계가 100%가 되도록 입력해 주세요.
-              기본값은 20, 20, 30, 30입니다.
-            </div>
-          </Form.Group>
-        </Col>
+                <Col md={3}>
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text">과제</span>
+                    <Form.Control
+                      type="number"
+                      placeholder="예: 20"
+                      min="0"
+                      max="100"
+                      step="1"
+                      name="assignment"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setPercent((previous) => ({ ...previous, assignment: value }))
+                      }}
+                    />
+                    <span className="input-group-text">%</span>
+                  </div>
+                </Col>
 
-        {/* 4-b) 수업일수 & 요일/시간 (UI만 추가) */}
-        <Col md={12}>
-          <Form.Group className="mt-2">
-            <Form.Label className="small fw-semibold">수업 일수</Form.Label>
-            {/* 값/로직 바인딩 없음, 옵션 기본값만 1개 */}
-           <Form.Select
-              size="sm"
-              onChange={(e) => {
-                console.log(schedule)
-                const count = Number(e.target.value) || 0;
-                setSchedule(prev => {
-                  // 1) 기존값 보존 (앞에서부터 count개)
-                  const next = prev.slice(0, count).map(r => r ?? emptyRow());
-                  // 2) 모자라면 빈 행을 뒤에 채움
-                  while (next.length < count) next.push(emptyRow());
-                  return next;
-                });
-              }}
-            >
-              <option value={''}>선택</option>
-              <option value={1}>1일</option>
-              <option value={2}>2일</option>
-              <option value={3}>3일</option>
-              <option value={4}>4일</option>
-              <option value={5}>5일</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-
-                    {schedule.map((row, i) => {
-              // 현재 행(i)을 제외한 다른 행들이 고른 요일들
-              const usedByOthers = new Set(
-                schedule
-                  .filter((_, idx) => idx !== i)
-                  .map(r => r.day)
-                  .filter(Boolean)
-              );
-
-              return (
-                <Col md={12} key={i}>
-                  <Row className="g-2 align-items-end">
-                    <Col md={4}>
-                      <Form.Group>
-                        <Form.Label className="small fw-semibold">요일</Form.Label>
-                        <Form.Select
-                          size="sm"
-                          value={row.day}
-                          onChange={e =>
-                            setSchedule(prev => {
-                              const next = prev.map((row, index) => {
-                                if (index === i) {
-                                  return { ...row, day: e.target.value || null}; // 해당 행만 교체
-                                }
-                                return row; // 나머지는 그대로
-                              });
-                              return next;
-                            })
-                          }
-                        >
-                          <option value="">선택</option>
-                          <option value="MONDAY" disabled={usedByOthers.has('MONDAY')}>월요일</option>
-                          <option value="TUESDAY" disabled={usedByOthers.has('TUESDAY')}>화요일</option>
-                          <option value="WEDNESDAY" disabled={usedByOthers.has('WEDNESDAY')}>수요일</option>
-                          <option value="THURSDAY" disabled={usedByOthers.has('THURSDAY')}>목요일</option>
-                          <option value="FRIDAY" disabled={usedByOthers.has('FRIDAY')}>금요일</option>
-                        </Form.Select>
-                      </Form.Group>
-                    </Col>
-
-                    <Col md={4}>
-                      <Form.Group>
-                        <Form.Label className="small fw-semibold">시작 시간</Form.Label>
-                        <Form.Select
-                          size="sm"
-                          value={row.startTime}
-                          onChange={e =>
-                            setSchedule(prev => {
-                              const next = prev.map((row, index) => {
-                                if (index === i) {
-                                  return { ...row, startTime: e.target.value || null }; // 해당 행만 교체
-                                }
-                                return row; // 나머지는 그대로
-                              });
-                              return next;
-                            })
-                          }
-                        >
-                          <option value={''}>선택</option>
-                          <option value={'10:00'}>1교시</option>
-                          <option value={'11:00'}>2교시</option>
-                          <option value={'12:00'}>3교시</option>
-                          <option value={'13:00'}>4교시</option>
-                          <option value={'14:00'}>5교시</option>
-                          <option value={'15:00'}>6교시</option>
-                          <option value={'16:00'}>7교시</option>
-                          <option value={'17:00'}>8교시</option>
-                          <option value={'18:00'}>9교시</option>
-                        </Form.Select>
-                      </Form.Group>
-                    </Col>
-
-                    <Col md={4}>
-                      <Form.Group>
-                        <Form.Label className="small fw-semibold">끝나는 시간</Form.Label>
-                        <Form.Select
-                          size="sm"
-                          value={row.endTime}
-                          onChange={e =>
-                            setSchedule(prev => {
-                              const next = prev.map((row, index) => {
-                                if (index === i) {
-                                  return { ...row, endTime: e.target.value || null }; // 해당 행만 교체
-                                }
-                                return row; // 나머지는 그대로
-                              });
-                              return next;
-                            })
-                          }
-                        >
-                          <option value={''}>선택</option>
-                          <option value={'11:00'}>1교시</option>
-                          <option value={'12:00'}>2교시</option>
-                          <option value={'13:00'}>3교시</option>
-                          <option value={'14:00'}>4교시</option>
-                          <option value={'15:00'}>5교시</option>
-                          <option value={'16:00'}>6교시</option>
-                          <option value={'17:00'}>7교시</option>
-                          <option value={'18:00'}>8교시</option>
-                          <option value={'19:00'}>9교시</option>
-                        </Form.Select>
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                <Col md={3}>
+                  <div className="input-group input-group-sm">
+                    <span className="input-group-text">중간</span>
+                    <Form.Control
+                      type="number"
+                      placeholder="예: 30"
+                      min="0"
+                      max="100"
+                      step="1"
+                      name="midtermExam"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setPercent((previous) => ({ ...previous, midtermExam: value }))
+                      }}
+                    />
+                    <span className="input-group-text">%</span>
+                  </div>
                 </Col>
               );
             })}
