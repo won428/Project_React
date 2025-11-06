@@ -5,43 +5,57 @@ import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
 import { useNavigate, useParams } from 'react-router-dom';
 
-// 출결 유형 (DB 저장 X, 단순 표시용)
-const ATTENDANCE_TYPES = [
+const APPEAL_TYPES = {
     { value: 'BE_LATE', label: '지각' },
     { value: 'ABSENT', label: '결석' }
-];
+;
 
-// 출결 세부 사유 (프론트 전용)
 const ATTENDANCE_DETAILS = [
     { value: 'MEDICAL_PROBLEM', label: '병원 방문' },
-    { value: 'MILITARY_PROBLEM', label: '예비군 훈련' }
+    { value: 'MILITARY_PROBLEM', label: '예비군 훈련' },
 ];
 
 function AttendanceAppeal() {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const { lectureId } = useParams();
+    const { lectureId } = useParams(); // URL에서 lectureId 받음
     const userId = user?.id;
+    
+    console.log("lectureId:", lectureId);
 
+    const [enrollments, setEnrollments] = useState([]);
     const [lectureName, setLectureName] = useState('');
     const [professorId, setProfessorId] = useState('');
     const [professorName, setProfessorName] = useState('');
-    const [file, setFile] = useState(null);
 
     const [appealForm, setAppealForm] = useState({
         lectureId: Number(lectureId || ''),
         sendingId: userId || '',
-        receiverId: '',
-        appealType: 'ATTENDANCE', // 항상 출결
-        attendanceType: 'BE_LATE', // 지각/결석 선택
-        attendanceDetail: '',     // 세부 사유 선택
+        receiverId: professorId || '',    // 담당 교수
+        appealType: 'ATTENDANCE',
+        attendanceDetail: '',
         title: '',
         content: '',
         appealDate: new Date().toISOString().slice(0, 10),
         status: 'PENDING'
     });
 
-    // 강의 정보 조회
+    const [file, setFile] = useState(null);
+
+    useEffect(() => {
+    if (!userId || !lectureId) return;
+    axios.get(`${API_BASE_URL}/lecture/enrollments`, {
+        params: { userId }
+    })
+        .then(res => {
+            // URL에서 넘어온 lectureId에 해당하는 강의만 필터링
+            const currentLecture = res.data.find(e => e.lectureId === Number(lectureId));
+            setEnrollments(currentLecture ? [currentLecture] : []);
+        })
+        .catch(err => console.error(err));
+}, [userId, lectureId]);
+
+    // 강의 정보 가져오기
     useEffect(() => {
         if (!lectureId) return;
 
@@ -52,11 +66,13 @@ function AttendanceAppeal() {
                 setProfessorName(res.data.userName);
                 setAppealForm(prev => ({
                     ...prev,
+                    lectureId: lectureId,
                     receiverId: res.data.userId
                 }));
             })
             .catch(err => console.error(err));
     }, [lectureId]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -67,18 +83,16 @@ function AttendanceAppeal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if (!appealForm.lectureId) return alert('강의 정보가 없습니다.');
 
         const formData = new FormData();
         formData.append('lectureId', appealForm.lectureId);
         formData.append('sendingId', appealForm.sendingId);
         formData.append('receiverId', appealForm.receiverId);
-        formData.append('appealType', 'ATTENDANCE'); // DB 저장용
+        formData.append('appealType', appealForm.appealType);
         formData.append('title', appealForm.title);
         formData.append('attendanceDetail', appealForm.attendanceDetail);
-        // content에 지각/결석 + 세부사유 합치기
-        formData.append('content', `[${appealForm.attendanceType}] [${appealForm.attendanceDetail}] ${appealForm.content}`);
+        formData.append('content', `[${appealForm.attendanceDetail}] ${appealForm.content}`);
 
         if (file) formData.append('file', file);
 
@@ -99,7 +113,7 @@ function AttendanceAppeal() {
         <Container style={{ maxWidth: 720, marginTop: 24, marginBottom: 24 }}>
             <h3 style={{ marginBottom: 16 }}>출결 이의제기 신청</h3>
 
-            {/* 강의 정보 */}
+            {/* 선택된 강의 정보 */}
             <div style={{ marginBottom: 16, padding: 12, border: '1px solid #ddd', borderRadius: 8 }}>
                 <Form.Group className="mb-2">
                     <Form.Label>강의</Form.Label>
@@ -111,37 +125,40 @@ function AttendanceAppeal() {
                 </Form.Group>
             </div>
 
+            {/* 이의제기 폼 */}
             <Form onSubmit={handleSubmit}>
-                {/* 출결 유형 */}
+                {/* 이의제기 유형 */}
                 <Form.Group className="mb-3">
-                    <Form.Label>출결 유형</Form.Label>
+                    <Form.Label>이의제기 유형</Form.Label>
                     <Form.Select
-                        name="attendanceType"
-                        value={appealForm.attendanceType}
+                        name="appealType"
+                        value={appealForm.appealType}
                         onChange={handleChange}
                         required
                     >
-                        {ATTENDANCE_TYPES.map(o => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
+                        {APPEAL_TYPES.map(type => (
+                            <option key={type.value} value={type.value}>{type.label}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
 
-                {/* 출결 세부 사유 */}
-                <Form.Group className="mb-3">
-                    <Form.Label>출결 사유 선택</Form.Label>
-                    <Form.Select
-                        name="attendanceDetail"
-                        value={appealForm.attendanceDetail || ''}
-                        onChange={handleChange}
-                        required
-                    >
-                        <option value="">선택하세요</option>
-                        {ATTENDANCE_DETAILS.map(o => (
-                            <option key={o.value} value={o.value}>{o.label}</option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
+                {/* 출결 세부 */}
+                {(appealForm.appealType === 'BE_LATE' || appealForm.appealType === 'ABSENT') && (
+                    <Form.Group className="mb-3">
+                        <Form.Label>출결 세부 선택</Form.Label>
+                        <Form.Select
+                            name="attendanceDetail"
+                            value={appealForm.attendanceDetail || ''}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">선택하세요</option>
+                            {ATTENDANCE_DETAILS.map(o => (
+                                <option key={o.value} value={o.value}>{o.label}</option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                )}
 
                 {/* 제목 */}
                 <Form.Group className="mb-3">
@@ -169,9 +186,9 @@ function AttendanceAppeal() {
                     />
                 </Form.Group>
 
-                {/* 파일 첨부 */}
+                {/* 첨부파일 */}
                 <Form.Group className="mb-3">
-                    <Form.Label>증빙 파일 첨부 (선택)</Form.Label>
+                    <Form.Label>증빙 파일 첨부 (예: 진료내역, 예비군 필증)</Form.Label>
                     <Form.Control type="file" onChange={handleFileChange} />
                 </Form.Group>
 
@@ -179,7 +196,9 @@ function AttendanceAppeal() {
                 <Button variant="secondary" onClick={() => navigate(-1)}>취소</Button>
             </Form>
         </Container>
+
     );
+
 }
 
 export default AttendanceAppeal;

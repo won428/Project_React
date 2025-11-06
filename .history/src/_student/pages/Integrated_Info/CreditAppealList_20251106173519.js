@@ -25,7 +25,7 @@ function CreditAppealList() {
     };
 
     const handleAdd = () => {
-        navigate('/CreditAppeal/${appealId}');
+        navigate('/CreditAppeal/${}');
     };
 
     

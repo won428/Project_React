@@ -87,7 +87,7 @@ function AttendanceAppeal() {
         })
             .then(() => {
                 alert('출결 이의제기 신청이 완료되었습니다.');
-                navigate('/AttendanceAppealList');
+                navigate('/AttendanceAppealList/${sendingId}');
             })
             .catch(err => {
                 console.error(err);
