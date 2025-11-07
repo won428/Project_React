@@ -98,6 +98,7 @@ function App() {
             newformData.append("major", user.major);
             newformData.append("type", user.type);
             newformData.append("file", file);
+
             const url = `${API_BASE_URL}/user/signup`;
             const response = await axios.post(url, newformData);
 

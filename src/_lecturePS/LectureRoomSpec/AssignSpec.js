@@ -284,7 +284,8 @@ function App() {
     const [end, setEnd] = useState();
     const fileRef = useRef();
     console.log("APP 랜더링");
-
+    const currentDate = new Date();
+    const DueDate = new Date(resdata.dueAt)
     // 📦 과제 상세 데이터 로드
     useEffect(() => {
         if (!data || !user?.email) { return; }
@@ -301,6 +302,10 @@ function App() {
 
     // 1. 신규 제출 로직
     const SubmitAssign = async () => {
+        if (currentDate < DueDate) {
+            alert("제출 기한이 아닙니다.")
+            navigate("/asnlst")
+        }
         const url = `${API_BASE_URL}/assign/submit`;
         const formData = new FormData();
         formData.append("email", user.email);
@@ -323,6 +328,11 @@ function App() {
 
     // 2. 학생 제출 내역 수정 로직
     const SubmitMod = async () => {
+
+        if (currentDate < DueDate) {
+            alert("제출 기한이 아닙니다.")
+            navigate("/asnlst")
+        }
         const url = `${API_BASE_URL}/assign/update/${resdata.id}`;
 
         const formData = new FormData();

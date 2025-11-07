@@ -11,8 +11,8 @@ import { format } from "date-fns";
 
 function App() {
     const { user } = useAuth();
-    const [title, setTitle] = useState();
-    const [content, setContent] = useState();
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [subfiles, setSubfiles] = useState([]);
     const [startDate, setStartDate] = useState(new Date());
     const { lectureId } = useLectureStore();
@@ -55,7 +55,7 @@ function App() {
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
-            navigate("/asnlst");
+            navigate("/Lec");
         } else {
             alert(respone.statusText)
         }
@@ -81,7 +81,6 @@ function App() {
 
         setSubfiles(newfiles);
     }
-    console.log(subfiles);
 
     const removeFile = (fileName) => {
         // 제거할 파일의 URL을 찾아서 해제합니다.
