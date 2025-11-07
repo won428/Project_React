@@ -34,9 +34,9 @@ export const LayoutStCon = () => {
                             className="text-white"
                         >구성원 리스트</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/user/StatusManage`)}
+                            onClick={() => navigate(`/user/UserList`)}
                             className="text-white"
-                        >학생 학적관리</Nav.Link>
+                        >구성원 리스트</Nav.Link>
                     </Nav>
                 </Container>
             </Col>

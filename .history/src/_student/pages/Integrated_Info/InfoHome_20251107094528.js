@@ -37,22 +37,8 @@ function App() {
     studentImage: '',
   });
 
-  // 사용자 유형 한글 맵핑
-  const userTypeMap = {
-    STUDENT: '학생',
-    PROFESSOR: '교수',
-    ADMIN: '관리자'
-  };
 
-  // 학적 상태 한글 맵핑
-  const studentStatusMap = {
-    ENROLLED: '재학중',
-    ON_LEAVE: '휴학',
-    REINSTATED: '복학',
-    GRADUATED: '졸업',
-    EXPELLED: '퇴학'
-  };
-
+  
   // 에러 및 로딩 상태
   const [error, setError] = useState(null);
 
@@ -126,7 +112,7 @@ function App() {
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>생년월일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.birthDate}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>성별</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.gender}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>소속학과</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.major || ''}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>사용자 유형</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{userTypeMap[studentInfo.type] || studentInfo.type}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>사용자 유형</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.type}</td></tr>
         </tbody>
       </table>
 
@@ -165,7 +151,7 @@ function App() {
         </colgroup>
         <tbody>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>학적 상태 ID</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.statusid}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>학적상태</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentStatusMap[statusRecords.studentStatus] || statusRecords.studentStatus}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>학적상태</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.studentStatus}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>입학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.admissionDate}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>휴학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.leaveDate || '-'}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>복학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.returnDate || '-'}</td></tr>

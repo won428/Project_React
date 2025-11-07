@@ -50,6 +50,7 @@ function App() {
     ON_LEAVE: '휴학',
     REINSTATED: '복학',
     GRADUATED: '졸업',
+  
     EXPELLED: '퇴학'
   };
 

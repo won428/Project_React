@@ -47,9 +47,10 @@ function App() {
   // 학적 상태 한글 맵핑
   const studentStatusMap = {
     ENROLLED: '재학중',
-    ON_LEAVE: '휴학',
+    LEAVE: '휴학',
     REINSTATED: '복학',
     GRADUATED: '졸업',
+    RETENTION: '유급',
     EXPELLED: '퇴학'
   };
 

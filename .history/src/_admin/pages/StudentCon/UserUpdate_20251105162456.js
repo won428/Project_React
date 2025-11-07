@@ -55,8 +55,8 @@ function App() {
         setMajorList(response.data)
       })
       .catch((error) => {
-        console.error("status:", error.response?.status);
-        console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+          console.error("status:", error.response?.status);
+          console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
 
       })
   }, [college])
@@ -72,8 +72,8 @@ function App() {
 
       })
       .catch((error) => {
-        console.error("status:", error.response?.status);
-        console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
+          console.error("status:", error.response?.status);
+          console.error("data:", error.response?.data); // ★ 서버의 에러 메시지/스택이 JSON으로 오면 여기 찍힘
       })
 
 
@@ -238,40 +238,40 @@ function App() {
                   <Form.Group className="mb-3">
                     <Form.Label>소속 단과 대학</Form.Label>
                     <Form.Select
-                      value={college}
-                      onChange={(e) => {
-                        const value = e.target.value
-                        setCollege(value)
-                        console.log(value)
-                      }}
+                        value={college}
+                        onChange={(e) => {
+                            const value = e.target.value
+                            setCollege(value)
+                            console.log(value)
+                        }}
                     >
-                      <option value={''}>단과 대학을 선택해주세요</option>
-                      {collegeList.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.type}
-                        </option>
-                      ))}
+                        <option value={''}>단과 대학을 선택해주세요</option>
+                        {collegeList.map(c => (
+                            <option key={c.id} value={c.id}>
+                                {c.type}
+                            </option>
+                        ))}
                     </Form.Select>
-                  </Form.Group>
+                </Form.Group>
 
-                  <Form.Group className="mb-3">
+                <Form.Group className="mb-3">
                     <Form.Label>소속 학과</Form.Label>
                     <Form.Select
-                      value={user.major}
-                      onChange={(e) => {
-                        const value = e.target.value
-                        setUser(prev => ({ ...prev, major: value }))
-                        console.log(e.target.value)
-                      }}
+                        value={user.major}
+                        onChange={(e) => {
+                            const value = e.target.value
+                            setUser(prev => ({ ...prev, major: value }))
+                            console.log(e.target.value)
+                        }}
                     >
-                      <option value={''}>소속 학과를 선택해주세요</option>
-                      {majorList.map(m => (
-                        <option key={m.id} value={m.id}>
-                          {m.m_name}
-                        </option>
-                      ))}
+                        <option value={''}>소속 학과를 선택해주세요</option>
+                        {majorList.map(m => (
+                            <option key={m.id} value={m.id}>
+                                {m.m_name}
+                            </option>
+                        ))}
                     </Form.Select>
-                  </Form.Group>
+                </Form.Group>
 
                   <Form.Group className="mb-3">
                     <Form.Label>사용자 구분</Form.Label>
