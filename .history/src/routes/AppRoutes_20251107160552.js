@@ -37,7 +37,7 @@ import UserBatchReg from '../_admin/pages/StudentCon/UserBatchReg';
 import UserList from '../_admin/pages/StudentCon/UserList';
 import UserUpdateByAdmin from '../_admin/pages/StudentCon/UserUpdate';
 import StatusManage from '../_admin/pages/StudentCon/StatusManage';
-import StMList from '../_admin/pages/StudentCon/StMList';
+import StatusManage from '../_admin/pages/StudentCon/StatusManage';
 import LectureRegister from '../_admin/pages/Lecture_Room/LecRegister';
 import LectureList from '../_admin/pages/Lecture_Room/LectureList';
 import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
@@ -198,8 +198,7 @@ function App() {
                         <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
-                        <Route path='/user/StMList' element={<StMList />}></Route>
-                        <Route path='/user/StatusManage/:userId' element={<StatusManage />}></Route>
+                        <Route path='/user/StatusManage' element={<StatusManage />}></Route>
                     </Route>
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}

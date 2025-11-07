@@ -130,15 +130,15 @@ function App() {
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>이메일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.email}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>전화번호</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.phone}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>생년월일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.birthDate}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>성별</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.gender}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>소속학과</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentInfo.major || ''}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>사용자 유형</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{userTypeMap[studentInfo.type] || studentInfo.type}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>성별</th><td style={{ border: '1px solid #ddd' }}>{studentInfo.gender}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>소속학과</th><td style={{ border: '1px solid #ddd' }}>{studentInfo.major || ''}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px', backgroundColor: '#f9f9f9' }}>사용자 유형</th><td style={{ border: '1px solid #ddd' }}>{userTypeMap[studentInfo.type] || studentInfo.type}</td></tr>
         </tbody>
       </table>
 
       <div style={{ display: 'flex', alignItems: 'center', marginTop: '3rem' }}>
         <h2 style={{ margin: 0 }}>학적 상태</h2>
-        <Button variant="primary" size="sm" onClick={handleGoChangeStatus} style={{ marginLeft: 12 }}>
+        <Button variant="primary" size="sm" onClick={handleGoChangeStatus} style={{ marginLeft: 12}>
           학적 변경 신청
         </Button>
       </div>
@@ -178,20 +178,20 @@ function App() {
       <table style={{ borderCollapse: 'collapse', width: '100%', marginTop: '1rem', tableLayout: 'fixed' }}>
         <tbody>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>학적 상태 ID</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.statusid}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>학적상태</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentStatusMap[statusRecords.studentStatus]}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>입학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.admissionDate}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>휴학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.leaveDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>복학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.returnDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>졸업일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.graduationDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>유급일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.retentionDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>퇴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.expelledDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>전공 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.majorCredit}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>학적상태</th><td style={{ border: '1px solid #ddd' }}>{studentStatusMap[statusRecords.studentStatus]}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>입학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.admissionDate}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>휴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.leaveDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>복학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.returnDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>졸업일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.graduationDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>유급일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.retentionDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>퇴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.expelledDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>전공 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.majorCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>교양 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.generalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>총 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.totalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>이번 학기 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.currentCredit}</td></tr>
         </tbody>
       </table>
-    </Container>
+    </Container >
   );
 }
 

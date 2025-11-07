@@ -199,7 +199,7 @@ function App() {
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
                         <Route path='/user/StMList' element={<StMList />}></Route>
-                        <Route path='/user/StatusManage/:userId' element={<StatusManage />}></Route>
+                        <Route path='/user/StatusManage' element={<StatusManage />}></Route>
                     </Route>
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}

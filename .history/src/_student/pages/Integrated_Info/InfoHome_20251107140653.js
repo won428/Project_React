@@ -59,12 +59,6 @@ function App() {
         if (res.data.type === 'STUDENT') {
           setStudentInfo(res.data.studentInfo);
           setStatusRecords(res.data.statusRecords);
-
-          // 서버에서 가져온 이미지가 있으면 previewURL로 세팅
-          if (res.data.statusRecords.studentImage) {
-            setPreviewURL(res.data.statusRecords.studentImage);
-          }
-
           setError(null);
         } else {
           setStudentInfo(null);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // ← 추가
 import { API_BASE_URL } from '../../../public/config/config';
 
 const statusOptions = [
@@ -12,26 +11,28 @@ const statusOptions = [
 ];
 
 function StatusManage() {
-    const { userId } = useParams(); // URL에서 userId 가져오기
+    const userId = 8; // 테스트용 고정
+    // const {userId} = 
+
     const [studentInfo, setStudentInfo] = useState({
         academicStatus: '',
         leaveDate: '',
         returnDate: '',
-        statusDate: ''
+        statusDate: '' // 졸업/제적용 단일 날짜
     });
+
+    const [isLoading, setIsLoading] = useState(true);
     const [isNew, setIsNew] = useState(false);
-    const [loadError, setLoadError] = useState(false);
 
     useEffect(() => {
-        if (!userId) return;
         axios.get(`${API_BASE_URL}/user/${userId}/status`)
             .then(res => {
                 if (res.data && Object.keys(res.data).length > 0) {
                     setStudentInfo({
-                        academicStatus: res.data.studentStatus || '',
+                        academicStatus: res.data.academicStatus || '',
                         leaveDate: res.data.leaveDate || '',
                         returnDate: res.data.returnDate || '',
-                        statusDate: res.data.graduationDate || res.data.retentionDate || ''
+                        statusDate: res.data.graduationDate || res.data.expelledDate || ''
                     });
                     setIsNew(false);
                 } else {
@@ -40,23 +41,20 @@ function StatusManage() {
             })
             .catch(err => {
                 console.error(err);
-                setLoadError(true);
-                setIsNew(true); // 실패 시에도 폼 렌더링
-            });
+                alert('학생 정보를 불러오는데 실패했습니다.');
+            })
+            .finally(() => setIsLoading(false));
     }, [userId]);
 
-    // 이하 기존 handleChange, saveStatus, deleteStatus 동일
     const handleChange = (field, value) => {
         setStudentInfo(prev => ({ ...prev, [field]: value }));
     };
 
     const saveStatus = () => {
         const payload = {
-            studentStatus: studentInfo.academicStatus,
-            leaveDate: studentInfo.leaveDate || null,
-            returnDate: studentInfo.returnDate || null,
-            retentionDate: studentInfo.academicStatus === 'EXPELLED' ? studentInfo.statusDate : null,
-            graduationDate: studentInfo.academicStatus === 'GRADUATED' ? studentInfo.statusDate : null
+            ...studentInfo,
+            graduationDate: studentInfo.academicStatus === 'GRADUATED' ? studentInfo.statusDate : null,
+            expelledDate: studentInfo.academicStatus === 'EXPELLED' ? studentInfo.statusDate : null
         };
 
         const request = isNew
@@ -88,12 +86,12 @@ function StatusManage() {
             .catch(err => alert('삭제 실패: ' + err.message));
     };
 
+    if (isLoading) return <p>Loading...</p>;
+
     return (
         <Container style={{ marginTop: 24 }}>
             <h3>학생 학적 관리</h3>
-            {loadError && (
-                <p style={{ color: 'red' }}>학생 정보를 불러오는데 실패했습니다. 기본 폼으로 입력하세요.</p>
-            )}
+
             <Form.Label>학적 상태</Form.Label>
             <Form.Select
                 value={studentInfo.academicStatus}
@@ -105,7 +103,8 @@ function StatusManage() {
                 ))}
             </Form.Select>
 
-            {studentInfo.academicStatus === 'ON_LEAVE' && (
+            {/* 휴학/복학 선택 시 휴학일/복학일 입력 */}
+            {['ON_LEAVE', 'REINSTATED'].includes(studentInfo.academicStatus) && (
                 <>
                     <Form.Label style={{ marginTop: 12 }}>휴학일</Form.Label>
                     <Form.Control
@@ -113,11 +112,6 @@ function StatusManage() {
                         value={studentInfo.leaveDate || ''}
                         onChange={(e) => handleChange('leaveDate', e.target.value)}
                     />
-                </>
-            )}
-
-            {studentInfo.academicStatus === 'REINSTATED' && (
-                <>
                     <Form.Label style={{ marginTop: 12 }}>복학일</Form.Label>
                     <Form.Control
                         type="date"
@@ -127,6 +121,7 @@ function StatusManage() {
                 </>
             )}
 
+            {/* 졸업/제적 선택 시 단일 날짜 입력 */}
             {['GRADUATED', 'EXPELLED'].includes(studentInfo.academicStatus) && (
                 <>
                     <Form.Label style={{ marginTop: 12 }}>

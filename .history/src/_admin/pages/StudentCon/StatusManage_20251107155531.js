@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // ← 추가
 import { API_BASE_URL } from '../../../public/config/config';
 
 const statusOptions = [
@@ -12,7 +11,7 @@ const statusOptions = [
 ];
 
 function StatusManage() {
-    const { userId } = useParams(); // URL에서 userId 가져오기
+    const userId = 8; // 테스트용 고정
     const [studentInfo, setStudentInfo] = useState({
         academicStatus: '',
         leaveDate: '',
@@ -23,7 +22,6 @@ function StatusManage() {
     const [loadError, setLoadError] = useState(false);
 
     useEffect(() => {
-        if (!userId) return;
         axios.get(`${API_BASE_URL}/user/${userId}/status`)
             .then(res => {
                 if (res.data && Object.keys(res.data).length > 0) {
@@ -45,7 +43,6 @@ function StatusManage() {
             });
     }, [userId]);
 
-    // 이하 기존 handleChange, saveStatus, deleteStatus 동일
     const handleChange = (field, value) => {
         setStudentInfo(prev => ({ ...prev, [field]: value }));
     };
@@ -94,6 +91,7 @@ function StatusManage() {
             {loadError && (
                 <p style={{ color: 'red' }}>학생 정보를 불러오는데 실패했습니다. 기본 폼으로 입력하세요.</p>
             )}
+
             <Form.Label>학적 상태</Form.Label>
             <Form.Select
                 value={studentInfo.academicStatus}

@@ -34,11 +34,11 @@ export const LayoutStCon = () => {
                             className="text-white"
                         >구성원 리스트</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/user/StatusManage/:userId`)}
+                            onClick={() => navigate(`/user/StatusManage`)}
                             className="text-white"
                         >학생 학적관리</Nav.Link>
                         <Nav.Link
-                            onClick={() => navigate(`/user/StMList`)}
+                            onClick={() => navigate(`/user/S`)}
                             className="text-white"
                         >학생 학적관리 List</Nav.Link>
                     </Nav>

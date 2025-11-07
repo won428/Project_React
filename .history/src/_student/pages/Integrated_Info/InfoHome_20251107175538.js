@@ -38,7 +38,7 @@ function App() {
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const [previewURL, setPreviewURL] = useState(null);
+  const [previewURL, setPreviewURL] = useState(null); // 페이지 초기 렌더링 시 이미지 유지
   const [error, setError] = useState(null);
 
   const { user } = useAuth();
@@ -54,6 +54,7 @@ function App() {
       return;
     }
 
+    // 학생 정보 및 학적 정보 조회
     axios.get(`${API_BASE_URL}/student/info`, { params: { userId: user?.id } })
       .then(res => {
         if (res.data.type === 'STUDENT') {
@@ -98,7 +99,7 @@ function App() {
     if (!file) return;
 
     setSelectedFile(file);
-    setPreviewURL(URL.createObjectURL(file));
+    setPreviewURL(URL.createObjectURL(file)); // 업로드 즉시 미리보기
 
     // 서버 업로드
     const formData = new FormData();
@@ -106,16 +107,21 @@ function App() {
     formData.append("file", file);
 
     try {
-      await axios.post(`${API_BASE_URL}/student/status/upload-image`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/student/status/upload-image`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
+
+      // 서버에서 업로드 후 반환된 이미지 URL이 있으면 previewURL에 반영
+      if (response.data?.imageUrl) {
+        setPreviewURL(response.data.imageUrl);
+      }
     } catch (err) {
       console.error(err);
       alert("이미지 업로드 중 오류 발생");
     }
   };
 
-  // 화면 렌더링용 변수
+  // 화면 렌더링용 변수: 미리보기 URL > 서버 저장 이미지
   const displayedImage = previewURL || statusRecords.studentImage || null;
 
   return (
@@ -180,12 +186,12 @@ function App() {
           <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>학적 상태 ID</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.statusid}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>학적상태</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{studentStatusMap[statusRecords.studentStatus]}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>입학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.admissionDate}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>휴학일</th><td style={{ border: '1px solid #ddd', padding: '8px' }}>{statusRecords.leaveDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>휴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.leaveDate || '-'}</td></tr>
           <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>복학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.returnDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>졸업일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.graduationDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>유급일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.retentionDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>퇴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.expelledDate || '-'}</td></tr>
-          <tr><th style={{ border: '1px solid #ddd', padding: '8px' }}>전공 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.majorCredit}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>졸업일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.graduationDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>유급일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.retentionDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>퇴학일</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.expelledDate || '-'}</td></tr>
+          <tr><th style={{ border: '1px solid #ddd' }}>전공 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.majorCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>교양 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.generalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>총 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.totalCredit}</td></tr>
           <tr><th style={{ border: '1px solid #ddd' }}>이번 학기 학점</th><td style={{ border: '1px solid #ddd' }}>{statusRecords.currentCredit}</td></tr>

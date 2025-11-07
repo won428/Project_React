@@ -47,6 +47,8 @@ function App() {
   const userTypeMap = { STUDENT: '학생', PROFESSOR: '교수', ADMIN: '관리자' };
   const studentStatusMap = { ENROLLED: '재학중', ON_LEAVE: '휴학', REINSTATED: '복학', GRADUATED: '졸업', EXPELLED: '퇴학' };
 
+  const displayedImage = previewURL || statusRecords.studentImage || null;
+
   useEffect(() => {
     if (!user) {
       alert('로그인이 필요한 서비스입니다.');
