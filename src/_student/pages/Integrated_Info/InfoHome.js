@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Form, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import axios from 'axios';
@@ -99,6 +99,22 @@ function App() {
     return (
         <Container>
             <h2>학생 기본 정보</h2>
+            <table style={{ borderCollapse: 'collapse', marginBottom: '1rem', width: 'auto' }}>
+                <tbody>
+                    <tr>
+                        <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center', width: '105px', height: '135px' }}>
+                            {statusRecords.studentImage
+                                ? <img
+                                    src={statusRecords.studentImage}
+                                    alt="증명사진"
+                                    style={{ width: '105px', height: '135px', objectFit: 'cover', display: 'block' }}
+                                />
+                                : '-'}
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
             <table style={{ borderCollapse: 'collapse', width: '100%', tableLayout: 'fixed' }}>
                 <colgroup>
                     <col style={{ width: '25%' }} />
@@ -129,21 +145,7 @@ function App() {
                 </Button>
             </div>
 
-            <table style={{ borderCollapse: 'collapse', marginBottom: '1rem', width: 'auto' }}>
-                <tbody>
-                    <tr>
-                        <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center', width: '105px', height: '135px' }}>
-                            {statusRecords.studentImage
-                                ? <img
-                                    src={statusRecords.studentImage}
-                                    alt="증명사진"
-                                    style={{ width: '105px', height: '135px', objectFit: 'cover', display: 'block' }}
-                                />
-                                : '-'}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
 
             <table style={{ borderCollapse: 'collapse', width: '100%', marginTop: '1rem', tableLayout: 'fixed' }}>
                 <colgroup>

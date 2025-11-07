@@ -27,14 +27,8 @@ const ProfessorSubmitTable = ({ resdata, API_BASE_URL }) => (
                                 <td>{item.username}</td>
                                 <td>{item.title.length > 10 ? item.title.slice(0, 10) + "..." : item.title}</td>
                                 <td>{item.content.length > 30 ? item.content.slice(0, 30) + "..." : item.content}</td>
-                                <td>{new Date(item.updateAt).toLocaleString("ko-KR")}</td>
+                                <td>{new Date(item.updateAt).toLocaleDateString("ko-KR")}</td>
                                 <td>
-                                    {/* [!] 잠재적 버그 알림:
-                                      이 로직은 모든 학생의 제출물(item)에 대해
-                                      '전체' 첨부파일(resdata.attachmentSubmittedDto)을 순회합니다.
-                                      만약 `item` 안에 해당 학생의 파일 목록(예: item.attachments)이 따로 있다면
-                                      그것을 순회(item.attachments.map(...))해야 합니다.
-                                    */}
                                     {resdata.attachmentSubmittedDto?.length ? (
                                         <ul className="mt-2 mb-0">
                                             {resdata.attachmentSubmittedDto.map((file, j) => (
@@ -66,10 +60,11 @@ const ProfessorSubmitTable = ({ resdata, API_BASE_URL }) => (
  */
 const StudentSubmitForm = ({
     SubmitAssign, title, setTitle, content, setContent,
-    fileRef, Fileselect, subfiles, removeFile, navigate
+    fileRef, Fileselect, subfiles, removeFile, navigate, resdata
 }) => {
 
     const currentDate = new Date();
+    const DueDate = new Date(resdata.dueAt)
     return (
         <Card>
             <CardBody>
@@ -98,13 +93,17 @@ const StudentSubmitForm = ({
                             </div>
                         ))}
                     </div>
-                    {/* {currentDate>
-                        ? <div className="d-flex justify-content-end mt-3 gap-2">
+                    {currentDate < DueDate ?
+                        <div className="d-flex justify-content-end mt-3 gap-2">
                             <Button type="submit">등록</Button>
                             <Button variant="secondary" onClick={() => navigate("/asnlst")}>취소</Button>
-                        </div> :
-                            <></>
-                    } */}
+                        </div>
+                        :
+                        <div>
+                            제출 마감
+                        </div>
+
+                    }
                 </Form>
             </CardBody>
         </Card>
@@ -119,6 +118,8 @@ const ModisTrue = ({
     fileRef, Fileselect, subfiles, removeFile,
     SubmitMod, setMod
 }) => {
+    const currentDate = new Date();
+    const DueDate = new Date(resdata.dueAt)
     return (
         <Card>
             <CardBody>
@@ -171,10 +172,17 @@ const ModisTrue = ({
                     </div>
 
                     {/* ✅ FIX 2: 누락되었던 "수정 완료" 및 "취소" 버튼 추가 */}
-                    <div className="d-flex justify-content-end mt-3 gap-2">
-                        <Button type="submit">수정 완료</Button>
-                        <Button variant="secondary" onClick={() => setMod(false)}>취소</Button>
-                    </div>
+                    {currentDate < DueDate ?
+                        <div className="d-flex justify-content-end mt-3 gap-2">
+                            <Button type="submit">수정 완료</Button>
+                            <Button variant="secondary" onClick={() => setMod(false)}>취소</Button>
+                        </div>
+                        :
+                        <>
+                            수정 불가
+                        </>
+                    }
+
                 </Form>
             </CardBody>
         </Card>
@@ -185,6 +193,8 @@ const ModisTrue = ({
  * 8. (학생용) 제출 내역 조회 (mod === false)
  */
 const ModisFailure = ({ resdata, API_BASE_URL, handleEdit }) => {
+    const currentDate = new Date();
+    const DueDate = new Date(resdata.dueAt)
     return (
         <Card className="mt-4">
             <CardBody>
@@ -209,11 +219,17 @@ const ModisFailure = ({ resdata, API_BASE_URL, handleEdit }) => {
                         </tr>
                     </tbody>
                 </Table>
-                <div className="d-flex justify-content-end mt-3 gap-2">
-                    <Button onClick={() => handleEdit()}>
-                        수정
-                    </Button>
-                </div>
+                {currentDate < DueDate ?
+                    <div className="d-flex justify-content-end mt-3 gap-2">
+                        <Button onClick={() => handleEdit()}>
+                            수정
+                        </Button>
+                    </div>
+                    :
+                    <>
+
+                    </>
+                }
             </CardBody>
         </Card>
     );
@@ -264,6 +280,8 @@ function App() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [subfiles, setSubfiles] = useState([]);
+    const [start, setStart] = useState(new Date());
+    const [end, setEnd] = useState();
     const fileRef = useRef();
     console.log("APP 랜더링");
 
@@ -312,6 +330,7 @@ function App() {
         formData.append("lectureId", lectureId);
         formData.append("title", title);
         formData.append("content", content);
+        formData.append("dueAt", resdata.dueAt)
 
         if (subfiles && subfiles.length > 0) {
             subfiles.forEach(f => {
@@ -499,6 +518,10 @@ function App() {
                                 <Form.Control value={resdata.updateAt} readOnly />
                             </Form.Group>
                             <Form.Group>
+                                <Form.Label>마감일 조정</Form.Label>
+                                <Form.Control value={resdata.updateAt} readOnly />
+                            </Form.Group>
+                            <Form.Group>
                                 <Form.Label>파일 첨부</Form.Label>
                                 <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
                             </Form.Group>
@@ -603,6 +626,7 @@ function App() {
                         subfiles={subfiles}
                         removeFile={removeFile}
                         navigate={navigate}
+                        resdata={resdata}
                     />
             )}
             {user.roles.includes("PROFESSOR") && (
