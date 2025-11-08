@@ -34,6 +34,7 @@ export default function PostViewUI() {
     try {
       const url = `${API_BASE_URL}/inquiry/page/${id}`;
       const { data } = await axios.get(url);
+      console.log(data);
       setPage(data);
     } catch (err) {
       console.log(err);
@@ -44,6 +45,7 @@ export default function PostViewUI() {
     try {
       const url = `${API_BASE_URL}/inquiry/comment/list/${id}`;
       const { data } = await axios.get(url);
+      console.log(data)
       setCommentList(data);
     } catch (err) {
       console.log(err);
@@ -170,35 +172,52 @@ export default function PostViewUI() {
         </div>
       </div>
 
-      <div className="d-flex justify-content-end mb-2">
-        <Button variant="secondary" size="sm"
-            onClick={()=> navigate(-1)}
-        >돌아가기</Button>
+      <div className="d-flex justify-content-end gap-2 mb-2">
+        {page.user === user.id&&(
+           <Button variant="outline-primary" size="sm" onClick={()=> navigate(`/updatePost/${id}`)}>수정</Button>
+        )}
+       <Button variant="outline-secondary" size="sm" onClick={()=> navigate(-1)}>돌아가기</Button>
+        {page.user === user.id&&(
+          <Button variant="outline-danger" size="sm" onClick={()=> navigate(-1)}>삭제</Button>
+        )}
+        
       </div>
-
       <Card className="mb-5">
         <Card.Header className="py-2">댓글</Card.Header>
 
-        {commentList.map((comment)=>(
-          <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={comment.postId}>
-            <div className="d-flex gap-3">
-              <div
-                className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 40, height: 40 }}
-              >
-               <span className="small">{(comment?.userName ?? '').trim().slice(0, 1)}</span>
-              </div>
-              <div className="border rounded w-100 p-3">
-                <div className="d-flex align-items-center gap-2 mb-2">
-                  <span className="fw-semibold">{comment.userName}</span>
-                  <span className="text-muted small">{comment.createdAt}</span>
-                </div>
-                <div style={{ whiteSpace: "pre-wrap" }}>
-                  {comment.content}
-                </div>
-              </div>
-            </div>
+        {commentList.map((comment) => (
+  <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={comment.id}>
+    <div className="d-flex gap-3">
+      <div
+        className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+        style={{ width: 40, height: 40 }}
+      >
+        <span className="small">{(comment?.userName ?? '').trim().slice(0, 1)}</span>
+      </div>
+
+      {/* 댓글칸 */}
+      <div className="border rounded w-100 p-3">
+        {/* 상단: 이름/시간 */}
+        <div className="d-flex align-items-center gap-2 mb-2">
+          <span className="fw-semibold">{comment.userName}</span>
+          <span className="text-muted small">{comment.createdAt}</span>
+        </div>
+
+        {/* 본문 */}
+        <div className="mb-2" style={{ whiteSpace: "pre-wrap" }}>
+          {comment.content}
+        </div>
+          {user.id === comment.userId &&(
+            <div className="mt-2 d-flex justify-content-end gap-2 small">
+            <button type="button" className="btn btn-link p-0 text-decoration-none link-secondary">수정</button>
+            <span className="text-muted">·</span>
+            <button type="button" className="btn btn-link p-0 text-decoration-none link-danger">삭제</button>
           </div>
+          )}
+          
+      </div>
+    </div>
+  </div>
 ))}
         
 

@@ -101,6 +101,7 @@ import InquiryBoard from "../public/pages/InquiryBoard";
 import { LayoutStInfoPublic }from "../public/ui/LayoutStInfoPublic";
 import CreatePost from "../public/pages/CreatePost";
 import InquiryPage from "../public/pages/InquiryPage";
+import UpdatePost from "../public/pages/UpdatePost";
 
 function App() {
     /**
@@ -137,6 +138,7 @@ function App() {
                         <Route path='/inquiryBoard' element={<InquiryBoard />} />
                         <Route path='/createPost' element={<CreatePost />} />
                         <Route path='/inquiryPage/:id' element={<InquiryPage />} />
+                        <Route path='/updatePost/:id' element={<UpdatePost />} />
                     </Route>
 
                     </Route>
