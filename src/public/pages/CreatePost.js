@@ -51,7 +51,7 @@ const signup = async (e) => {
 
         if (response.status === 200) {
           alert("등록 완료");
-          navigate("/inquiryBoard");
+          navigate(-1);
         }
       } catch (error) {
         const err = error.response;

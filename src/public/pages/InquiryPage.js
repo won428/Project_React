@@ -23,12 +23,26 @@ export default function PostViewUI() {
     postId : id
   })
   const [commentList, setCommentList] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState({
+    content : ''
+  });
 
    const typeMap2 = {
     'LECTURE': "[강의]",
     'CALENDAR': "[학사]",
     "OTHERS": "[기타]",
   };
+
+  const startEdit = (c) => {
+  setEditingId(c.postId);                // 수정할 댓글 PK
+  setEditingText({ content: c.content ?? "" });
+};
+
+const cancelEdit = () => {
+  setEditingId(null);
+  setEditingText("");
+};
 
   const loadPost = useCallback(async () => {
     try {
@@ -118,6 +132,84 @@ export default function PostViewUI() {
         }
   }
 
+  const updateComment =  async (e, id) =>{
+    
+  try {
+        e.preventDefault();
+        const url = `${API_BASE_URL}/inquiry/comment/update/${id}`;
+        const response =  await axios.patch(url, editingText,
+          {headers: { 'Content-Type': 'application/json' } }
+        )
+        if (response.status === 200) {
+          alert("수정 완료");
+          navigate(0);
+        }
+            
+        } catch (error) {
+             const err = error.response;
+             console.log(error)
+        if (!err) {
+            alert('네트워크 오류가 발생하였습니다');
+            return;
+        }
+        const message = err.data?.message ?? '오류 발생';
+        alert(message);
+
+        }
+    };
+
+    const deleteComment = async (e,id) =>{
+      try {
+        e.preventDefault();
+       if (!window.confirm("댓글을 삭제할까요?")) {
+            return;
+          }
+        const url = `${API_BASE_URL}/inquiry/comment/delete/${id}`;
+        const response =  await axios.delete(url)
+        if (response.status === 200) {
+          alert("삭제 완료");
+          navigate(0);
+        }
+            
+        } catch (error) {
+             const err = error.response;
+             console.log(error)
+        if (!err) {
+            alert('네트워크 오류가 발생하였습니다');
+            return;
+        }
+        const message = err.data?.message ?? '오류 발생';
+        alert(message);
+
+        }
+    };
+
+    const deletePost = async (e) =>{
+      try {
+        e.preventDefault();
+       if (!window.confirm("게시글을 삭제할까요?")) {
+            return;
+          }
+        const url = `${API_BASE_URL}/inquiry/post/delete/${id}`;
+        const response =  await axios.delete(url)
+        if (response.status === 200) {
+          alert("삭제 완료");
+          navigate(0);
+        }
+            
+        } catch (error) {
+             const err = error.response;
+             console.log(error)
+        if (!err) {
+            alert('네트워크 오류가 발생하였습니다');
+            return;
+        }
+        const message = err.data?.message ?? '오류 발생';
+        alert(message);
+
+        }
+    }
+
   return (
     <Container className="py-4" style={{ maxWidth: 960 }}>
       <Stack gap={2} className="mb-3">
@@ -178,47 +270,89 @@ export default function PostViewUI() {
         )}
        <Button variant="outline-secondary" size="sm" onClick={()=> navigate(-1)}>돌아가기</Button>
         {page.user === user.id&&(
-          <Button variant="outline-danger" size="sm" onClick={()=> navigate(-1)}>삭제</Button>
+          <Button variant="outline-danger" size="sm" onClick={(e)=> deletePost(e)}>삭제</Button>
         )}
         
       </div>
       <Card className="mb-5">
         <Card.Header className="py-2">댓글</Card.Header>
 
-        {commentList.map((comment) => (
-  <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={comment.id}>
-    <div className="d-flex gap-3">
-      <div
-        className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
-        style={{ width: 40, height: 40 }}
-      >
-        <span className="small">{(comment?.userName ?? '').trim().slice(0, 1)}</span>
-      </div>
+ {commentList.map((c) => {
+  const cid = c.postId;
+  const mine = user.id === c.userId;
+  const isEditing = editingId === cid;
 
-      {/* 댓글칸 */}
-      <div className="border rounded w-100 p-3">
-        {/* 상단: 이름/시간 */}
-        <div className="d-flex align-items-center gap-2 mb-2">
-          <span className="fw-semibold">{comment.userName}</span>
-          <span className="text-muted small">{comment.createdAt}</span>
+  return (
+    <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={cid}>
+      <div className="d-flex gap-3">
+        <div
+          className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+          style={{ width: 40, height: 40 }}
+        >
+          <span className="small">{(c?.userName ?? '').trim().slice(0, 1)}</span>
         </div>
 
-        {/* 본문 */}
-        <div className="mb-2" style={{ whiteSpace: "pre-wrap" }}>
-          {comment.content}
-        </div>
-          {user.id === comment.userId &&(
-            <div className="mt-2 d-flex justify-content-end gap-2 small">
-            <button type="button" className="btn btn-link p-0 text-decoration-none link-secondary">수정</button>
-            <span className="text-muted">·</span>
-            <button type="button" className="btn btn-link p-0 text-decoration-none link-danger">삭제</button>
+        {/* 댓글칸 */}
+        <div className="border rounded w-100 p-3">
+          {/* 상단: 이름/시간 */}
+          <div className="d-flex align-items-center gap-2 mb-2">
+            <span className="fw-semibold">{c.userName}</span>
+            <span className="text-muted small">{c.createdAt}</span>
           </div>
+
+          {/* 보기 모드 vs 수정 모드 교체 지점 */}
+          {isEditing ? (
+            <>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                className="mb-2"
+                value={editingText.content}
+                autoFocus
+                onChange={(e) => setEditingText((pre)=>({...pre, content : e.target.value}))}
+               
+              />
+              <div className="d-flex justify-content-end gap-2">
+                <Button size="sm" variant="secondary" onClick={cancelEdit}>
+                  취소
+                </Button>
+                <Button size="sm" variant="primary" onClick={(e) => updateComment(e, cid)}>
+                  저장
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-2" style={{ whiteSpace: "pre-wrap" }}>
+                {c.content}
+              </div>
+
+              {mine && (
+                <div className="mt-2 d-flex justify-content-end gap-2 small">
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 text-decoration-none link-secondary"
+                    onClick={() => startEdit(c)}
+                  >
+                    수정
+                  </button>
+                  <span className="text-muted">·</span>
+                  <button
+                    type="button"
+                    className="btn btn-link p-0 text-decoration-none link-danger"
+                    onClick={(e) => deleteComment(e,cid)}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+            </>
           )}
-          
+        </div>
       </div>
     </div>
-  </div>
-))}
+  );
+})}
         
 
         <Card.Body>
