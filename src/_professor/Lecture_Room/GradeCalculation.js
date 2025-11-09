@@ -15,7 +15,7 @@ function EightLineForm({ value, onChange, weights }) {
         asScore: "",
         tScore: "",
         ftScore: "",
-        total: "-",
+        total_score: 0,
     };
     const v = value ?? DEFAULT_FORM;
 
@@ -87,10 +87,11 @@ function EightLineForm({ value, onChange, weights }) {
                         inputMode="decimal"
                         name="asScore"
                         value={v.asScore ?? ""}
-                        onChange={(e) => onModalChange("asScore", e.target.value)}
-                        onBlur={(e) => onModalChange("asScore", clamp(e.target.value, 100))}   // ← 100으로
-                        placeholder="0 ~ 100"
+                        onChange={handle}
+                        onBlur={(e) => onChange("asScore", clamp(e.target.value, weights.assignment))}   // ← 100으로
+                        placeholder={`0 ~ ${weights.assignment}`}
                     />
+                    <Form.Text muted>최대 {weights.assignment}점</Form.Text>
                 </Col>
             </Form.Group>
 
@@ -103,10 +104,11 @@ function EightLineForm({ value, onChange, weights }) {
                         inputMode="decimal"
                         name="tScore"
                         value={v.tScore ?? ""}
-                        onChange={(e) => onModalChange("tScore", e.target.value)}
-                        onBlur={(e) => onModalChange("tScore", clamp(e.target.value, 100))}    // ← 100으로
-                        placeholder="0 ~ 100"
+                        onChange={handle}
+                        onBlur={(e) => onChange("tScore", clamp(e.target.value, weights.midterm))}    // ← 100으로
+                        placeholder={`0 ~ ${weights.midterm}`}
                     />
+                    <Form.Text muted>최대 {weights.midterm}점</Form.Text>
                 </Col>
             </Form.Group>
 
@@ -118,10 +120,11 @@ function EightLineForm({ value, onChange, weights }) {
                         inputMode="decimal"
                         name="ftScore"
                         value={v.ftScore ?? ""}
-                        onChange={(e) => onModalChange("ftScore", e.target.value)}
-                        onBlur={(e) => onModalChange("ftScore", clamp(e.target.value, 100))}   // ← 100으로
-                        placeholder="0 ~ 100"
+                        onChange={handle}
+                        onBlur={(e) => onChange("ftScore", clamp(e.target.value, weights.final))}   // ← 100으로
+                        placeholder={`0 ~ ${weights.final}`}
                     />
+                    <Form.Text muted>최대 {weights.final}점</Form.Text>
                 </Col>
             </Form.Group>
 
@@ -132,7 +135,7 @@ function EightLineForm({ value, onChange, weights }) {
                     <Form.Control
                         readOnly
                         plaintext
-                        value={v.total === "" || v.total == null ? "-" : v.total}
+                        value={v.total_score === "" || v.total_score == null ? "-" : v.total_score}
                     />
                 </Col>
             </Form.Group>
@@ -171,8 +174,8 @@ function GradeCalculation() {
         asScore: "",
         tScore: "",
         ftScore: "",
-        total: "-",
-        gpa: "",
+        total_score: null,
+        gpa: null,
     };
     const [form, setForm] = useState(DEFAULT_FORM); // 그대로 두셔도 됩니다(미사용)
 
@@ -347,34 +350,26 @@ function GradeCalculation() {
 
     // (교체) 총점/학점 계산: 입력은 0~100% 기준, 가중치 비율대로 100점 만점으로 합산
     const gradeCalcul = () => {
-        // 1) 가중치(비율) 정규화
-        const W = normalizeWeights(weights); // 합계가 정확히 100이 되도록 보정됨
+        // 각 영역의 만점(가중치)
+  const maxA   = Number(weights.attendance) || 0;
+  const maxAs  = Number(weights.assignment) || 0;
+  const maxMid = Number(weights.midterm)    || 0;
+  const maxFin = Number(weights.final)      || 0;
 
-        // 2) 각 영역을 %로 준비
-        //   - attendance는 백엔드에서 '가중치 점수'로 오는 경우가 많아 disabled 되어 있음
-        //     (예: 가중치 20점 만점에서 17점이면 85%)
-        const attPoints = Number(modalForm.attendance) || 0;        // 예: 0~weights.attendance 범위의 '점수'
-        const attPercent = W.attendance > 0
-            ? clamp01((attPoints / W.attendance) * 100)               // 포인트→퍼센트 변환
-            : 0;
+  const denom = maxA + maxAs + maxMid + maxFin || 1; // 분모 보호
 
-        const asPercent = clamp01(modalForm.asScore);              // 사용자가 0~100 입력
-        const midPercent = clamp01(modalForm.tScore);
-        const finPercent = clamp01(modalForm.ftScore);
+  // 사용자가 입력한 "원점"을 각 만점으로 클램프
+  const att = Math.min(Number(modalForm.attendance) || 0, maxA); // 출석은 이미 백엔드 계산값
+  const as  = Math.min(Number(modalForm.asScore)    || 0, maxAs);
+  const mid = Math.min(Number(modalForm.tScore)     || 0, maxMid);
+  const fin = Math.min(Number(modalForm.ftScore)    || 0, maxFin);
 
-        // 3) 비율대로 가중합 (합계 100점 만점)
-        const total =
-            (attPercent * W.attendance +
-                asPercent * W.assignment +
-                midPercent * W.midterm +
-                finPercent * W.final) / 100;
+  // 원점 합계 → 100점 만점으로 환산
+  const totalPoints = att + as + mid + fin;                 // 최대 denom
+  const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
+  const gpa   = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
 
-        const totalRounded = Math.round(total * 100) / 100;
-
-        // 4) 4.5 만점 환산 (선형 환산: 100점 -> 4.5)
-        const gpa = Math.round(((totalRounded / 100) * 4.5) * 100) / 100;
-
-        setModalForm(prev => ({ ...prev, total: totalRounded, gpa }));
+  setModalForm(prev => ({ ...prev, total_score: total, gpa }));
     };
 
     const handleSave = async () => {
@@ -387,12 +382,14 @@ function GradeCalculation() {
             asScore: clamp01(modalForm.asScore),           // 0~100
             tScore: clamp01(modalForm.tScore),            // 0~100
             ftScore: clamp01(modalForm.ftScore),           // 0~100
-            total: modalForm.total,                      // 0~100
+            totalScore: modalForm.total_score,                      // 0~100
             gpa: modalForm.gpa,                        // 0~4.5
         };
-        await axios.post(`${API_BASE_URL}/grade/insertGrades`);
+        console.log('payload ->', payload); // 보내기 전 확인
+        await axios.post(`${API_BASE_URL}/grade/insertGrades`,payload);
 
         setFormsById(prev => ({ ...prev, [selectedId]: { ...(prev[selectedId] ?? DEFAULT_FORM), ...modalForm } }));
+        alert("점수 저장이 완료되었습니다.");
         closeModal();
     };
 
@@ -450,7 +447,7 @@ function GradeCalculation() {
                     <div className="d-flex gap-2">
                         <Button variant="outline-secondary" onClick={closeModal}>닫기</Button>
                         <Button variant="outline-secondary" onClick={gradeCalcul}>점수 산출</Button>
-                        <Button variant="primary" onClick={handleSave}>저장</Button>
+                        <Button variant="primary" onClick={handleSave}>점수 저장</Button>
                     </div>
                 </Modal.Footer>
             </Modal>
