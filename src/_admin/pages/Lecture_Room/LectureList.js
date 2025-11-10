@@ -482,7 +482,7 @@ function App() {
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary"onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
@@ -608,7 +608,7 @@ function App() {
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary" onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
