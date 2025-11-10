@@ -14,14 +14,14 @@ function App() {
   const [rejectedSelected, setRejectedSelected] = useState([]);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [modalId,setModalId] = useState('');
-  const [modalLec,setModalLec] = useState({});
+  const [modalId, setModalId] = useState('');
+  const [modalLec, setModalLec] = useState({});
 
   useEffect(() => {
     if (!modalId) return;
     const url = `${API_BASE_URL}/lecture/info`;
     axios
-      .get(url, { params: { modalId: Number(modalId) } }) 
+      .get(url, { params: { modalId: Number(modalId) } })
       .then((res) => setModalLec(res.data))
       .catch((err) => {
         console.error(err.response.data);
@@ -237,30 +237,30 @@ function App() {
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`
     axios
-      .get(url, {responseType: 'blob'})
-      .then((response)=>{
-          console.log(response.headers)
-          const cd = response.headers['content-disposition'] || '';
-          const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
-          const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
-          const filename = (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
+      .get(url, { responseType: 'blob' })
+      .then((response) => {
+        console.log(response.headers)
+        const cd = response.headers['content-disposition'] || '';
+        const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
+        const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
+        const filename = (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
 
-          const blob = new Blob(
-            [response.data],
-            {
-              type: response.headers['content-type'] || 'application/octet-stream',
-            }
-          );
+        const blob = new Blob(
+          [response.data],
+          {
+            type: response.headers['content-type'] || 'application/octet-stream',
+          }
+        );
 
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(a.href);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.error(err.response.data);
         alert('오류');
       })
@@ -328,7 +328,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td> {/* 수업 요일 */}
+                  {/* ✅ 수정: 요일 배열을 문자열로 합치기 (null-safe) */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -336,16 +341,17 @@ function App() {
                     <Button
                       size="sm"
                       variant="outline-dark"
-                      onClick={()=>{
+                      onClick={() => {
                         setModalId(lec.id)
-                        setOpen(true)}}
+                        setOpen(true)
+                      }}
                     >
                       상세
                     </Button>
                   </td> {/* 상세보기 */}
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary" onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
@@ -381,12 +387,12 @@ function App() {
           </Table>
 
           <div className="d-flex justify-content-end gap-2 mt-2">
-            <Button size="sm" variant="primary" onClick={(e)=>{
+            <Button size="sm" variant="primary" onClick={(e) => {
               lectureApproved(e, approveSelected)
             }}>일괄승인</Button>
             <Button size="sm" variant="danger"
-              onClick={(e)=>{
-                lectureRejected(e,approveSelected);
+              onClick={(e) => {
+                lectureRejected(e, approveSelected);
               }}
             >일괄거부</Button>
           </div>
@@ -453,7 +459,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day])}</td>
+                  {/* ✅ 수정: 요일 배열을 문자열로 합치기 (null-safe) */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -461,9 +472,10 @@ function App() {
                     <Button
                       size="sm"
                       variant="outline-dark"
-                      onClick={()=>{
+                      onClick={() => {
                         setModalId(lec.id)
-                        setOpen(true)}}
+                        setOpen(true)
+                      }}
                     >
                       상세
                     </Button>
@@ -478,7 +490,7 @@ function App() {
                   </td>
                   <td className="text-center">
                     <Button variant="outline-primary" size="sm"
-                      onClick={()=>{
+                      onClick={() => {
                         stautsRequest(lec.id, "INPROGRESS")
                       }}
                     >
@@ -505,7 +517,7 @@ function App() {
           <div className="d-flex justify-content-end gap-2 mt-2">
             <Button size="sm" variant="primary" onClick={lectureInprogress}>일괄 개강</Button>
             <Button size="sm" variant="danger"
-              onClick={(e)=>{
+              onClick={(e) => {
                 lectureRejected(e, inproSelected)
               }}
             >일괄거부</Button>
@@ -525,7 +537,7 @@ function App() {
             style={{ fontSize: "0.875rem" }}
           >
             <colgroup>
-               <col style={{ width: "3rem" }} />   {/* 체크박스 */}
+              <col style={{ width: "3rem" }} />   {/* 체크박스 */}
               <col style={{ width: "16rem" }} />  {/* 강의명 */}
               <col style={{ width: "7rem" }} />   {/* 이수구분 */}
               <col style={{ width: "3rem" }} />   {/* 학년 */}
@@ -573,7 +585,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day].join(", "))}</td>
+                  {/* ✅ 수정: 기존에 join을 잘못 썼던 부분 교정 */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -581,9 +598,10 @@ function App() {
                     <Button
                       size="sm"
                       variant="outline-dark"
-                      onClick={()=>{
+                      onClick={() => {
                         setModalId(lec.id)
-                        setOpen(true)}}
+                        setOpen(true)
+                      }}
                     >
                       상세
                     </Button>
@@ -598,7 +616,7 @@ function App() {
                   </td>
                   <td className="text-center" colSpan={2}>
                     <Button variant="outline-primary" size="sm"
-                      onClick={()=>{
+                      onClick={() => {
                         stautsRequest(lec.id, "APPROVED")
                       }}
                     >
@@ -611,14 +629,14 @@ function App() {
           </Table>
           <div className="d-flex justify-content-end gap-2 mt-2">
             <Button size="sm" variant="primary" onClick={
-              (e)=>{
-                 lectureApproved(e, rejectedSelected)
+              (e) => {
+                lectureApproved(e, rejectedSelected)
               }}>
-                일괄 재승인</Button>
+              일괄 재승인</Button>
           </div>
-          
+
         </div>
-        
+
       </div>
 
       {/* ───────── 상세 모달 UI ───────── */}
@@ -668,12 +686,12 @@ function App() {
                       <td colSpan={4} className="text-center text-muted">시간표 없음</td>
                     </tr>
                   )}
-              </tbody>
+                </tbody>
               </Table>
             </div>
           </div>
 
-          
+
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
             <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
@@ -681,39 +699,39 @@ function App() {
             </div>
           </div>
 
-         <div>
-          <div className="text-muted small mb-2">첨부파일</div>
+          <div>
+            <div className="text-muted small mb-2">첨부파일</div>
 
-         <div className="d-flex align-items-center justify-content-between">
-  <div className="text-muted w-100">
-    <ul className="mb-0 w-100">
-      {modalLec?.attachmentDtos?.length > 0 ? (
-        modalLec.attachmentDtos.map((lecFile) => (
-          <li key={lecFile.id} className="mb-1">
-            <div className="d-flex align-items-center w-100">
-              <span className="text-truncate me-2 flex-grow-1">{lecFile.name}</span>
-              <Button
-                size="sm"
-                variant="outline-secondary"
-                className="ms-auto flex-shrink-0"
-                disabled={!modalLec?.attachmentDtos?.length}
-                onClick={()=>{
-                  downloadClick(lecFile.id)
-                  console.log(lecFile.id)
-                }}
-              >
-                다운로드
-              </Button>
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="text-muted w-100">
+                <ul className="mb-0 w-100">
+                  {modalLec?.attachmentDtos?.length > 0 ? (
+                    modalLec.attachmentDtos.map((lecFile) => (
+                      <li key={lecFile.id} className="mb-1">
+                        <div className="d-flex align-items-center w-100">
+                          <span className="text-truncate me-2 flex-grow-1">{lecFile.name}</span>
+                          <Button
+                            size="sm"
+                            variant="outline-secondary"
+                            className="ms-auto flex-shrink-0"
+                            disabled={!modalLec?.attachmentDtos?.length}
+                            onClick={() => {
+                              downloadClick(lecFile.id)
+                              console.log(lecFile.id)
+                            }}
+                          >
+                            다운로드
+                          </Button>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-muted">첨부된 파일이 없습니다.</li>
+                  )}
+                </ul>
+              </div>
             </div>
-          </li>
-        ))
-      ) : (
-        <li className="text-muted">첨부된 파일이 없습니다.</li>
-      )}
-    </ul>
-  </div>
-</div>
-        </div>
+          </div>
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">

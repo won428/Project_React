@@ -1,10 +1,8 @@
-
 function App() {
     return (
         <>
-            This_Credit
+            Menu Item
         </>
-
     )
 }
 export default App;

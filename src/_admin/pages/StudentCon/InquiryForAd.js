@@ -46,7 +46,7 @@ function InquiryBoardUI() {
       );
       
       if(response.status === 200){
-        navigate(`/inquiryPage/${id}`)
+        navigate(`/inquiryPage/admin/${id}`)
       }
       
     } catch (error) {

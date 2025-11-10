@@ -194,7 +194,7 @@ const cancelEdit = () => {
         const response =  await axios.delete(url)
         if (response.status === 200) {
           alert("삭제 완료");
-          navigate(0);
+          navigate(-1);
         }
             
         } catch (error) {
