@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../../config/config";
 import { Button, Col, Row, Container, Form, Modal, Table } from "react-bootstrap";
 import axios from "axios";
 
+
 /* ====== 여기: EightLineForm을 최상위로 이동 ====== */
 function EightLineForm({ value, onChange, weights }) {
     const DEFAULT_FORM = {
@@ -165,6 +166,11 @@ function GradeCalculation() {
     const [studentList, setStudentList] = useState([]);
     const [studentBasic, setStudentBasic] = useState(null);
     const [lecture, setLecture] = useState({});
+    const [saveGradeStudent, setSaveGradeStudent] = useState({});
+    const [isLocked, setIslocked] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+
+    const selectedLocked = !!(selectedId && saveGradeStudent && saveGradeStudent[selectedId]);
 
     const DEFAULT_FORM = {
         name: "",
@@ -203,10 +209,21 @@ function GradeCalculation() {
 
     const [formsById, setFormsById] = useState({});
     const [show, setShow] = useState(false);
-    const [selectedId, setSelectedId] = useState(null);
+
 
     const dirtyRef = useRef(false);
     const [modalForm, setModalForm] = useState(DEFAULT_FORM);
+
+    // 점수 3개가 모두 입력(빈문자 아님) + 숫자 + 0 이상일 때만 저장 가능
+    const canSave = useMemo(() => {
+        const isNum = (v) => {
+            const s = String(v ?? "").trim();
+            if (s === "") return false;               // 빈값 불가
+            const n = Number(s);
+            return Number.isFinite(n) && n >= 0;      // 숫자 && 0 이상
+        };
+        return isNum(modalForm.asScore) && isNum(modalForm.tScore) && isNum(modalForm.ftScore);
+    }, [modalForm.asScore, modalForm.tScore, modalForm.ftScore]);
 
     useEffect(() => {
         if (!lectureId) return;
@@ -284,6 +301,41 @@ function GradeCalculation() {
         return () => ac.abort();
     }, [selectedId, lectureId, studentList]);
 
+
+    useEffect(() => {
+        if (!lectureId) return;
+
+        const idAtRequest = selectedId;
+        const minScore = 0;
+        const controller = new AbortController();
+
+        (async () => {
+            setStudentLoading(true); // async 위로 빼면 목록 바뀔때마다 계속 호출됨.
+            try {
+                const { data } = await axios.get(
+                    `${API_BASE_URL}/grade/listByGrade`, {
+                    params: { lectureId },
+                    signal: controller.signal
+                });
+
+                const dict = Object.fromEntries(
+                    (Array.isArray(data) ? data : []).map(row => [
+                        row.userId,
+                        { totalScore: row.totalScore, lectureGrade: row.lectureGrade }
+                    ])
+                );
+                // 변수명은 그대로 사용: saveGradeStudent에 딕셔너리 저장
+                setSaveGradeStudent(dict);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setStudentLoading(false);
+            }
+        })();
+
+        return () => controller.abort();
+    }, [lectureId]);
+
     useEffect(() => {
         setFormsById((prev) => {
             const next = { ...prev };
@@ -351,29 +403,49 @@ function GradeCalculation() {
     // (교체) 총점/학점 계산: 입력은 0~100% 기준, 가중치 비율대로 100점 만점으로 합산
     const gradeCalcul = () => {
         // 각 영역의 만점(가중치)
-  const maxA   = Number(weights.attendance) || 0;
-  const maxAs  = Number(weights.assignment) || 0;
-  const maxMid = Number(weights.midterm)    || 0;
-  const maxFin = Number(weights.final)      || 0;
+        const maxA = Number(weights.attendance) || 0;
+        const maxAs = Number(weights.assignment) || 0;
+        const maxMid = Number(weights.midterm) || 0;
+        const maxFin = Number(weights.final) || 0;
 
-  const denom = maxA + maxAs + maxMid + maxFin || 1; // 분모 보호
+        const denom = maxA + maxAs + maxMid + maxFin || 1; // 분모 보호
 
-  // 사용자가 입력한 "원점"을 각 만점으로 클램프
-  const att = Math.min(Number(modalForm.attendance) || 0, maxA); // 출석은 이미 백엔드 계산값
-  const as  = Math.min(Number(modalForm.asScore)    || 0, maxAs);
-  const mid = Math.min(Number(modalForm.tScore)     || 0, maxMid);
-  const fin = Math.min(Number(modalForm.ftScore)    || 0, maxFin);
+        // 사용자가 입력한 "원점"을 각 만점으로 클램프
+        const att = Math.min(Number(modalForm.attendance) || 0, maxA); // 출석은 이미 백엔드 계산값
+        const as = Math.min(Number(modalForm.asScore) || 0, maxAs);
+        const mid = Math.min(Number(modalForm.tScore) || 0, maxMid);
+        const fin = Math.min(Number(modalForm.ftScore) || 0, maxFin);
 
-  // 원점 합계 → 100점 만점으로 환산
-  const totalPoints = att + as + mid + fin;                 // 최대 denom
-  const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
-  const gpa   = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
+        // 원점 합계 → 100점 만점으로 환산
+        const totalPoints = att + as + mid + fin;                 // 최대 denom
+        const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
+        const gpa = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
 
-  setModalForm(prev => ({ ...prev, total_score: total, gpa }));
+        setModalForm(prev => ({ ...prev, total_score: total, gpa }));
     };
 
     const handleSave = async () => {
         if (!selectedId) return;
+        if (!canSave) {
+            alert("과제/중간/기말 점수를 모두 입력하세요. 0도 입력 가능합니다.");
+            return;
+        }
+
+        // 1) 가중치(만점) 가져오기
+        const maxA = Number(weights.attendance) || 0;
+        const maxAs = Number(weights.assignment) || 0;
+        const maxMid = Number(weights.midterm) || 0;
+        const maxFin = Number(weights.final) || 0;
+        const denom = Math.max(1, maxA + maxAs + maxMid + maxFin); // 0 나눗셈 보호
+
+        // 2) 입력값 클램프 & 합산 (점수산출 버튼 안 눌러도 여기서 계산)
+        const att = Math.min(Number(modalForm.attendance) || 0, maxA);
+        const as = Math.min(Number(modalForm.asScore) || 0, maxAs);
+        const mid = Math.min(Number(modalForm.tScore) || 0, maxMid);
+        const fin = Math.min(Number(modalForm.ftScore) || 0, maxFin);
+        const totalPoints = att + as + mid + fin;                    // 원점 합
+        const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
+        const gpa = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
 
         const payload = {
             userId: selectedId,
@@ -382,13 +454,16 @@ function GradeCalculation() {
             asScore: clamp01(modalForm.asScore),           // 0~100
             tScore: clamp01(modalForm.tScore),            // 0~100
             ftScore: clamp01(modalForm.ftScore),           // 0~100
-            totalScore: modalForm.total_score,                      // 0~100
-            gpa: modalForm.gpa,                        // 0~4.5
+            totalScore: total,                      // 0~100
+            gpa: gpa,                        // 0~4.5
         };
         console.log('payload ->', payload); // 보내기 전 확인
-        await axios.post(`${API_BASE_URL}/grade/insertGrades`,payload);
+        await axios.post(`${API_BASE_URL}/grade/insertGrades`, payload);
 
-        setFormsById(prev => ({ ...prev, [selectedId]: { ...(prev[selectedId] ?? DEFAULT_FORM), ...modalForm } }));
+        setSaveGradeStudent(prev => ({
+            ...prev,
+            [selectedId]: { totalScore: total, lectureGrade: gpa }
+        }));
         alert("점수 저장이 완료되었습니다.");
         closeModal();
     };
@@ -407,17 +482,27 @@ function GradeCalculation() {
                         <th>학생명</th>
                         <th style={{ width: 180 }}>전공</th>
                         <th style={{ width: 240 }}>이메일</th>
+                        <th style={{ width: 240 }}>총점</th>
+                        <th style={{ width: 240 }}>학점</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {studentList.map((it) => (
-                        <tr key={it.id} style={{ cursor: "pointer" }} onClick={() => openModal(it.id)}>
-                            <td>{it.userCode}</td>
-                            <td>{it.name}</td>
-                            <td>{it.majorName}</td>
-                            <td>{it.email}</td>
-                        </tr>
-                    ))}
+                    {studentList.map((it) => {
+                        const info = saveGradeStudent?.[it.id]; // { totalScore, lectureGrade } | undefined  
+                        const locked = !!info; // 이미 점수 저장된 학생
+                        return (
+                            <tr key={it.id}
+                                style={{ cursor: locked ? "not-allowed" : "pointer", opacity: locked ? 0.6 : 1 }}
+                                onClick={() => { if (!locked) openModal(it.id); }}>
+                                <td>{it.userCode}</td>
+                                <td>{it.name}</td>
+                                <td>{it.majorName}</td>
+                                <td>{it.email}</td>
+                                <td>{info?.totalScore ?? 0}</td>
+                                <td>{info?.lectureGrade ?? 0}</td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
 
@@ -447,7 +532,7 @@ function GradeCalculation() {
                     <div className="d-flex gap-2">
                         <Button variant="outline-secondary" onClick={closeModal}>닫기</Button>
                         <Button variant="outline-secondary" onClick={gradeCalcul}>점수 산출</Button>
-                        <Button variant="primary" onClick={handleSave}>점수 저장</Button>
+                        <Button variant="primary" onClick={handleSave} disabled={studentLoading || selectedLocked || !canSave}>점수 저장</Button>
                     </div>
                 </Modal.Footer>
             </Modal>
