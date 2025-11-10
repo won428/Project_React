@@ -167,6 +167,11 @@ function App() {
                         <Route path='/lecins' element={<LectureInsert />} ></Route>
                         <Route path='/Lec' element={<Lecture />} ></Route>
                         <Route path='/LecSpec' element={<LectureSpec />} ></Route>
+
+                        {/* 교수 전용 */}
+                        <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
+                        <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+
                     </Route>
                 </Route>
 
@@ -203,7 +208,7 @@ function App() {
 
 
                         <Route path='/infohome/ad' element={<InfohomeAD />} ></Route>
-                        
+
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
                         <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
@@ -263,13 +268,13 @@ function App() {
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
-                        
+
 
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/Student_Credit' element={<This_Credit />} ></Route>
                         <Route path='/CreditAppeal/:lectureId' element={<CreditAppeal />} ></Route>
                         <Route path='/CreditAppealList' element={<CreditAppealList />} ></Route>
-                        
+
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
                         {/* 동적 파라미터 포함 경로 */}
@@ -310,8 +315,7 @@ function App() {
 
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
-                        <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
-                        <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+
                     </Route>
 
 
