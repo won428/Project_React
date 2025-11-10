@@ -30,7 +30,10 @@ export const Layout_lecRoomP = () => {
                             className="text-white">강의</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/lectureSession/${lectureId}`, { state: { lectureId } })}
-                            className="text-white">수강</Nav.Link>
+                            className="text-white">출결 관리</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/gradeCalculation/${lectureId}`, { state: { lectureId } })}
+                            className="text-white">성적 관리</Nav.Link>
                     </Nav>
                 </Container>
             </Col>
