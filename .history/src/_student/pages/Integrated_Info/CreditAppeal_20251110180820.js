@@ -5,7 +5,11 @@ import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
 import { useNavigate, useParams } from 'react-router-dom';
 
-
+const APPEAL_TYPES = [
+    { value: 'ASSIGNMENTSCORE', label: '과제 이의제기' },
+    { value: 'MIDTERMSCORE', label: '중간고사 이의제기' },
+    { value: 'FINALSCORE', label: '기말고사 이의제기' }
+];
 
 const STATUS_OPTIONS = [
     { value: 'PENDING', label: '대기' },
@@ -24,15 +28,15 @@ function CreditAppeal() {
     const [lectureName, setLectureName] = useState('');
     const [professorId, setProfessorId] = useState('');
     const [professorName, setProfessorName] = useState('');
-    const numLecId = Number(lectureId);
+
     // 기본 신청 상태
     const [appealForm, setAppealForm] = useState({
-        lectureId: numLecId,
+        lectureId: lectureId,
         sendingId: userId || '',
         receiverId: professorId || '',           // 담당 교수/관리자 ID
         title: '',
         content: '',
-        appealType: '',
+        appealType: 'GRADE',
         attachmentDtos : []
     });
 
@@ -50,7 +54,7 @@ function CreditAppeal() {
                 setProfessorName(res.data.userName);
                 setAppealForm(prev => ({
                     ...prev,
-                    lectureId: Number(lectureId),   // ★ 강의ID
+                    lectureId: lectureId,   // ★ 강의ID
                     receiverId: res.data.userId // 교수ID
                 }));
             })
@@ -88,7 +92,7 @@ function CreditAppeal() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(appealForm)
+        console.log(f)
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, appealForm)
             .then(() => {
                 alert('이의제기 신청이 완료되었습니다.');
@@ -133,16 +137,12 @@ function CreditAppeal() {
                                 <Form.Select
                                     name="appealType"
                                     value={appealForm.appealType}
-                                    onChange={(e)=>{
-                                        const value = e.target.value;
-                                        setAppealForm((pre)=>({...pre, appealType : value}))
-                                    }}
+                                    onChange={handleChange}
                                     required
                                 >
-
-                                    <option value={'ASSIGNMENT'}>과제</option>
-                                    <option value={'MIDTERMEXAM'}>중간</option>
-                                    <option value={'FINALEXAM'}>기말</option>
+                                    {APPEAL_TYPES.map(o => (
+                                        <option key={o.value} value={o.value}>{o.label}</option>
+                                    ))}
                                 </Form.Select>
                             </Col>
                         </Form.Group>

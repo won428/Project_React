@@ -5,7 +5,11 @@ import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
 import { useNavigate, useParams } from 'react-router-dom';
 
-
+const APPEAL_TYPES = [
+    { value: 'ASSIGNMENT', label: '과제 이의제기' },
+    { value: 'MIDTERMEXAM', label: '중간고사 이의제기' },
+    { value: 'FINALEXAM', label: '기말고사 이의제기' }
+];
 
 const STATUS_OPTIONS = [
     { value: 'PENDING', label: '대기' },
@@ -33,7 +37,7 @@ function CreditAppeal() {
         title: '',
         content: '',
         appealType: '',
-        attachmentDtos : []
+        attachmentDtos: []
     });
 
     // 수강 강의 목록
@@ -50,7 +54,7 @@ function CreditAppeal() {
                 setProfessorName(res.data.userName);
                 setAppealForm(prev => ({
                     ...prev,
-                    lectureId: Number(lectureId),   // ★ 강의ID
+                    lectureId: lectureId,   // ★ 강의ID
                     receiverId: res.data.userId // 교수ID
                 }));
             })
@@ -114,7 +118,7 @@ function CreditAppeal() {
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm={3}>강의명</Form.Label>
                             <Col sm={9}>
-                                <Form.Control type="text" readOnly value={lectureName} />
+                                <Form.Control type="number" readOnly  />
                             </Col>
                         </Form.Group>
 
@@ -133,16 +137,12 @@ function CreditAppeal() {
                                 <Form.Select
                                     name="appealType"
                                     value={appealForm.appealType}
-                                    onChange={(e)=>{
-                                        const value = e.target.value;
-                                        setAppealForm((pre)=>({...pre, appealType : value}))
-                                    }}
+                                    onChange={handleChange}
                                     required
                                 >
-
-                                    <option value={'ASSIGNMENT'}>과제</option>
-                                    <option value={'MIDTERMEXAM'}>중간</option>
-                                    <option value={'FINALEXAM'}>기말</option>
+                                    {APPEAL_TYPES.map(o => (
+                                        <option key={o.value} value={o.value}>{o.label}</option>
+                                    ))}
                                 </Form.Select>
                             </Col>
                         </Form.Group>
@@ -174,7 +174,7 @@ function CreditAppeal() {
                 </Form.Group>
 
                 <Button type="submit" variant="primary" style={{ marginRight: 8 }}
-                    
+
                 >신청 제출</Button>
                 <Button variant="secondary" onClick={() => navigate(-1)}>취소</Button>
             </Form>

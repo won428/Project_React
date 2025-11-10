@@ -33,7 +33,8 @@ export const LayoutStInfost = () => {
                             onClick={() => navigate(`/inquiryBoard`)}
                             className="text-white"
                         >1:1 문의 </Nav.Link>
-                        
+                        <Nav.Link>
+                        학적 변경 </Nav.Link>
 
 
 

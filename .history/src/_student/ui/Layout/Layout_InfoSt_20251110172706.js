@@ -28,12 +28,13 @@ export const LayoutStInfost = () => {
                             onClick={() => navigate(`/Change_Status`)}
                             className="text-white"
 
-                        >학적 변경</Nav.Link>
+                        > </Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/inquiryBoard`)}
                             className="text-white"
                         >1:1 문의 </Nav.Link>
-                        
+                        <Nav.Link>
+                        학적 변경 </Nav.Link>
 
 
 

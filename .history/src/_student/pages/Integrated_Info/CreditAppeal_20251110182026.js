@@ -5,7 +5,11 @@ import { useAuth } from '../../../public/context/UserContext';
 import { API_BASE_URL } from '../../../public/config/config';
 import { useNavigate, useParams } from 'react-router-dom';
 
-
+const APPEAL_TYPES = [
+    { value: 'ASSIGNMENT', label: '과제 이의제기' },
+    { value: 'MIDTERMEXAM', label: '중간고사 이의제기' },
+    { value: 'FINALEXAM', label: '기말고사 이의제기' }
+];
 
 const STATUS_OPTIONS = [
     { value: 'PENDING', label: '대기' },
@@ -134,8 +138,7 @@ function CreditAppeal() {
                                     name="appealType"
                                     value={appealForm.appealType}
                                     onChange={(e)=>{
-                                        const value = e.target.value;
-                                        setAppealForm((pre)=>({...pre, appealType : value}))
+                                        const value = e.target.va
                                     }}
                                     required
                                 >
