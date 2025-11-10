@@ -36,7 +36,11 @@ export const LayoutStCon = () => {
                         {/* <Nav.Link
                             onClick={() => navigate(`/user/StatusManage/:userId`)}
                             className="text-white"
-                        >학생 학적관리</Nav.Link> */}                    
+                        >학생 학적관리</Nav.Link> */}
+                        <Nav.Link
+                            onClick={() => navigate(`/user/StMList`)}
+                            className="text-white"
+                        >학생 학적관리 List</Nav.Link>
                     </Nav>
                 </Container>
             </Col>

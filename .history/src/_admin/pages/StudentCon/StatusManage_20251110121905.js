@@ -159,21 +159,6 @@ function StatusManage() {
                 ) : (
                     <span style={{ color: '#888' }}>신청 정보를 불러올 수 없습니다.</span>
                 )}
-                {/* 승인/거부 버튼 추가 */}
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                    <Button
-                        variant="success"
-                        onClick={() => handleApproveReject('APPROVED')}
-                    >
-                        승인
-                    </Button>
-                    <Button
-                        variant="danger"
-                        onClick={() => handleApproveReject('REJECTED')}
-                    >
-                        거부
-                    </Button>
-                </div>
             </div>
 
             {/* 학적 상태 변경(관리자) 폼 */}

@@ -12,20 +12,20 @@ function UsersSkeleton() {
   const [college, setCollege] = useState('');
 
   const [paging, setPaging] = useState({
-    totalElements: 0, // 전체 데이터 개수(165개)
-    pageSize: 10, // 1페이지에 보여 주는 데이터 개수(20개)
-    totalPages: 0, // 전체 페이지 개수(28페이지)
-    pageNumber: 0, // 현재 페이지 번호(20페이지)
-    pageCount: 10, // 페이지 하단 버튼의 개수(10개)
-    beginPage: 0, // 페이징 시작 번호
-    endPage: 0, // 페이징 끝 번호
-    searchCollege: '', // 단과대학
-    searchMajor: '', // 학과
-    searchGender: '', // 성별
-    searchUserType: '', // 유저 역할
-    searchMode: '', // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
-    searchKeyword: '', // 검색 키워드 입력 상자
-  });
+		totalElements : 0, // 전체 데이터 개수(165개)
+		pageSize : 10, // 1페이지에 보여 주는 데이터 개수(20개)
+		totalPages : 0, // 전체 페이지 개수(28페이지)
+		pageNumber : 0, // 현재 페이지 번호(20페이지)
+		pageCount : 10, // 페이지 하단 버튼의 개수(10개)
+		beginPage : 0, // 페이징 시작 번호
+		endPage : 0, // 페이징 끝 번호
+		searchCollege: '', // 단과대학
+		searchMajor: '', // 학과
+		searchGender: '', // 성별
+		searchUserType: '', // 유저 역할
+		searchMode: '', // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
+		searchKeyword:'', // 검색 키워드 입력 상자
+	});
 
   const navigate = useNavigate();
 
@@ -33,102 +33,102 @@ function UsersSkeleton() {
 
     const url = `${API_BASE_URL}/user/pageList`
     const parameters = {
-      params: {
-        pageNumber: paging.pageNumber,
-        pageSize: paging.pageSize,
-        searchCollege: paging.searchCollege, // 단과대학
-        searchMajor: paging.searchMajor, // 학과
-        searchGender: paging.searchGender, // 성별
-        searchUserType: paging.searchUserType, // 유저 역할
-        searchMode: paging.searchMode, // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
-        searchKeyword: paging.searchKeyword, // 검색 키워드 입력 상자		
-      },
-    };
+			params:{
+			pageNumber: paging.pageNumber,
+			pageSize: paging.pageSize,
+			searchCollege: paging.searchCollege, // 단과대학
+      searchMajor: paging.searchMajor, // 학과
+      searchGender: paging.searchGender, // 성별
+      searchUserType: paging.searchUserType, // 유저 역할
+      searchMode: paging.searchMode, // 유저 검색 모드(이름, 이메일, 전화번호 등등) 
+      searchKeyword:paging.searchKeyword, // 검색 키워드 입력 상자		
+			},
+		};
     axios
       .get(url, parameters)
       .then((response) => {
         console.log('응답 받은 데이터')
-        console.log(response.data)
-        setUserList(response.data.content || []);
-
-        setPaging((previous) => {
+				console.log(response.data)
+				setUserList(response.data.content||[]);
+        
+        setPaging((previous)=>{
           const totalElements = response.data.totalElements;
-          const totalPages = response.data.totalPages;
-          const pageNumber = response.data.pageable.pageNumber;
+					const totalPages =response.data.totalPages;
+					const pageNumber = response.data.pageable.pageNumber;
           const pageSize = response.data.pageable.pageSize;
 
-          const beginPage = Math.floor(pageNumber / previous.pageCount) * previous.pageCount;
-          const endPage = Math.min(beginPage + previous.pageCount - 1, totalPages - 1);
+          const beginPage = Math.floor(pageNumber/ previous.pageCount )* previous.pageCount;
+					const endPage = Math.min(beginPage + previous.pageCount -1, totalPages -1);
 
 
-          return {
-            ...previous,
-            totalElements: totalElements,
-            totalPages: totalPages,
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            beginPage: beginPage,
-            endPage: endPage,
-          };
+           return {
+						...previous,
+						totalElements:totalElements,
+						totalPages:totalPages,
+						pageNumber:pageNumber,
+						pageSize:pageSize,
+						beginPage:beginPage,
+						endPage:endPage,
+						};
 
         })
 
-
-
+         
+        
       })
       .catch((error) => {
         console.log(error.response.data)
       })
 
   }, [paging.pageNumber, paging.searchCollege, paging.searchMajor, paging.searchCollege, paging.searchGender, paging.searchUserType, paging.searchMode, paging.searchKeyword])
-
-  useEffect(() => {
+  
+  useEffect(()=>{
     const url = `${API_BASE_URL}/college/list`;
 
     axios
       .get(url)
-      .then((response) => {
+      .then((response)=>{
         setCollegeList(response.data)
       })
-      .catch((error) => {
+      .catch((error)=>{
         const err = error.response;
-        if (!err) {
-          alert('네트워크 오류가 발생하였습니다')
-          return;
-        }
+           if(!err){
+            alert('네트워크 오류가 발생하였습니다')
+            return;
+           }
         console.log(error)
       })
 
-  }, [])
+  },[])
 
-  useEffect(() => {
+  useEffect(()=>{
     const url = `${API_BASE_URL}/major/list`
 
-    if (!college) {
-      setMajorList([]);
-      return;
-    }
-
+     if (!college) {
+    setMajorList([]);
+    return;
+  }
+    
     axios
-      .get(url, {
-        params: {
+      .get(url,{
+         params:{
           college_id: Number(college)
         }
       })
-      .then((response) => {
+      .then((response)=>{
         setMajorList(response.data)
         console.log(response.data)
       })
-      .catch((error) => {
-        const err = error.response;
-        if (!err) {
-          alert('네트워크 오류가 발생하였습니다')
-          return;
-        }
+      .catch((error)=>{
+         const err = error.response;
+           if(!err){
+            alert('네트워크 오류가 발생하였습니다')
+            return;   
+           }
         console.log(error)
       })
 
-  }, [college])
+  },[college])
 
   const typeMap = {
     ADMIN: '관리자',
@@ -152,9 +152,9 @@ function UsersSkeleton() {
 
             <Col>
               <Form.Select size="sm"
-                onChange={(e) => {
+                onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous) => ({ ...previous, pageNumber: 0, searchUserType: value }))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchUserType : value}))
                   console.log(paging)
                 }}
               >
@@ -165,16 +165,16 @@ function UsersSkeleton() {
               </Form.Select>
             </Col>
             <Col>
-              <Form.Select
+              <Form.Select 
                 size="sm"
-                onChange={(e) => {
+                onChange={(e)=>{
                   const value = e.target.value;
                   setCollege(value);
-                  setPaging((previous) => ({ ...previous, pageNumber: 0, searchCollege: value }))
+                  setPaging((previous)=>({...previous, pageNumber: 0, searchCollege : value}))
                 }}
-              >
+                >
                 <option value={''}>단과대학</option>
-                {colllegeList.map((college) => (
+                {colllegeList.map((college)=>(
                   <option
                     key={college.id} value={college.id}
                   >
@@ -185,13 +185,13 @@ function UsersSkeleton() {
             </Col>
             <Col>
               <Form.Select size="sm"
-                onChange={(e) => {
+                 onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous) => ({ ...previous, pageNumber: 0, searchMajor: value }))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMajor : value}))
                 }}
               >
                 <option value={''}>학과</option>
-                {majorList.map((major) => (
+                {majorList.map((major)=>(
                   <option
                     key={major.id} value={major.id}
                   >
@@ -202,9 +202,9 @@ function UsersSkeleton() {
             </Col>
             <Col>
               <Form.Select size="sm"
-                onChange={(e) => {
+                onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous) => ({ ...previous, pageNumber: 0, searchGender: value }))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchGender : value}))
                 }}
               >
                 <option value={''}>성별</option>
@@ -214,9 +214,9 @@ function UsersSkeleton() {
             </Col>
             <Col>
               <Form.Select size="sm"
-                onChange={(e) => {
+                  onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous) => ({ ...previous, pageNumber: 0, searchMode: value }))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMode : value}))
                 }}
               >
                 <option value={''}>전체 검색</option>
@@ -226,16 +226,16 @@ function UsersSkeleton() {
               </Form.Select>
             </Col>
             <Col
-
-            >
-              <Form.Control size="sm" placeholder="검색어 입력"
-                onChange={(e) => {
+                  
+              >
+              <Form.Control size="sm" placeholder="검색어 입력" 
+                onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous) => ({ ...previous, searchKeyword: value }))
+                  setPaging((previous)=>({...previous, searchKeyword : value}))
                 }}
               />
             </Col>
-
+          
           </Row>
         </Col>
 
@@ -243,9 +243,6 @@ function UsersSkeleton() {
         <Col xs="auto" className="text-end">
           <Button size="sm" variant="primary" onClick={() => navigate('/user/insert_user')}>
             등록
-          </Button>
-          <Button size="sm" variant="outline-success" style={{ marginLeft: 10 }} onClick={() => navigate('/user/StMList')}>
-            학생 학적 관리
           </Button>
         </Col>
       </Row>
@@ -293,7 +290,7 @@ function UsersSkeleton() {
                     </Button>
                     <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭", /* u.id */)}>
                       삭제
-                    </Button>                    
+                    </Button>
                   </div>
                 </td>
               </tr>
@@ -303,76 +300,76 @@ function UsersSkeleton() {
         </Table>
       </div>
       {/* 페이징 처리 영역 */}
-      <Pagination className="justify-content-center mt-4">
-        {/* 앞쪽 영역 */}
-        <Pagination.First
-          onClick={() => {
-            console.log('First 버튼 클릭(0 페이지로 이동)')
-            setPaging((previous) => ({ ...previous, pageNumber: 0 }))
-          }}
-          disabled={paging.pageNumber < paging.pageCount}
-          as="button"
-        >
-          맨처음
-        </Pagination.First>
+				  <Pagination className="justify-content-center mt-4">
+					{/* 앞쪽 영역 */}
+					<Pagination.First
+						onClick={()=>{
+							console.log('First 버튼 클릭(0 페이지로 이동)')
+							setPaging((previous)=>({...previous, pageNumber: 0}))
+						}}
+						disabled={paging.pageNumber < paging.pageCount}
+						as="button"
+					>
+						맨처음
+					</Pagination.First>
+					
+					<Pagination.Prev
+						onClick={()=>{
+							const gotoPage = paging.beginPage -1;
+							console.log(`Prev 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber < paging.pageCount}
+						as="button"
+					>
+						이전
+					</Pagination.Prev>
 
-        <Pagination.Prev
-          onClick={() => {
-            const gotoPage = paging.beginPage - 1;
-            console.log(`Prev 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous) => ({ ...previous, pageNumber: gotoPage }))
-          }}
-          disabled={paging.pageNumber < paging.pageCount}
-          as="button"
-        >
-          이전
-        </Pagination.Prev>
+					
+					{/* 숫자 링크가 들어가는 영역 */}
+					{[...Array(paging.endPage - paging.beginPage + 1)].map((_, idx)=>{
+						// pageIndex는 숫자 링크 번호입니다.
+						const pageIndex = paging.beginPage + idx + 1 ;
 
-
-        {/* 숫자 링크가 들어가는 영역 */}
-        {[...Array(paging.endPage - paging.beginPage + 1)].map((_, idx) => {
-          // pageIndex는 숫자 링크 번호입니다.
-          const pageIndex = paging.beginPage + idx + 1;
-
-          return (
-            <Pagination.Item
-              key={pageIndex}
-              active={paging.pageNumber === (pageIndex - 1)}
-              onClick={() => {
-                console.log(`(${pageIndex} 페이지로 이동)`)
-                setPaging((previous) => ({ ...previous, pageNumber: pageIndex - 1 }))
-              }}
-            >
-              {pageIndex}
-            </Pagination.Item>
-          )
-        })}
-
-
-
-        <Pagination.Next
-          onClick={() => {
-            const gotoPage = paging.endPage + 1;
-            console.log(`Next 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous) => ({ ...previous, pageNumber: gotoPage }))
-          }}
-          disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
-          as="button"
-        >
-          다음
-        </Pagination.Next>
-        <Pagination.Last
-          onClick={() => {
-            const gotoPage = paging.totalPages - 1;
-            console.log(`Last 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous) => ({ ...previous, pageNumber: gotoPage }))
-          }}
-          disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
-          as="button"
-        >
-          맨끝
-        </Pagination.Last>
-      </Pagination>
+						return(
+							<Pagination.Item 
+								key={pageIndex}
+								active={paging.pageNumber === (pageIndex -1)}
+								onClick={()=>{
+								console.log(`(${pageIndex} 페이지로 이동)`)
+								setPaging((previous)=>({...previous, pageNumber: pageIndex-1}))
+						}}
+							>
+								{pageIndex}
+							</Pagination.Item>
+						)
+					})}
+					
+					
+					
+					<Pagination.Next 
+						onClick={()=>{
+							const gotoPage = paging.endPage +1;
+							console.log(`Next 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
+						as="button"
+					>
+						다음
+						</Pagination.Next>
+					<Pagination.Last 
+						onClick={()=>{
+							const gotoPage = paging.totalPages -1;
+							console.log(`Last 버튼 클릭(${gotoPage} 페이지로 이동)`)
+							setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+						}}
+						disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
+						as="button"	
+					>
+						맨끝
+					</Pagination.Last>
+				</Pagination>
     </Container>
   );
 }

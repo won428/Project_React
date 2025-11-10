@@ -112,12 +112,6 @@ function StatusManage() {
             .catch(err => alert('삭제 실패: ' + err.message));
     };
 
-    const handleApproveReject = (result) => {
-        axios.put(`${API_BASE_URL}/user/status/${recordId}`, { status: result }) // 혹은 params로 status 전달
-            .then(() => alert(result === 'APPROVED' ? '승인 처리되었습니다.' : '거부 처리되었습니다.'))
-            .catch(err => alert('처리 실패: ' + err.message));
-    };
-
     return (
         <Container style={{ marginTop: 24, maxWidth: 720 }}>
             <h3>학생 학적 변경 신청 정보</h3>
@@ -159,21 +153,6 @@ function StatusManage() {
                 ) : (
                     <span style={{ color: '#888' }}>신청 정보를 불러올 수 없습니다.</span>
                 )}
-                {/* 승인/거부 버튼 추가 */}
-                <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                    <Button
-                        variant="success"
-                        onClick={() => handleApproveReject('APPROVED')}
-                    >
-                        승인
-                    </Button>
-                    <Button
-                        variant="danger"
-                        onClick={() => handleApproveReject('REJECTED')}
-                    >
-                        거부
-                    </Button>
-                </div>
             </div>
 
             {/* 학적 상태 변경(관리자) 폼 */}

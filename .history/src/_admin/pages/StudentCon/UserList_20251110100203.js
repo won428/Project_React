@@ -244,7 +244,7 @@ function UsersSkeleton() {
           <Button size="sm" variant="primary" onClick={() => navigate('/user/insert_user')}>
             등록
           </Button>
-          <Button size="sm" variant="outline-success" style={{ marginLeft: 10 }} onClick={() => navigate('/user/StMList')}>
+          <Button size="sm" variant="outline-success" onClick={() => navigate('/user/StMList')}>
             학생 학적 관리
           </Button>
         </Col>

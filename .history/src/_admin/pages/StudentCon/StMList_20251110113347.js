@@ -54,8 +54,8 @@ function StudentListPage() {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th style={{ width: '90px' }}>신청번호</th>
-                        <th style={{ width: '90px' }}>학생번호</th>
+                        <th>신청번호</th>
+                        <th>학생번호</th>
                         <th>이름</th>
                         <th>학과</th>
                         <th>학적 변경 처리</th>

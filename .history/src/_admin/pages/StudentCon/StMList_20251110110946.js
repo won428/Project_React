@@ -54,8 +54,7 @@ function StudentListPage() {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th style={{ width: '90px' }}>신청번호</th>
-                        <th style={{ width: '90px' }}>학생번호</th>
+                        <th>UserID</th>
                         <th>이름</th>
                         <th>학과</th>
                         <th>학적 변경 처리</th>
@@ -66,7 +65,6 @@ function StudentListPage() {
                         students.map(student =>
                             student.records.map(record => (
                                 <tr key={record.recordId}>
-                                    <td>{record.recordId}</td>
                                     <td>{student.id}</td>
                                     <td>{student.name}</td>
                                     <td>{student.majorName || student.major?.name || '정보 없음'}</td>
@@ -83,7 +81,7 @@ function StudentListPage() {
                         )
                     ) : (
                         <tr>
-                            <td colSpan="5" style={{ textAlign: 'center' }}>
+                            <td colSpan="4" style={{ textAlign: 'center' }}>
                                 학적 변경 신청한 학생이 없습니다.
                             </td>
                         </tr>

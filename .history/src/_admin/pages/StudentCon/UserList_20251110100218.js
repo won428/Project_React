@@ -244,7 +244,7 @@ function UsersSkeleton() {
           <Button size="sm" variant="primary" onClick={() => navigate('/user/insert_user')}>
             등록
           </Button>
-          <Button size="sm" variant="outline-success" style={{ marginLeft: 10 }} onClick={() => navigate('/user/StMList')}>
+          <Button size="sm" variant="outline-success" onClick={() => navigate('/user/StMList')}>
             학생 학적 관리
           </Button>
         </Col>
@@ -291,7 +291,7 @@ function UsersSkeleton() {
                     <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
                       수정
                     </Button>
-                    <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭", /* u.id */)}>
+                    <Button size="sm" variant="outline-danger" style={{ marginTop: 24 }} onClick={() => console.log("삭제 클릭", /* u.id */)}>
                       삭제
                     </Button>                    
                   </div>

@@ -21,19 +21,14 @@ function StudentListPage() {
                 const applyRes = await axios.get(`${API_BASE_URL}/user/student/record/all`, {
                     params: { status: "PENDING" }
                 });
-                const pendingRecords = applyRes.data;
 
-                // 3) 학생별 신청 기록 연결
-                const studentsWithRecords = allStudents
-                    .map(student => ({
-                        ...student,
-                        records: pendingRecords.filter(record => Number(record.userId) === Number(student.id))
-                    }))
-                    // 신청 기록 없는 학생 제거
-                    .filter(student => student.records.length > 0);
+                const pendingRecords = applyRes.data; // recordId, userId, status 등
+                const pendingUserIds = new Set(pendingRecords.map(r => r.userId));
 
-                setStudents(studentsWithRecords);
+                // 3) 학적변경 신청한 학생만 필터링
+                const filteredStudents = allStudents.filter(st => pendingUserIds.has(st.userId));
 
+                setStudents(filteredStudents);
             } catch (err) {
                 console.error('학생 목록 로드 실패:', err);
                 setError(true);
@@ -54,8 +49,7 @@ function StudentListPage() {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th style={{ width: '90px' }}>신청번호</th>
-                        <th style={{ width: '90px' }}>학생번호</th>
+                        <th>UserID</th>
                         <th>이름</th>
                         <th>학과</th>
                         <th>학적 변경 처리</th>
@@ -63,27 +57,24 @@ function StudentListPage() {
                 </thead>
                 <tbody>
                     {students.length > 0 ? (
-                        students.map(student =>
-                            student.records.map(record => (
-                                <tr key={record.recordId}>
-                                    <td>{record.recordId}</td>
-                                    <td>{student.id}</td>
-                                    <td>{student.name}</td>
-                                    <td>{student.majorName || student.major?.name || '정보 없음'}</td>
-                                    <td>
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => navigate(`/user/StatusManage/${record.recordId}`)}
-                                        >
-                                            학적변경 처리
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))
-                        )
+                        students.map(student => (
+                            <tr key={student.userId}>
+                                <td>{student.userId}</td>
+                                <td>{student.name}</td>
+                                <td>{student.majorName || student.major?.name || '정보 없음'}</td>
+                                <td>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => navigate(`/user/StatusManage/${student.userId}`)}
+                                    >
+                                        학적변경 처리
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))
                     ) : (
                         <tr>
-                            <td colSpan="5" style={{ textAlign: 'center' }}>
+                            <td colSpan="4" style={{ textAlign: 'center' }}>
                                 학적 변경 신청한 학생이 없습니다.
                             </td>
                         </tr>
