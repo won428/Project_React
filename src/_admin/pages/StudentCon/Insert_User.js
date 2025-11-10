@@ -1,4 +1,4 @@
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Image } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
@@ -21,9 +21,11 @@ function App() {
     const [collegeList, setCollegeList] = useState([]);
     const [majorList, setMajorList] = useState([]);
     const [college, setCollege] = useState('');
+    const [file, setFile] = useState('');
+    const [previewUrl, setPreviewUrl] = useState('');
     const [errors, setErrors] = useState({
-	name:'', email:'', password:'', birthdate:'', phone:'', gender:'',major:'',type:'' 
-});
+        name: '', email: '', password: '', birthdate: '', phone: '', gender: '', major: '', type: ''
+    });
 
     const navigate = useNavigate();
 
@@ -62,54 +64,100 @@ function App() {
             })
     }, [college])
 
-
+    useEffect(() => {
+        // 컴포넌트가 사라질 때(unmount) 실행될 클린업 함수
+        return () => {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+    }, [previewUrl]);
     const signup = async (e) => {
 
         try {
             e.preventDefault();
 
-            
 
-            if(user.u_type === ''){
+
+            if (user.type === '') {
                 alert('역할을 선택하세요')
                 return;
             }
-            if(user.gender === ''){
+            if (user.gender === '') {
                 alert('성별을 선택하세요')
                 return;
             }
-            
-            const url = `${API_BASE_URL}/user/signup`;
-            const response = await axios.post(url, user);
 
-             if (response.data.success) {
+            const newformData = new FormData();
+            newformData.append("name", user.name);
+            newformData.append("password", user.password);
+            newformData.append("birthdate", user.birthdate);
+            newformData.append("email", user.email);
+            newformData.append("phone", user.phone);
+            newformData.append("gender", user.gender);
+            newformData.append("major", user.major);
+            newformData.append("type", user.type);
+            newformData.append("file", file);
+            const url = `${API_BASE_URL}/user/signup`;
+            const response = await axios.post(url, newformData);
+
+            if (response.data.success) {
                 alert('등록 성공');
                 navigate('/user/UserList')
-            }else{
+            } else {
                 alert('등록 성공');
                 navigate('/user/UserList')
             }
         } catch (error) {
-            
+
             const err = error.response;
-            if(!err){
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-           }
+            if (!err) {
+                alert('네트워크 오류가 발생하였습니다')
+                return;
+            }
 
             const httpStatus = err.status;
             const errData = err.data;
 
-            const message = errData?.message??'오류 발생'
+            const message = errData?.message ?? '오류 발생'
 
             alert(message)
         }
     };
 
-        return (
+    const FileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            const newPreviewUrl = URL.createObjectURL(selectedFile);
+            setPreviewUrl(newPreviewUrl);
+        }
+    }
+    return (
         <>
 
             <Form onSubmit={signup}>
+                {previewUrl && (
+                    <div className="mt-3">
+                        <p>미리보기:</p>
+                        <Image
+                            src={previewUrl}
+                            alt="Preview"
+                            thumbnail // 부트스트랩의 썸네일 스타일 적용
+                            style={{ maxWidth: '300px' }}
+                        />
+                    </div>
+                )}
+                <Form.Group>
+                    <Form.Label>사진</Form.Label>
+                    <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={FileChange}
+                        max={1}
+                    />
+
+                </Form.Group>
                 <Form.Group className="mb-3">
                     <Form.Label>이름</Form.Label>
                     <Form.Control
