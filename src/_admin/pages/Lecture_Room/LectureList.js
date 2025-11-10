@@ -266,6 +266,36 @@ function App() {
       })
   }
 
+  const typeMapDay = {
+    MONDAY: "월",
+    TUESDAY: "화",
+    WEDNESDAY: "수",
+    THURSDAY: "목",
+    FRIDAY: "금",
+  };
+  const typeMapStart = {
+    "9:00": "1교시",
+    "10:00": "2교시",
+    "11:00": "3교시",
+    "12:00": "4교시",
+    "13:00": "5교시",
+    "14:00": "6교시",
+    "15:00": "7교시",
+    "16:00": "8교시",
+    "17:00": "9교시",
+  };
+  const typeMapEnd = {
+    "10:00": "1교시",
+    "11:00": "2교시",
+    "12:00": "3교시",
+    "13:00": "4교시",
+    "14:00": "5교시",
+    "15:00": "6교시",
+    "16:00": "7교시",
+    "17:00": "8교시",
+    "18:00": "9교시",
+  };
+
   return (
     <>
       {/* ───────── 승인 대기 목록 ───────── */}
@@ -640,7 +670,7 @@ function App() {
       </div>
 
       {/* ───────── 상세 모달 UI ───────── */}
-      <Modal
+            <Modal
         show={open}
         onHide={() => setOpen(false)}
         centered
@@ -654,16 +684,11 @@ function App() {
         </Modal.Header>
 
         <Modal.Body>
+          {/* 상세 시간표 */}
           <div className="mb-3">
             <div className="text-muted small mb-2">상세 시간표</div>
             <div className="table-responsive">
-              <Table
-                size="sm"
-                bordered
-                hover
-                className="align-middle mb-0"
-                style={{ fontSize: "0.9rem" }}
-              >
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
                 <thead className="table-light">
                   <tr>
                     <th style={{ width: "6rem" }} className="text-center">요일</th>
@@ -673,25 +698,23 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(modalLec?.lectureSchedules ?? []).map((schedule, idx) => (
+                  {(modalLec?.lectureSchedules ?? []).map((s, idx) => (
                     <tr key={idx}>
-                      <td className="text-center">{typeMap3[schedule.day] ?? schedule.day}</td>
-                      <td className="text-center">{typeMap4[schedule.startTime] ?? schedule.startTime}</td>
-                      <td className="text-center">{typeMap5[schedule.endTime] ?? schedule.endTime}</td>
-                      <td className="text-nowrap">{schedule.startTime}~{schedule.endTime}</td>
+                      <td className="text-center">{typeMapDay[s.day] ?? s.day}</td>
+                      <td className="text-center">{typeMapStart[s.startTime] ?? s.startTime}</td>
+                      <td className="text-center">{typeMapEnd[s.endTime] ?? s.endTime}</td>
+                      <td className="text-nowrap">{s.startTime}~{s.endTime}</td>
                     </tr>
                   ))}
                   {(modalLec?.lectureSchedules ?? []).length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="text-center text-muted">시간표 없음</td>
-                    </tr>
+                    <tr><td colSpan={4} className="text-center text-muted">시간표 없음</td></tr>
                   )}
                 </tbody>
               </Table>
             </div>
           </div>
 
-
+          {/* 강의설명 */}
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
             <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
@@ -699,9 +722,35 @@ function App() {
             </div>
           </div>
 
+          {/* 점수 산출 비율 */}
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "6rem" }}>출석</th>
+                    <th className="text-center" style={{ width: "6rem" }}>과제</th>
+                    <th className="text-center" style={{ width: "6rem" }}>중간</th>
+                    <th className="text-center" style={{ width: "6rem" }}>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {/* 값은 사용자가 채울 예정 */}
+                    <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.finalExam ?? "-"}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          </div>
+
+          {/* 첨부파일 */}
           <div>
             <div className="text-muted small mb-2">첨부파일</div>
-
             <div className="d-flex align-items-center justify-content-between">
               <div className="text-muted w-100">
                 <ul className="mb-0 w-100">
@@ -714,11 +763,7 @@ function App() {
                             size="sm"
                             variant="outline-secondary"
                             className="ms-auto flex-shrink-0"
-                            disabled={!modalLec?.attachmentDtos?.length}
-                            onClick={() => {
-                              downloadClick(lecFile.id)
-                              console.log(lecFile.id)
-                            }}
+                            onClick={() => downloadClick(lecFile.id)}
                           >
                             다운로드
                           </Button>
@@ -735,7 +780,9 @@ function App() {
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
-          <Button variant="secondary" onClick={() => setOpen(false)}>닫기</Button>
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            닫기
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
