@@ -133,7 +133,7 @@ function App() {
             const existingDtos = files.filter(v => !isRealFile(v)); // 기존 파일들 객체형태
             const newFiles = files.filter(isRealFile)
             
-            const totalPercent = Number(percent.assignment) + Number(percent.attendance) + Number(percent.midtermExam) + Number(percent.finalExam)
+            const totalPercent = Number(percent.assignmentScore) + Number(percent.attendanceScore) + Number(percent.midtermExam) + Number(percent.finalExam)
             if(totalPercent > 100){
               alert('퍼센트 비율은 100을 넘을 수 없습니다.')
               return;
