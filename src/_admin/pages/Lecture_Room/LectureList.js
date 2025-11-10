@@ -346,7 +346,7 @@ function App() {
                   </td> {/* 상세보기 */}
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary" onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
@@ -472,7 +472,7 @@ function App() {
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary"onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
@@ -575,11 +575,7 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-<<<<<<< HEAD
-                  <td className="text-center">{lec.lectureSchedules.map(s => typeMap3[s.day])}</td>
-=======
-                  <td className="text-center">{lec.lectureSchedules.map(s=>typeMap3[s.day].join(", "))}</td>
->>>>>>> 8eb8cbdddce7b93c11f6eadb9aedb12b77093043
+                  <td className="text-center">{lec.lectureSchedules.map(s => typeMap3[s.day].join(", "))}</td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -597,7 +593,7 @@ function App() {
                   </td>
                   <td className="text-center">{typeMap[lec.status]}</td>
                   <td className="text-center">
-                    <Button size="sm" variant="outline-secondary" onClick={()=>{
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
                       navigate(`/lecupdateAd/${lec.id}`)
                     }}>
                       수정
