@@ -3,6 +3,7 @@
   import axios from "axios";
   import { useNavigate } from "react-router-dom";
   import { Button, Col, Form, Row } from "react-bootstrap";
+
   function App() {
 
     const [collegeList, setCollegeList] = useState([])
@@ -24,7 +25,7 @@
     });
     const [major, setMajor] = useState('');
     const [schedule, setSchedule] = useState([]);
-    
+
     const startRef = useRef(null);
     const endRef = useRef(null);
     const emptyRow = () => ({ day: null, startTime: null, endTime: null});
@@ -38,6 +39,8 @@
     })
 
     const navigate = useNavigate(); 
+
+   
 
     useEffect(() => {
       const url = `${API_BASE_URL}/college/list`
@@ -123,7 +126,9 @@
           return;
         }
 
-        if (lecture.startDate.length) {
+         if (!isAllowedStartMonth(lecture.startDate)) {
+            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            return;
         }
 
         const formData = new FormData();
@@ -159,6 +164,19 @@
 
     const removeFile = (i) => {
       setFiles(files.filter((_, idx) => idx !== i));
+    };
+
+    const monthFromDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
+    return Number.isNaN(m) ? null : m;
+    };
+
+    const ALLOWED_MONTHS = [1, 3, 9, 12];
+
+    const isAllowedStartMonth = (dateStr) => {
+    const m = monthFromDateStr(dateStr);
+    return m != null && ALLOWED_MONTHS.includes(m);
     };
 
     return (
@@ -368,9 +386,11 @@
                     value={lecture.startDate}
                     min="0001-01-01"
                     max="9999-12-31"
-                    onChange={(event) => {
-                      setLecture((previous) => ({ ...previous, startDate: event.target.value }));
-                      console.log(event.target.value);
+                   onChange={(event) => {
+                    
+                    const value = event.target.value;
+                    setLecture((previous) => ({ ...previous, startDate: value }));
+                    console.log(value);
                     }}
                   />
                   <Button
