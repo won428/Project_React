@@ -328,7 +328,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s => typeMap3[s.day])}</td> {/* 수업 요일 */}
+                  {/* ✅ 수정: 요일 배열을 문자열로 합치기 (null-safe) */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -454,7 +459,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s => typeMap3[s.day])}</td>
+                  {/* ✅ 수정: 요일 배열을 문자열로 합치기 (null-safe) */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>
@@ -575,7 +585,12 @@ function App() {
                   <td className="text-start">{lec.majorName}</td>
                   <td className="text-center">{lec.userName}</td>
                   <td className="text-center">{splitStartDate(lec.startDate)}</td>
-                  <td className="text-center">{lec.lectureSchedules.map(s => typeMap3[s.day].join(", "))}</td>
+                  {/* ✅ 수정: 기존에 join을 잘못 썼던 부분 교정 */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
                   <td className="text-center">{lec.totalStudent}</td>
                   <td className="text-center">{lec.nowStudent}</td>
                   <td className="text-center">{lec.credit}</td>

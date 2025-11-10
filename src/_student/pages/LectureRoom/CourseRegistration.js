@@ -218,7 +218,7 @@ function App() {
       });
   }, [modalId]);
 
-  // ───────── 파일 다운로드 ─────────
+
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`;
     axios

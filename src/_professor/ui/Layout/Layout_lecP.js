@@ -39,6 +39,10 @@ export const Layout_lecP = () => {
                         <Nav.Link
                             onClick={() => navigate(`/asn`)}
                             className="text-white">과제 등록</Nav.Link>
+                         <Nav.Link
+                            onClick={() => navigate(`/inquiryBoard`)}
+                            className="text-white">1:1 문의</Nav.Link>
+
 
 
                     </Nav>

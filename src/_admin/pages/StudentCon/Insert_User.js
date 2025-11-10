@@ -210,6 +210,8 @@ function App() {
                             ref={dateInputRef}
                             type="date"                 // 브라우저 내장 달력
                             placeholder="YYYY-MM-DD"
+                            min="0001-01-01"
+                            max="9999-12-31"
                             name="birthdate"
                             value={user.birthdate}
                             onChange={(event) => {
