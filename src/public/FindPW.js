@@ -50,15 +50,16 @@ function App() {
                                         required
                                     />
                                 </Form.Group>
+                                <div className="d-flex justify-content-end mt-3">
+                                    <Button
+                                        className="w-30 "
+                                        type="submit"
+                                    >
+                                        submit
+                                    </Button>
+                                </div>
                             </Form>
-                            <div className="d-flex justify-content-end mt-3">
-                                <Button
-                                    className="w-30 "
-                                    type="submit"
-                                >
-                                    submit
-                                </Button>
-                            </div>
+
                         </CardBody>
                     </Card>
                 </Col>

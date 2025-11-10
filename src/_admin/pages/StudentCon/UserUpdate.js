@@ -204,6 +204,8 @@ function App() {
                         ref={dateInputRef}
                         type="date"
                         placeholder="YYYY-MM-DD"
+                        min="0001-01-01"
+                        max="9999-12-31"
                         name="birthdate"
                         defaultValue={user.birthdate}
                         onChange={(event) => {
