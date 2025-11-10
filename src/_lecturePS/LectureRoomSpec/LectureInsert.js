@@ -55,6 +55,8 @@ function App() {
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
+            console.log(respone.data);
+
             navigate("/Lec");
         } else {
             alert(respone.statusText)

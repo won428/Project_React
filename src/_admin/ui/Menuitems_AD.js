@@ -19,13 +19,13 @@ function App() {
                     <Container>
                         <Navbar.Brand onClick={() => navigate(`/ha`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
-                            <Nav.Link onClick={() => navigate(`/sthm/ad`)}>
+                            <Nav.Link onClick={() => navigate(`/user/insert_user`)}>
                                 학생관리
                             </Nav.Link>
-                            <Nav.Link onClick={() => navigate(`/infohome/ad`)}>
+                            <Nav.Link onClick={() => navigate(`/collist`)}>
                                 통합 정보
                             </Nav.Link>
-                            <Nav.Link onClick={() => navigate(`/LHomeAD`)}>
+                            <Nav.Link onClick={() => navigate(`/lectureRegister`)}>
                                 사이버 캠퍼스 관리
                             </Nav.Link>
                             <Nav.Link onClick={() => {

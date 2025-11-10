@@ -52,10 +52,12 @@ function App() {
             const url = `${API_BASE_URL}/online/delete/${id}`
             const res = await axios.delete(url);
 
-            if (res === 200) {
+            if (res.status === 200) {
                 alert("성공");
+                navigate("/Lec")
             } else {
                 alert("오류");
+                navigate("/Lec")
             }
         } catch {
             alert("오류 발생");
