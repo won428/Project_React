@@ -13,8 +13,9 @@ function InquiryBoardUI() {
 
   const typeMap = {
     PENDING: "대기중",
-    ANSWERED: "답변 완료",
-    RESOLVED: "처리 완료",
+    APPROVED: "처리중",
+    COMPLETED : "처리완료",
+    REJECTED : "거부"
   };
 
   const typeMap2 = {
