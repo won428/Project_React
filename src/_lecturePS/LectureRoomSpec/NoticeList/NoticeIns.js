@@ -103,9 +103,21 @@ function App() {
                                             value={title}
                                             onChange={(evt) => setTitle(evt.target.value)}
                                         />
-
-
                                     </Form.Group>
+                                    <Form.Group className="mb-3" onSubmit={PostNotice}>
+                                        <Form.Label>
+                                            제목
+                                        </Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            row={10}
+                                            type="text"
+                                            placeholder="내용을 입력하세요"
+                                            value={content}
+                                            onChange={(evt) => setContent(evt.target.value)}
+                                        />
+                                    </Form.Group>
+
                                     <Form.Group>
                                         <Form.Label>Files</Form.Label>
                                         <Form.Control

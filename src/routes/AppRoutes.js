@@ -1,7 +1,7 @@
 
 import PrivateRoute from "./PrivateRoute";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
+import Lecture_Home from '../_student/pages/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
 import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
 import This_Credit from '../_student/pages/Integrated_Info/Student_Credit';
