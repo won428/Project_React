@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Pagination, Row, Table, Tabs, Tab } from "react-bootstrap"; // ★ 추가: Tabs, Tab
+import { Button, Col, Container, Form, Pagination, Row, Table, Tabs, Tab } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
@@ -13,123 +13,122 @@ function UsersSkeleton() {
   const [studentList, setStudentList] = useState([]);
   const [professorList, setProfessorList] = useState([]);
   const [adminList, setAdmin] = useState([]);
+  const [activeTab, setActiveTab] = useState('students');
+  const roleMap = { students: 'STUDENT', professors: 'PROFESSOR', admins: 'ADMIN' };
 
   const [paging, setPaging] = useState({
-		totalElements : 0,
-		pageSize : 10,
-		totalPages : 0,
-		pageNumber : 0,
-		pageCount : 10,
-		beginPage : 0,
-		endPage : 0,
-		searchCollege: '',
-		searchMajor: '',
-		searchGender: '',
-		searchUserType: '',
-		searchMode: 'all',
-		searchKeyword:'',
-	});
+    totalElements : 0,
+    pageSize : 10,
+    totalPages : 0,
+    pageNumber : 0,
+    pageCount : 10,
+    beginPage : 0,
+    endPage : 0,
+    searchCollege: '',
+    searchMajor: '',
+    searchGender: '',
+    searchUserType: '',
+    searchMode: 'all',
+    searchKeyword:'',
+    searchLevel:'',
+  });
+
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+    setCollege('');
+    setMajorList([]);
+    setPaging(prev => ({
+      ...prev,
+      pageNumber: 0, beginPage: 0, endPage: 0, totalElements: 0, totalPages: 0,
+      searchCollege: '', searchMajor: '', searchGender: '', searchMode: 'all', searchKeyword: '', searchLevel: '',
+      searchUserType: roleMap[key],
+    }));
+  };
 
   const navigate = useNavigate();
 
-  
-
   useEffect(() => {
+    const url = `${API_BASE_URL}/user/pageList`;
 
-    const url = `${API_BASE_URL}/user/pageList`
-    const parameters = {
-			params:{
-			pageNumber: paging.pageNumber,
-			pageSize: paging.pageSize,
-			searchCollege: paging.searchCollege,
-      searchMajor: paging.searchMajor,
-      searchGender: paging.searchGender,
-      searchUserType: paging.searchUserType,
-      searchMode: paging.searchMode,
-      searchKeyword:paging.searchKeyword,
-			},
-		};
+    // 2) 조건부 파라미터 전송 (빈 값/불필요 값 제외, 학년은 학생 탭에서만 전송)
+    const params = {
+      pageNumber: paging.pageNumber,
+      pageSize: paging.pageSize,
+      searchCollege: paging.searchCollege || undefined,
+      searchMajor: paging.searchMajor || undefined,
+      searchGender: paging.searchGender || undefined,
+      searchUserType: paging.searchUserType || undefined,
+      searchMode: paging.searchMode || undefined,
+      searchKeyword: (paging.searchKeyword || '').trim() || undefined,
+    };
+    if (activeTab === 'students' && paging.searchLevel) {
+      params.searchLevel = Number(paging.searchLevel);
+    }
+
     axios
-      .get(url, parameters)
+      .get(url, { params })
       .then((response) => {
-        console.log('응답 받은 데이터')
-				console.log(response.data)
-				setUserList(response.data.content||[]);
-        
+        setUserList(response.data.content || []);
         setPaging((previous)=>{
           const totalElements = response.data.totalElements;
-					const totalPages =response.data.totalPages;
-					const pageNumber = response.data.pageable.pageNumber;
+          const totalPages = response.data.totalPages;
+          const pageNumber = response.data.pageable.pageNumber;
           const pageSize = response.data.pageable.pageSize;
 
-          const beginPage = Math.floor(pageNumber/ previous.pageCount )* previous.pageCount;
-					const endPage = Math.min(beginPage + previous.pageCount -1, totalPages -1);
+          const beginPage = Math.floor(pageNumber / previous.pageCount) * previous.pageCount;
+          const endPage = Math.min(beginPage + previous.pageCount - 1, totalPages - 1);
 
-           return {
-						...previous,
-						totalElements:totalElements,
-						totalPages:totalPages,
-						pageNumber:pageNumber,
-						pageSize:pageSize,
-						beginPage:beginPage,
-						endPage:endPage,
-						};
-
-        })
+          return {
+            ...previous,
+            totalElements,
+            totalPages,
+            pageNumber,
+            pageSize,
+            beginPage,
+            endPage,
+          };
+        });
       })
       .catch((error) => {
-        console.log(error.response.data)
-      })
+        console.log(error?.response?.data || error);
+      });
 
-  }, [paging.pageNumber, paging.searchCollege, paging.searchMajor, paging.searchCollege, paging.searchGender, paging.searchUserType, paging.searchMode, paging.searchKeyword])
-  
+  // 1) 의존성(이미 적용했다고 했던 부분) — 중복 제거 및 searchLevel 포함
+  }, [paging.searchLevel, paging.pageNumber, paging.searchCollege, paging.searchMajor, paging.searchGender, paging.searchUserType, paging.searchMode, paging.searchKeyword, activeTab]);
+
   useEffect(()=>{
     const url = `${API_BASE_URL}/college/list`;
-
-    axios
-      .get(url)
-      .then((response)=>{
-        setCollegeList(response.data)
-      })
+    axios.get(url)
+      .then((response)=> setCollegeList(response.data))
       .catch((error)=>{
         const err = error.response;
-           if(!err){
-            alert('네트워크 오류가 발생하였습니다')
-            return;
-           }
-        console.log(error)
-      })
-
-  },[])
+        if(!err){
+          alert('네트워크 오류가 발생하였습니다');
+          return;
+        }
+        console.log(error);
+      });
+  },[]);
 
   useEffect(()=>{
-    const url = `${API_BASE_URL}/major/list`
+    const url = `${API_BASE_URL}/major/list`;
 
-     if (!college) {
-    setMajorList([]);
-    return;
-  }
-    
+    if (!college) {
+      setMajorList([]);
+      return;
+    }
     axios
-      .get(url,{
-         params:{
-          college_id: Number(college)
-        }
-      })
-      .then((response)=>{
-        setMajorList(response.data)
-        console.log(response.data)
-      })
+      .get(url,{ params:{ college_id: Number(college) }})
+      .then((response)=> setMajorList(response.data))
       .catch((error)=>{
-         const err = error.response;
-           if(!err){
-            alert('네트워크 오류가 발생하였습니다')
-            return;   
-           }
-        console.log(error)
-      })
-
-  },[college])
+        const err = error.response;
+        if(!err){
+          alert('네트워크 오류가 발생하였습니다');
+          return;
+        }
+        console.log(error);
+      });
+  },[college]);
 
   const typeMap = {
     ADMIN: '관리자',
@@ -137,12 +136,11 @@ function UsersSkeleton() {
     PROFESSOR: '교수'
   };
 
-  useEffect(() => { 
-    // ★ 추가: 가져온 userList를 역할별로 분배
+  useEffect(() => {
     setStudentList((userList || []).filter(u => u.u_type === 'STUDENT'));
     setProfessorList((userList || []).filter(u => u.u_type === 'PROFESSOR'));
     setAdmin((userList || []).filter(u => u.u_type === 'ADMIN'));
-  }, [userList]); // ★ 추가
+  }, [userList]);
 
   return (
     <Container fluid className="py-4" style={{ maxWidth: "100%" }}>
@@ -153,22 +151,37 @@ function UsersSkeleton() {
 
         <Col xs={12} md>
           <Row xs={1} sm={2} md={6} className="g-2">
-            {/* 역할 콤보박스 제거됨 (요청사항) */}
+            <Col>
+              <Form.Select
+                size="sm"
+                value={paging.searchLevel ?? ''}
+                disabled={activeTab !== 'students'}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPaging(prev => ({ ...prev, pageNumber: 0, searchLevel: value }));
+                }}
+              >
+                <option value=''>학년</option>
+                <option value='1'>1학년</option>
+                <option value='2'>2학년</option>
+                <option value='3'>3학년</option>
+                <option value='4'>4학년</option>
+              </Form.Select>
+            </Col>
 
             <Col>
-              <Form.Select 
+              <Form.Select
                 size="sm"
+                value={college}
                 onChange={(e)=>{
                   const value = e.target.value;
                   setCollege(value);
-                  setPaging((previous)=>({...previous, pageNumber: 0, searchCollege : value}))
+                  setPaging((previous)=>({...previous, pageNumber: 0, searchCollege : value}));
                 }}
-                >
+              >
                 <option value={''}>단과대학</option>
                 {colllegeList.map((college)=>(
-                  <option
-                    key={college.id} value={college.id}
-                  >
+                  <option key={college.id} value={college.id}>
                     {college.type}
                   </option>
                 ))}
@@ -176,16 +189,14 @@ function UsersSkeleton() {
             </Col>
             <Col>
               <Form.Select size="sm"
-                 onChange={(e)=>{
+                onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous)=>({...previous,pageNumber: 0, searchMajor : value}))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMajor : value}));
                 }}
               >
                 <option value={''}>학과</option>
                 {majorList.map((major)=>(
-                  <option
-                    key={major.id} value={major.id}
-                  >
+                  <option key={major.id} value={major.id}>
                     {major.m_name}
                   </option>
                 ))}
@@ -195,7 +206,7 @@ function UsersSkeleton() {
               <Form.Select size="sm"
                 onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous)=>({...previous,pageNumber: 0, searchGender : value}))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchGender : value}));
                 }}
               >
                 <option value={''}>성별</option>
@@ -205,9 +216,9 @@ function UsersSkeleton() {
             </Col>
             <Col>
               <Form.Select size="sm"
-                  onChange={(e)=>{
+                onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous)=>({...previous,pageNumber: 0, searchMode : value}))
+                  setPaging((previous)=>({...previous,pageNumber: 0, searchMode : value}));
                 }}
               >
                 <option value={'all'}>전체 검색</option>
@@ -217,10 +228,10 @@ function UsersSkeleton() {
               </Form.Select>
             </Col>
             <Col>
-              <Form.Control size="sm" placeholder="검색어 입력" 
+              <Form.Control size="sm" placeholder="검색어 입력"
                 onChange={(e)=>{
                   const value = e.target.value;
-                  setPaging((previous)=>({...previous, searchKeyword : value}))
+                  setPaging((previous)=>({...previous, searchKeyword : value}));
                 }}
               />
             </Col>
@@ -234,12 +245,13 @@ function UsersSkeleton() {
         </Col>
       </Row>
 
-      {/* ★ 추가: 탭 UI (학생 / 교수 / 관리자) + 회색 톤 */}
+      {/* 3) Tabs 제어 컴포넌트(activeKey)로 변경 */}
       <Tabs
         id="users-tabs"
-        defaultActiveKey="students"
+        activeKey={activeTab}
         className="mb-3"
         mountOnEnter
+        onSelect={handleTabChange}
         unmountOnExit={false}
         style={{
           '--bs-nav-link-color': '#6c757d',
@@ -250,23 +262,22 @@ function UsersSkeleton() {
           '--bs-nav-tabs-border-color': '#dee2e6',
         }}
       >
-        {/* ★ 추가: 학생 탭 */}
-        <Tab eventKey="students" title={`학생 (${studentList.length})`}>
+        <Tab eventKey="students" title={`학생`}>
           <div className="table-responsive" style={{ maxHeight: 560, overflow: "auto" }}>
             <Table bordered hover size="sm" className="align-middle w-100" style={{ tableLayout: "fixed" }}>
               <thead style={{ position: "sticky", top: 0, background: "#f8f9fa", zIndex: 1 }}>
                 <tr>
-                  <th style={{ width: 80 }}>학년</th> {/* ★ 추가: 학생 전용 학년 컬럼 */}
-                  <th style={{ minWidth: 140 }}>이름</th> 
-                  <th style={{ width: 100 }}>성별</th>
+                  <th style={{ width: 45 }}>학년</th>
+                  <th style={{ width: 100 }}>이름</th>
+                  <th style={{ width: 45 }}>성별</th>
                   <th style={{ width: 100 }}>생년월일</th>
-                  <th style={{ width: 140 }}>학번</th>
-                  <th style={{ minWidth: 300 }}>이메일</th>
-                  <th style={{ minWidth: 160 }}>휴대전화번호</th>
-                  <th style={{ minWidth: 160 }}>단과대학</th>
-                  <th style={{ minWidth: 180 }}>학과</th>
-                  <th style={{ width: 120 }}>역할구분</th>
-                  <th style={{ width: 160 }}>액션</th>
+                  <th style={{ width: 115 }}>학번</th>
+                  <th style={{ width: 200 }}>이메일</th>
+                  <th style={{ width: 140 }}>휴대전화</th>
+                  <th style={{ width: 120 }}>단과대학</th>
+                  <th style={{ width: 180 }}>학과</th>
+                  <th style={{ width: 85 }}>역할구분</th>
+                  <th style={{ width: 120 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -301,22 +312,21 @@ function UsersSkeleton() {
           </div>
         </Tab>
 
-        {/* ★ 추가: 교수 탭 */}
-        <Tab eventKey="professors" title={`교수 (${professorList.length})`}>
+        <Tab eventKey="professors" title={`교수`}>
           <div className="table-responsive" style={{ maxHeight: 560, overflow: "auto" }}>
             <Table bordered hover size="sm" className="align-middle w-100" style={{ tableLayout: "fixed" }}>
               <thead style={{ position: "sticky", top: 0, background: "#f8f9fa", zIndex: 1 }}>
                 <tr>
-                  <th style={{ minWidth: 160 }}>이름</th>
-                  <th style={{ width: 100 }}>성별</th>
+                  <th style={{ width: 100 }}>이름</th>
+                  <th style={{ width: 45 }}>성별</th>
                   <th style={{ width: 100 }}>생년월일</th>
-                  <th style={{ width: 140 }}>학번</th>
-                  <th style={{ minWidth: 300 }}>이메일</th>
-                  <th style={{ minWidth: 160 }}>휴대전화번호</th>
-                  <th style={{ minWidth: 160 }}>단과대학</th>
-                  <th style={{ minWidth: 180 }}>학과</th>
-                  <th style={{ width: 120 }}>역할구분</th>
-                  <th style={{ width: 160 }}>액션</th>
+                  <th style={{ width: 115 }}>학번</th>
+                  <th style={{ width: 200 }}>이메일</th>
+                  <th style={{ width: 140 }}>휴대전화</th>
+                  <th style={{ width: 120 }}>단과대학</th>
+                  <th style={{ width: 180 }}>학과</th>
+                  <th style={{ width: 85 }}>역할구분</th>
+                  <th style={{ width: 120 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -350,22 +360,21 @@ function UsersSkeleton() {
           </div>
         </Tab>
 
-        {/* ★ 추가: 관리자 탭 */}
-        <Tab eventKey="admins" title={`관리자 (${adminList.length})`}>
+        <Tab eventKey="admins" title={`관리자`}>
           <div className="table-responsive" style={{ maxHeight: 560, overflow: "auto" }}>
             <Table bordered hover size="sm" className="align-middle w-100" style={{ tableLayout: "fixed" }}>
               <thead style={{ position: "sticky", top: 0, background: "#f8f9fa", zIndex: 1 }}>
                 <tr>
-                  <th style={{ minWidth: 160 }}>이름</th>
-                  <th style={{ width: 100 }}>성별</th>
+                  <th style={{ width: 100 }}>이름</th>
+                  <th style={{ width: 45 }}>성별</th>
                   <th style={{ width: 100 }}>생년월일</th>
-                  <th style={{ width: 140 }}>학번</th>
-                  <th style={{ minWidth: 300 }}>이메일</th>
-                  <th style={{ minWidth: 160 }}>휴대전화번호</th>
-                  <th style={{ minWidth: 160 }}>단과대학</th>
-                  <th style={{ minWidth: 180 }}>학과</th>
-                  <th style={{ width: 120 }}>역할구분</th>
-                  <th style={{ width: 160 }}>액션</th>
+                  <th style={{ width: 115 }}>학번</th>
+                  <th style={{ width: 200 }}>이메일</th>
+                  <th style={{ width: 140 }}>휴대전화</th>
+                  <th style={{ width: 120 }}>단과대학</th>
+                  <th style={{ width: 180 }}>학과</th>
+                  <th style={{ width: 85 }}>역할구분</th>
+                  <th style={{ width: 120 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -399,25 +408,20 @@ function UsersSkeleton() {
           </div>
         </Tab>
       </Tabs>
-      {/* ★ 추가 끝 */}
 
       <Pagination className="justify-content-center mt-4">
         <Pagination.First
-          onClick={()=>{
-            console.log('First 버튼 클릭(0 페이지로 이동)')
-            setPaging((previous)=>({...previous, pageNumber: 0}))
-          }}
+          onClick={()=> setPaging((previous)=>({...previous, pageNumber: 0}))}
           disabled={paging.pageNumber < paging.pageCount}
           as="button"
         >
           맨처음
         </Pagination.First>
-        
+
         <Pagination.Prev
           onClick={()=>{
             const gotoPage = paging.beginPage -1;
-            console.log(`Prev 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+            setPaging((previous)=>({...previous, pageNumber: gotoPage}));
           }}
           disabled={paging.pageNumber < paging.pageCount}
           as="button"
@@ -428,38 +432,33 @@ function UsersSkeleton() {
         {[...Array(paging.endPage - paging.beginPage + 1)].map((_, idx)=>{
           const pageIndex = paging.beginPage + idx + 1 ;
           return(
-            <Pagination.Item 
+            <Pagination.Item
               key={pageIndex}
               active={paging.pageNumber === (pageIndex -1)}
-              onClick={()=>{
-                console.log(`(${pageIndex} 페이지로 이동)`)
-                setPaging((previous)=>({...previous, pageNumber: pageIndex-1}))
-              }}
+              onClick={()=> setPaging((previous)=>({...previous, pageNumber: pageIndex-1}))}
             >
               {pageIndex}
             </Pagination.Item>
-          )
+          );
         })}
-        
-        <Pagination.Next 
+
+        <Pagination.Next
           onClick={()=>{
             const gotoPage = paging.endPage +1;
-            console.log(`Next 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+            setPaging((previous)=>({...previous, pageNumber: gotoPage}));
           }}
           disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
           as="button"
         >
           다음
         </Pagination.Next>
-        <Pagination.Last 
+        <Pagination.Last
           onClick={()=>{
             const gotoPage = paging.totalPages -1;
-            console.log(`Last 버튼 클릭(${gotoPage} 페이지로 이동)`)
-            setPaging((previous)=>({...previous, pageNumber: gotoPage}))
+            setPaging((previous)=>({...previous, pageNumber: gotoPage}));
           }}
           disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
-          as="button"	
+          as="button"
         >
           맨끝
         </Pagination.Last>
