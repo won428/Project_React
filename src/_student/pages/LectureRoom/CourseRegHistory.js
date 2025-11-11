@@ -312,8 +312,8 @@ function App() {
                 <tbody>
                   <tr>
                     {/* 값은 사용자가 채울 예정 */}
-                    <td className="text-center">{modalLec?.weightsDto?.attendance ?? "-"}</td>
-                    <td className="text-center">{modalLec?.weightsDto?.assignment ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.finalExam ?? "-"}</td>
                   </tr>

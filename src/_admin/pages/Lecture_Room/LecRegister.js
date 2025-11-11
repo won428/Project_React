@@ -40,7 +40,8 @@
 
     const navigate = useNavigate(); 
 
-   
+    const toMin = (t) => t ? (+t.slice(0,2))*60 + (+t.slice(3,5)) : null; // 시간을 0,2만큼 자르고 * 60 분으로 바꿈 + 나머지 분자리인 3,5만큼 잘라서 시간을 분으로 치환한 값에 더해줌.
+
 
     useEffect(() => {
       const url = `${API_BASE_URL}/college/list`
@@ -131,6 +132,14 @@
             return;
         }
 
+        const invalidTime = schedule.some(r =>
+        !r.day || !r.startTime || !r.endTime || toMin(r.endTime) <= toMin(r.startTime)
+        );
+        if (invalidTime) {
+          alert("각 수업의 '종료 교시'는 ‘시작 교시’보다 늦어야 합니다.");
+          return;
+        }
+
         const formData = new FormData();
         formData.append("lecture", new Blob([JSON.stringify(lecture)], { type: "application/json" }));
         formData.append("schedule", new Blob([JSON.stringify(schedule)], { type: "application/json" }));
@@ -179,6 +188,7 @@
     return m != null && ALLOWED_MONTHS.includes(m);
     };
 
+    
     return (
       <>
         <Form onSubmit={signup}>

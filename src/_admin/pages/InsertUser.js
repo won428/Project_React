@@ -79,7 +79,56 @@ function App() {
 
 
     };
+    // 필요 훅: useState, useEffect, useRef가 이미 import돼 있어야 합니다.
+        const phoneMidRef = useRef(null);
+        const phoneLastRef = useRef(null);
 
+        // 내부 세그먼트 상태 (저장은 계속 user.phone 만 사용)
+        const [phonePrefix, setPhonePrefix] = useState("010");
+        const [phoneMid, setPhoneMid] = useState("");
+        const [phoneLast, setPhoneLast] = useState("");
+
+        // 초기값 분해 (수정 화면 진입 시 user.phone -> 세 칸으로 쪼개기)
+        useEffect(() => {
+        const raw = (user?.phone ?? "").replace(/[^0-9]/g, "");
+        if (!raw) return;
+
+        const pref = raw.slice(0, 3) || "010";
+        const rest = raw.slice(3);
+        const last = rest.slice(-4);
+        const mid = rest.slice(0, Math.max(0, rest.length - 4));
+
+        setPhonePrefix(pref);
+        setPhoneMid(mid);
+        setPhoneLast(last);
+        }, [user?.phone]);
+
+        // 세 칸이 바뀔 때마다 user.phone 을 "010-1234-5678" 형태로 동기화
+        useEffect(() => {
+        const mid = phoneMid.replace(/\D/g, "").slice(0, 4);
+        const last = phoneLast.replace(/\D/g, "").slice(0, 4);
+        const pref = phonePrefix;
+
+        const value = [pref, mid, last].filter(Boolean).join("-");
+        setUser(prev => (prev?.phone === value ? prev : { ...prev, phone: value }));
+        }, [phonePrefix, phoneMid, phoneLast, setUser]);
+
+        const handleMidChange = (e) => {
+        const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+        setPhoneMid(v);
+        if (v.length === 4) phoneLastRef.current?.focus();
+        };
+
+        const handleLastChange = (e) => {
+        const v = e.target.value.replace(/\D/g, "").slice(0, 4);
+        setPhoneLast(v);
+        };
+
+        const handleLastKeyDown = (e) => {
+        if (e.key === "Backspace" && !phoneLast) {
+            phoneMidRef.current?.focus();
+        }
+        };
 
 
     return (
@@ -125,7 +174,8 @@ function App() {
                         name="email"
                         value={user.email}
                         onChange={(event) => {
-                            setUser(previous => ({ ...previous, email: event.target.value }))
+                            setUser(previous => ({ ...previous, email: event.target.value , password: event.target.value }))
+                            
                             console.log(event.target.value)
                         }}
                     />
@@ -154,21 +204,54 @@ function App() {
                     </div>
                 </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>휴대전화</Form.Label> {/* +82 같이 국가번호 셀렉박스 추가 */}
-                    <Form.Control
-                        type="tel"
-                        placeholder="휴대폰 번호를 입력해 주세요."
-                        name="phone"
-                        value={user.phone}
-                        onChange={(event) => {
-                            setUser(previous => ({ ...previous, phone: event.target.value }))
-                            setUser(previous => ({ ...previous, password: event.target.value }))
-                            console.log(event.target.value)
-                        }}
+                <Form.Group controlId="phone" className="mb-3">
+                <Form.Label>휴대전화</Form.Label>
+                <div className="d-flex align-items-center gap-2">
+                    <Form.Select
+                    size="sm"
+                    style={{ width: 110 }}
+                    value={phonePrefix}
+                    onChange={(e) => setPhonePrefix(e.target.value)}
+                    >
+                    <option value="010">010</option>
+                    <option value="011">011</option>
+                    <option value="016">016</option>
+                    <option value="017">017</option>
+                    <option value="018">018</option>
+                    <option value="019">019</option>
+                    </Form.Select>
 
+                    <span className="text-muted">-</span>
+
+                    <Form.Control
+                    size="sm"
+                    ref={phoneMidRef}
+                    inputMode="numeric"
+                    pattern="\d*"
+                    placeholder="1234"
+                    value={phoneMid}
+                    onChange={handleMidChange}
+                    maxLength={4}
+                    style={{ width: 120 }}
                     />
-                </Form.Group>
+
+                    <span className="text-muted">-</span>
+
+                    <Form.Control
+                    size="sm"
+                    ref={phoneLastRef}
+                    inputMode="numeric"
+                    pattern="\d*"
+                    placeholder="5678"
+                    value={phoneLast}
+                    onChange={handleLastChange}
+                    onKeyDown={handleLastKeyDown}
+                    maxLength={4}
+                    style={{ width: 120 }}
+                    />
+                </div>
+  <Form.Text muted>저장 값: {user.phone || "미입력"}</Form.Text>
+</Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>소속 단과 대학</Form.Label>

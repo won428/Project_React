@@ -96,6 +96,7 @@ function App() {
         axios.get(`${API_BASE_URL}/api/grades/semester/lectures`, { params: { userId } })
             .then(res => {
                 const groupedLectures = groupLecturesByYear(res.data);
+                console.log(res.data)
                 const filtered = (groupedLectures[selectedYear] || []).filter(l => l.semester === selectedSemester);
                 setLectures(filtered);
                 setError(null);
