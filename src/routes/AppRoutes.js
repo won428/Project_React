@@ -10,6 +10,7 @@ import CreditAppealList from '../_student/pages/Integrated_Info/CreditAppealList
 
 import Change_Status from '../_student/pages/Integrated_Info/Change_Status';
 import ChangeStatusList from '../_student/pages/Integrated_Info/ChangeStatusList';
+import CheckAttendance from '../_student/pages/Integrated_Info/CheckAttendance';
 import ChangeStatusDetail from '../_student/pages/Integrated_Info/ChangeStatusDetail';
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
 import Academic_ScheduleMod from '../public/pages/Schedule/Academic_ScheduleMod';
@@ -106,7 +107,7 @@ import NoticeInsertEn from "../public/pages/EntireNotice/NoticeInsAd";
 import NoticeSpecEn from "../public/pages/EntireNotice/NoticeSpec";
 import NoticeListEn from "../public/pages/EntireNotice/NoticeList";
 import InquiryBoard from "../public/pages/InquiryBoard";
-import { LayoutStInfoPublic }from "../public/ui/LayoutStInfoPublic";
+import { LayoutStInfoPublic } from "../public/ui/LayoutStInfoPublic";
 import CreatePost from "../public/pages/CreatePost";
 import InquiryPage from "../public/pages/InquiryPage";
 import UpdatePost from "../public/pages/UpdatePost";
@@ -132,17 +133,17 @@ function App() {
 
 
 
-            
+
             {/* 학교 공통 */}
-                <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
-                    <Route element={<EnPage />}>
-                    
+            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
+                <Route element={<EnPage />}>
+
                     <Route path='/EnNot' element={<NoticeInsertEn />} />
                     <Route path='/EnNotSpec' element={<NoticeSpecEn />} />
                     <Route path='/EnNotList' element={<NoticeListEn />} />
                     <Route path='/acsche' element={<Academic_Schedule />} />
 
-                    
+
                     <Route element={<LayoutStInfoPublic />}>
                         <Route path='/inquiryBoard' element={<InquiryBoard />} />
                         <Route path='/createPost' element={<CreatePost />} />
@@ -150,8 +151,8 @@ function App() {
                         <Route path='/updatePost/:id' element={<UpdatePost />} />
                     </Route>
 
-                    </Route>
                 </Route>
+            </Route>
 
 
 
@@ -218,7 +219,7 @@ function App() {
 
 
                         <Route path='/infohome/ad' element={<InfohomeAD />} ></Route>
-                        
+
                         <Route path='/collist' element={<CollegeList />} ></Route>
                         <Route path='/colreg' element={<ColRegister />} ></Route>
                         <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
@@ -278,15 +279,17 @@ function App() {
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     {/* Integrated_Info Tab */}
                     <Route element={<LayoutStInfost />}>
-                        
+
 
                         <Route path='/InfoHome' element={<InfoHome />} ></Route>
                         <Route path='/Student_Credit' element={<This_Credit />} ></Route>
                         <Route path='/CreditAppeal/:lectureId' element={<CreditAppeal />} ></Route>
                         <Route path='/CreditAppealList' element={<CreditAppealList />} ></Route>
-                        
+
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
+
+                        <Route path='/CheckAttendance' element={<CheckAttendance />} ></Route>
                         {/* 동적 파라미터 포함 경로 */}
                         <Route path="/ChangeStatusDetail/:recordId" element={<ChangeStatusDetail />} />
                     </Route>
