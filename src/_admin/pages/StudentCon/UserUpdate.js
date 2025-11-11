@@ -25,6 +25,7 @@ function App() {
   const [majorList, setMajorList] = useState([]);
   const [college, setCollege] = useState('');
 
+
   const getCollegeList = () => {
     const url = `${API_BASE_URL}/college/list`
     axios
@@ -93,6 +94,7 @@ function App() {
       major: userinfo.major,
       college: userinfo.college
     }))
+    setCollege(userinfo.college)
 
   }, [userinfo])
 
