@@ -5,7 +5,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../../../public/config/config';
 import { useAuth } from '../../../public/context/UserContext';
 
-function AttendaceCheckForm({ show, onHide, onExited, loading, form, rows }) {
+function AttendaceCheckForm({ show, onHide, onExited, loading, form, rows, onAppeal }) {
 
     return (
         <Modal show={show} onHide={onHide} onExited={onExited}>
@@ -20,8 +20,16 @@ function AttendaceCheckForm({ show, onHide, onExited, loading, form, rows }) {
                 ) : (<>
                     <div className="mb-3">
                         <div className="fw-semibold">{form.lectureName}</div>
-                        <div className="text-muted small">
-                            {form.professorName} · {form.majorName}
+                        <div className="d-flex align-items-center text-muted small">
+                            <div>{form.professorName} · {form.majorName}</div>
+                            <Button
+                                size="sm"
+                                variant="outline-primary"
+                                className="ms-auto"
+                                onClick={() => onAppeal?.(form)}
+                            >
+                                이의제기
+                            </Button>
                         </div>
                         <div className="mt-2">
                             <span className="fw-semibold">출결 점수:</span>{" "}
@@ -185,6 +193,13 @@ function App() {
         setAttendanceRows([]);
     };
 
+    // 이의제기 전송 버튼 여기에 만드시면 됩니다.
+    const handleAppeal = (form) => {
+        // form.lectureName, form.professorName ... 사용 가능
+        // 모달 열기 / 라우팅 / API 호출 등 원하는 동작
+        console.log('이의제기 클릭:', form);
+    };
+
     // 학생이 수강중인 학생 목록 불러오는 useEffect
     useEffect(() => {
         if (!userId) return;
@@ -286,6 +301,7 @@ function App() {
                 loading={modalLoading}
                 form={modalForm}
                 rows={attendanceRows}
+                onAppeal={handleAppeal}
             />
         </Container>
     );
