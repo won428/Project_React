@@ -3,6 +3,9 @@ import { Button, Form, Modal, Table, Tab, Tabs } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMemo } from "react";
+
+const YEAR_START = 1990;
 
 function App() {
   const [lectureList, setLectureList] = useState();
@@ -16,6 +19,36 @@ function App() {
   const navigate = useNavigate();
   const [modalId, setModalId] = useState('');
   const [modalLec, setModalLec] = useState({});
+  const [majorList, setMajorList] = useState([]);
+  const [userList, setUserList] = useState([]);
+
+  const [paging, setPaging] = useState({
+    totalElements : 0,
+    pageSize : 10,
+    totalPages : 0,
+    pageNumber : 0,
+    pageCount : 10,
+    beginPage : 0,
+    endPage : 0,
+    searchCompletionDiv: '',
+    searchMajor: '',
+    searchCredit: '',
+    searchStartDate: '',
+    searchMode: 'all',
+    searchKeyword:'',
+    searchSchedule:'',
+    searchYear:'',
+    searchLevel:'',
+    searchUser:'',
+  });
+
+   const years = useMemo(() => {
+    const end = new Date().getFullYear() + 1;
+    return Array.from({ length: end - YEAR_START + 1 }, (_, i) => YEAR_START + i);
+  }, []);
+
+  const yearsDesc = years.slice().reverse();
+
 
   useEffect(() => {
     if (!modalId) return;
@@ -44,6 +77,19 @@ function App() {
       });
   }, []);
 
+  useEffect(()=>{
+    const url = `${API_BASE_URL}/major/listForLecturePage`;
+    axios
+      .get(url)
+      .then((response)=>{
+        setMajorList(response.data)
+        console.log(response.data)
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+  },[])
+
   useEffect(() => {
     fetchLectures();
   }, [fetchLectures]);
@@ -55,6 +101,18 @@ function App() {
     setRejectedLec(lectureList.filter((lec) => lec.status === "REJECTED"));
     setPendingLec(lectureList.filter((lec) => lec.status === "PENDING"));
   }, [lectureList]);
+
+  useEffect(() => {
+  // 선택한 학과의 교수 목록 세팅
+  const m = (majorList ?? []).find(v => String(v.id) === String(paging.searchMajor));
+  setUserList(m?.userList ?? []);
+
+  // 학과가 바뀌면 교수 선택 초기화 (이미 ''이면 상태 변경 안 함)
+  setPaging(prev =>
+    prev.searchUser !== '' ? { ...prev, searchUser: '' } : prev
+  );
+}, [paging.searchMajor, majorList]);
+  
 
   const typeMap = {
     PENDING: "처리중",
@@ -298,6 +356,174 @@ function App() {
 
  return (
   <>
+<div className="d-flex align-items-center flex-nowrap gap-2 mb-3">
+  <h4 className="mb-0 me-3 flex-shrink-0">강의 목록</h4>
+
+  {/* 년도 */}
+   <Form.Select id="filterYear" size="sm" className="w-auto"
+    value={paging.searchYear}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchYear : value}))
+    }}
+   >
+      <option value="">년도</option>
+      {yearsDesc.map(y => <option key={y} value={y}>{y}</option>)}
+    </Form.Select>
+
+  {/* 학기 */}
+  <Form.Select
+    id="filterSemester"
+    aria-label="학기"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 120 }}
+    value={paging.searchStartDate}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchStartDate : value}))
+    }}
+  >
+    <option value="">학기</option>
+    {/* TODO: 백엔드 정의에 맞춰 value 조정 */}
+    <option value="3">1학기</option>
+    <option value="9">2학기</option>
+    <option value="6">여름 계절</option>
+    <option value="12">겨울 계절</option>
+  </Form.Select>
+
+  {/* 이수구분 */}
+  <Form.Select
+    id="filterCompletionDiv"
+    aria-label="이수구분"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 160 }}
+    value={paging.searchCompletionDiv}
+     onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchCompletionDiv : value}))
+    }}
+  >
+    <option value="">이수구분</option>
+    <option value="MAJOR_REQUIRED">전공필수</option>
+    <option value="MAJOR_ELECTIVE">전공선택</option>
+    <option value="LIBERAL_REQUIRED">교양필수</option>
+    <option value="LIBERAL_ELECTIVE">교양선택</option>
+    <option value="GENERAL_ELECTIVE">일반선택</option>
+  </Form.Select>
+
+  {/* 학년 */}
+  <Form.Select
+    id="filterLevel"
+    aria-label="학년"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 120 }}
+    value={paging.searchLevel}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchLevel : value}))
+    }}
+  >
+    <option value="">학년</option>
+    <option value="1">1학년</option>
+    <option value="2">2학년</option>
+    <option value="3">3학년</option>
+    <option value="4">4학년</option>
+  </Form.Select>
+
+  {/* 소속학과 */}
+  <Form.Select
+    id="filterMajor"
+    aria-label="소속학과"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 180 }}
+    value={paging.searchMajor}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchMajor : value}))
+    }}
+  >
+    <option value="">소속학과</option>
+    {majorList.map((major)=>(
+      <option value={major.id}>{major.name}</option>
+    ))}
+  </Form.Select>
+
+  {/* 담당교수 */}
+  <Form.Select
+    id="filterProfessor"
+    aria-label="담당교수"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 150 }}
+    value={paging.searchUser}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchUser : value}))
+    }}
+  > 
+    <option value="">담당교수</option>
+    {userList.map((user)=>(
+      <option value={user.id}>{user.name}</option>
+    ))}
+    
+    
+    {/* TODO: 옵션 추가 */}
+  </Form.Select>
+
+  {/* 수업 요일 */}
+  <Form.Select
+    id="filterDay"
+    aria-label="수업 요일"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 140 }}
+    value={paging.searchSchedule}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchSchedule : value}))
+    }}
+  >
+    <option value="">수업 요일</option>
+    <option value="MONDAY">월요일</option>
+    <option value="TUESDAY">화요일</option>
+    <option value="WEDNESDAY">수요일</option>
+    <option value="THURSDAY">목요일</option>
+    <option value="FRIDAY">금요일</option>
+  </Form.Select>
+
+  {/* 학점 */}
+  <Form.Select
+    id="filterCredit"
+    aria-label="학점"
+    size="sm"
+    className="w-auto flex-shrink-0"
+    style={{ minWidth: 120 }}
+    value={paging.searchCredit}
+    onChange={(e)=>{
+      const value = e.target.value;
+      setPaging((pre)=>({...pre, searchCredit : value}))
+    }}
+  >
+    <option value="">학점</option>
+    <option value="1">1학점</option>
+    <option value="2">2학점</option>
+    <option value="3">3학점</option>
+    <option value="4">4학점</option>
+  </Form.Select>
+
+  <Button
+    variant="outline-secondary"
+    size="sm"
+    className="ms-auto w-auto flex-shrink-0"
+    onClick={() => navigate(-1)}
+  >
+    돌아가기
+  </Button>
+</div>
     {/* 상단 탭 네비게이션 */}
     <Tabs
       id="lecture-tabs"
@@ -728,15 +954,116 @@ function App() {
     </Tabs>
 
     {/* ───────── 상세 모달 UI (변경 없음) ───────── */}
-    <Modal
-      show={open}
-      onHide={() => setOpen(false)}
-      centered
-      backdrop="static"
-      aria-labelledby="lecture-detail-title"
-    >
-      {/* ...모달 내용 그대로... */}
-    </Modal>
+         <Modal
+        show={open}
+        onHide={() => setOpen(false)}
+        centered
+        backdrop="static"
+        aria-labelledby="lecture-detail-title"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="lecture-detail-title" className="fs-5">
+            {modalLec.name}
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="mb-3">
+            <div className="text-muted small mb-2">상세 시간표</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: "6rem" }} className="text-center">요일</th>
+                    <th style={{ width: "7rem" }} className="text-center">시작</th>
+                    <th style={{ width: "7rem" }} className="text-center">종료</th>
+                    <th>시간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(modalLec?.lectureSchedules ?? []).map((s, idx) => (
+                    <tr key={idx}>
+                      <td className="text-center">{typeMapDay[s.day] ?? s.day}</td>
+                      <td className="text-center">{typeMapStart[s.startTime] ?? s.startTime}</td>
+                      <td className="text-center">{typeMapEnd[s.endTime] ?? s.endTime}</td>
+                      <td className="text-nowrap">{s.startTime}~{s.endTime}</td>
+                    </tr>
+                  ))}
+                  {(modalLec?.lectureSchedules ?? []).length === 0 && (
+                    <tr><td colSpan={4} className="text-center text-muted">시간표 없음</td></tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <div className="text-muted small mb-2">강의설명</div>
+            <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+              {modalLec.description}
+            </div>
+          </div>
+
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "6rem" }}>출석</th>
+                    <th className="text-center" style={{ width: "6rem" }}>과제</th>
+                    <th className="text-center" style={{ width: "6rem" }}>중간</th>
+                    <th className="text-center" style={{ width: "6rem" }}>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.finalExam ?? "-"}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          </div>
+
+          <div>
+            <div className="text-muted small mb-2">첨부파일</div>
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="text-muted w-100">
+                <ul className="mb-0 w-100">
+                  {modalLec?.attachmentDtos?.length > 0 ? (
+                    modalLec.attachmentDtos.map((lecFile) => (
+                      <li key={lecFile.id} className="mb-1">
+                        <div className="d-flex align-items-center w-100">
+                          <span className="text-truncate me-2 flex-grow-1">{lecFile.name}</span>
+                          <Button
+                            size="sm"
+                            variant="outline-secondary"
+                            className="ms-auto flex-shrink-0"
+                            onClick={() => downloadClick(lecFile.id)}
+                          >
+                            다운로드
+                          </Button>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-muted">첨부된 파일이 없습니다.</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer className="d-flex justify-content-end">
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            닫기
+          </Button>
+        </Modal.Footer>
+      </Modal>
   </>
 );
 }
