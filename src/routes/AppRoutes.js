@@ -44,6 +44,7 @@ import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration
 import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
 import LecUpdateAd from '../_admin/pages/Lecture_Room/LecUpdateAd'
 import CourseRegHistory from '../_student/pages/LectureRoom/CourseRegHistory'
+import InquiryForAd from '../_admin/pages/StudentCon/InquiryForAd';
 
 
 import NoticeIns from "../_lecturePS/LectureRoomSpec/NoticeList/NoticeIns";
@@ -104,6 +105,12 @@ import SetPW from "../public/SetPW";
 import NoticeInsertEn from "../public/pages/EntireNotice/NoticeInsAd";
 import NoticeSpecEn from "../public/pages/EntireNotice/NoticeSpec";
 import NoticeListEn from "../public/pages/EntireNotice/NoticeList";
+import InquiryBoard from "../public/pages/InquiryBoard";
+import { LayoutStInfoPublic }from "../public/ui/LayoutStInfoPublic";
+import CreatePost from "../public/pages/CreatePost";
+import InquiryPage from "../public/pages/InquiryPage";
+import UpdatePost from "../public/pages/UpdatePost";
+import InquiryPageAd from "../_admin/pages/StudentCon/InquiryPageAd";
 
 function App() {
     /**
@@ -125,20 +132,26 @@ function App() {
 
 
 
-
+            
             {/* 학교 공통 */}
-            <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
-                <Route element={<EnPage />}>
+                <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT', 'ADMIN']} />}>
+                    <Route element={<EnPage />}>
+                    
+                    <Route path='/EnNot' element={<NoticeInsertEn />} />
+                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} />
+                    <Route path='/EnNotList' element={<NoticeListEn />} />
+                    <Route path='/acsche' element={<Academic_Schedule />} />
 
-                    <Route path='/EnNot' element={<NoticeInsertEn />} ></Route>
-                    <Route path='/EnNotSpec' element={<NoticeSpecEn />} ></Route>
-                    <Route path='/EnNotList' element={<NoticeListEn />} ></Route>
-                    <Route path='/acsche' element={<Academic_Schedule />} ></Route>
+                    
+                    <Route element={<LayoutStInfoPublic />}>
+                        <Route path='/inquiryBoard' element={<InquiryBoard />} />
+                        <Route path='/createPost' element={<CreatePost />} />
+                        <Route path='/inquiryPage/:id' element={<InquiryPage />} />
+                        <Route path='/updatePost/:id' element={<UpdatePost />} />
+                    </Route>
 
+                    </Route>
                 </Route>
-
-
-            </Route>
 
 
 
@@ -200,6 +213,8 @@ function App() {
                         <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
+                        <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
+                        <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
                     </Route>
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}

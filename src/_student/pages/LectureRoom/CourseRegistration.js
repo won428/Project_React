@@ -218,7 +218,7 @@ function App() {
       });
   }, [modalId]);
 
-  // ───────── 파일 다운로드 ─────────
+
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`;
     axios
@@ -246,6 +246,8 @@ function App() {
         alert('오류');
       });
   };
+
+
 
   return (
     <>
@@ -688,7 +690,7 @@ function App() {
       </div>
 
       {/* ───────── 상세 모달 ───────── */}
-      <Modal
+            <Modal
         show={open}
         onHide={() => setOpen(false)}
         centered
@@ -740,6 +742,32 @@ function App() {
             </div>
           </div>
 
+          {/* 점수 산출 비율 */}
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "6rem" }}>출석</th>
+                    <th className="text-center" style={{ width: "6rem" }}>과제</th>
+                    <th className="text-center" style={{ width: "6rem" }}>중간</th>
+                    <th className="text-center" style={{ width: "6rem" }}>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {/* 값은 사용자가 채울 예정 */}
+                    <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
+                    <td className="text-center">{modalLec?.weightsDto?.finalExam ?? "-"}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </div>
+          </div>
+
           {/* 첨부파일 */}
           <div>
             <div className="text-muted small mb-2">첨부파일</div>
@@ -772,7 +800,9 @@ function App() {
         </Modal.Body>
 
         <Modal.Footer className="d-flex justify-content-end">
-          <Button variant="secondary" onClick={() => setOpen(false)}>닫기</Button>
+          <Button variant="secondary" onClick={() => setOpen(false)}>
+            닫기
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

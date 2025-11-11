@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 
 
-export const LayoutStCon = () => {
+export const LayoutStInfoPublic = () => {
     const navigate = useNavigate();
 
     return (
@@ -16,27 +16,24 @@ export const LayoutStCon = () => {
                 <Container>
                     <Nav
                         className="flex-column">
-                        {/* <Nav.Link
-                            onClick={() => navigate(`/sthm/ad`)}
-                            className="text-white"
-                        >구성원 관리 홈</Nav.Link> */}
                         <Nav.Link
-                            onClick={() => navigate(`/user/insert_user`)}
+                            onClick={() => navigate(`/InfoHome`)}
                             className="text-white"
-                        >구성원 등록</Nav.Link>
+                        >학적 홈</Nav.Link>
                         <Nav.Link
+                            onClick={() => navigate(`/This_Credit`)}
+                            className="text-white"
+                        >당학기 성적</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/etrcdt`)}
+                            className="text-white"
+                        >전체 성적 </Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/inquiryBoard`)}
+                            className="text-white"
+                        >1:1 문의 </Nav.Link>
 
-                            onClick={() => navigate(`/user/UserBatchReg`)}
-                            className="text-white"
-                        >구성원 일괄등록</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/user/UserList`)}
-                            className="text-white"
-                        >구성원 리스트</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/inquiry/admin`)}
-                            className="text-white"
-                        >1:1 문의 관리</Nav.Link>
+
                     </Nav>
                 </Container>
             </Col>
