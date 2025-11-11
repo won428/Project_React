@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import { Alert, Button, ButtonGroup, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config/config";
@@ -8,7 +8,7 @@ import API, { setToken } from "../config/api"
 import { jwtDecode } from "jwt-decode";
 
 function App() {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     // const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ function App() {
         try {
             const url = `${API_BASE_URL}/auth/login`
             const parameters = {
-                email,
+                username,
                 password
             }
             // check
@@ -65,7 +65,7 @@ function App() {
         } catch (error) {
             console.log(error.message);
             setError("ID/PW incorrect")
-            alert("로그인 실패 " + error.response?.data || error.message);
+            alert("서버 오류 " + error.response?.data || error.message);
 
         }
 
@@ -101,14 +101,14 @@ function App() {
                                 <Form onSubmit={LoginAction}>
                                     <Form.Group>
                                         <Form.Label>
-                                            Email or 학번
+                                            학번
                                         </Form.Label>
 
                                         <Form.Control
-                                            type="email"
-                                            placeholder="Email을 입력하세요"
-                                            value={email}
-                                            onChange={(evt) => setEmail(evt.target.value)}
+                                            type="text"
+                                            placeholder="학번을 입력하세요"
+                                            value={username}
+                                            onChange={(evt) => setUsername(evt.target.value)}
                                             required
                                         />
                                     </Form.Group>

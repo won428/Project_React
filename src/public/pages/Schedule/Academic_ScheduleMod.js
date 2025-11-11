@@ -93,11 +93,18 @@ function App() {
         return <Pagination className="justify-content-center mt-3">{items}</Pagination>;
     };
 
-    const removeSche = (item) => {
+    const removeSche = async (item) => {
         console.log(item);
 
         const url = `${API_BASE_URL}/calendar/delete/${item}`;
-        axios.delete(url)
+        const res = await axios.delete(url);
+        if (res.status === 200) {
+            alert("삭제 성공")
+            setPost((prev) => prev.filter(postItem => postItem.id !== item));
+        } else {
+            alert("삭제 실패")
+        }
+
 
 
     }
@@ -124,6 +131,14 @@ function App() {
                         ))}
                     </Form.Select>
                 </Col>
+                <Col className="d-flex justify-content-end">
+                    <Button
+                        size="sm"
+                        onClick={() => navigate("/acscheIns")}
+                    >
+                        학사일정 생성
+                    </Button>
+                </Col>
             </Row>
 
             <Row>
@@ -146,7 +161,7 @@ function App() {
                                                 &nbsp;
                                                 <Button
                                                     size="sm"
-                                                    onClick={() => navigate(`예정`)}
+                                                    onClick={() => navigate(`/acschemod/up`, { state: item.id })}
                                                     style={{ backgroundColor: 'transparent' }}
                                                     variant="outline-light"
                                                 >
