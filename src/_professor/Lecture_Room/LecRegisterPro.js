@@ -30,8 +30,8 @@ import { useAuth } from "../../public/context/UserContext";
     const [files, setFiles] = useState([]);
     const fileRef = useRef(null);
     const [percent, setPercent] = useState({
-      attendance: 20,
-      assignment: 20,  
+      attendanceScore: 20,
+      assignmentScore: 20,  
       midtermExam : 30,
       finalExam: 30
     })
@@ -60,8 +60,8 @@ import { useAuth } from "../../public/context/UserContext";
         e.preventDefault();
         console.log(lecture);
         const totalPercent =
-          Number(percent.assignment) +
-          Number(percent.attendance) +
+          Number(percent.assignmentScore) +
+          Number(percent.attendanceScore) +
           Number(percent.midtermExam) +
           Number(percent.finalExam);
 
@@ -369,10 +369,10 @@ import { useAuth } from "../../public/context/UserContext";
                         min="0"
                         max="100"
                         step="1"
-                        name="attendance"
+                        name="attendanceScore"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, attendance: value }));
+                          setPercent((previous) => ({ ...previous, attendanceScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>
@@ -388,10 +388,10 @@ import { useAuth } from "../../public/context/UserContext";
                         min="0"
                         max="100"
                         step="1"
-                        name="assignment"
+                        name="assignmentScore"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, assignment: value }));
+                          setPercent((previous) => ({ ...previous, assignmentScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>
