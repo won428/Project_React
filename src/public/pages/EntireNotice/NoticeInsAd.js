@@ -10,7 +10,6 @@ function App() {
     const navigate = useNavigate();
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
-
     const [subfiles, setSubfiles] = useState([]);
     const fileRef = useRef();
 
@@ -53,7 +52,7 @@ function App() {
 
         const url = `${API_BASE_URL}/Entire/insert`
         const formData = new FormData();
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("title", title);
         formData.append("content", content);
         subfiles.forEach(file => {
@@ -66,7 +65,7 @@ function App() {
 
         if (respone.status === 200) {
             alert("등록에 성공하였습니다.");
-            navigate("/notionlist");
+            navigate("/EnNotList");
         } else {
             alert(respone.statusText)
         }
@@ -75,7 +74,7 @@ function App() {
 
 
     const Fileselect = (evt) => {
-        subfiles.forEach(f => URL.revokeObjectURL(f.url)); // ✅ 기존 것 해제
+        subfiles.forEach(f => URL.revokeObjectURL(f.url));
 
         const selectedFiles = Array.from(evt.target.files);
         if (selectedFiles.length > 3) {
