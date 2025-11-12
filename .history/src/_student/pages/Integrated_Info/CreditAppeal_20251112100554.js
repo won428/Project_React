@@ -26,7 +26,7 @@ function CreditAppeal() {
         receiverId: professorId || '',
         title: '',
         content: '',
-        appealType: 'ASSIGNMENT',
+        appealType: '',
         attachmentDtos: []
     });
 
@@ -76,14 +76,12 @@ function CreditAppeal() {
     }, [userId, lectureId]);
 
     const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log("handleChange 호출:", name, value); // ❗ 디버그
-    setAppealForm(prev => ({ ...prev, [name]: value }));
-};
+        const { name, value } = e.target;
+        setAppealForm(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("POST 전 appealForm:", appealForm);
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, appealForm)
             .then(() => {
                 alert('이의제기 신청이 완료되었습니다.');

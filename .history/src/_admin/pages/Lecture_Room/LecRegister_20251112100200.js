@@ -174,6 +174,22 @@
     const removeFile = (i) => {
       setFiles(files.filter((_, idx) => idx !== i));
     };
+<<<<<<< HEAD
+
+    const monthFromDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
+    return Number.isNaN(m) ? null : m;
+    };
+
+    const ALLOWED_MONTHS = [1, 3, 9, 12];
+
+    const isAllowedStartMonth = (dateStr) => {
+    const m = monthFromDateStr(dateStr);
+    return m != null && ALLOWED_MONTHS.includes(m);
+    };
+=======
+>>>>>>> origin/develop
 
     const monthFromDateStr = (dateStr) => {
     if (!dateStr) return null;

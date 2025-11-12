@@ -450,10 +450,17 @@ function GradeCalculation() {
         const payload = {
             userId: selectedId,
             lectureId,
+<<<<<<< HEAD
+            attendance: Number(modalForm.attendance) || 0, // 원점수(가중치 점수)
+            asScore: clamp01(modalForm.asScore),           // 0~100
+            tScore: clamp01(modalForm.tScore),            // 0~100
+            ftScore: clamp01(modalForm.ftScore),           // 0~100
+=======
             attendance: att, // 원점수(가중치 점수)
             asScore: as,           // 0~100
             tScore: mid,            // 0~100
             ftScore: fin,           // 0~100
+>>>>>>> origin/develop
             totalScore: total,                      // 0~100
             gpa: gpa,                        // 0~4.5
         };

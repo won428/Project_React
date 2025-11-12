@@ -132,6 +132,21 @@
             return;
         }
 
+<<<<<<< HEAD
+        const formData = new FormData();
+        formData.append("lecture", new Blob([JSON.stringify(lecture)], { type: "application/json" }));
+        formData.append("schedule", new Blob([JSON.stringify(schedule)], { type: "application/json" }));
+        formData.append("percent", new Blob([JSON.stringify(percent)], { type: "application/json" }));
+        files.forEach((file) => formData.append("files", file, file.name));
+
+        const url = `${API_BASE_URL}/lecture/lectureRegister`;
+        const response = await axios.post(url, formData);
+
+        if (response.status === 200) {
+          alert("등록 완료");
+          navigate("/lectureList");
+        }
+=======
         const invalidTime = schedule.some(r =>
         !r.day || !r.startTime || !r.endTime || toMin(r.endTime) <= toMin(r.startTime)
         );
@@ -153,6 +168,7 @@
           alert("등록 완료");
           navigate("/lectureList");
         }
+>>>>>>> origin/develop
       } catch (error) {
         const err = error.response;
         if (!err) {
@@ -174,6 +190,22 @@
     const removeFile = (i) => {
       setFiles(files.filter((_, idx) => idx !== i));
     };
+<<<<<<< HEAD
+
+    const monthFromDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
+    return Number.isNaN(m) ? null : m;
+    };
+
+    const ALLOWED_MONTHS = [1, 3, 9, 12];
+
+    const isAllowedStartMonth = (dateStr) => {
+    const m = monthFromDateStr(dateStr);
+    return m != null && ALLOWED_MONTHS.includes(m);
+    };
+=======
+>>>>>>> origin/develop
 
     const monthFromDateStr = (dateStr) => {
     if (!dateStr) return null;

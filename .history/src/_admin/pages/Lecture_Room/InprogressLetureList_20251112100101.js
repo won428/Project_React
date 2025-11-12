@@ -306,6 +306,242 @@ function App() {
 
   return (
     <>
+<<<<<<< HEAD
+      {/* ───────── 개강 목록 ───────── */}
+      <div className="mb-4">
+        <div className="fw-bold mb-2">개강 목록</div>
+        <div className="table-responsive">
+          <Table
+            bordered
+            hover
+            size="sm"
+            className="align-middle table-sm small mb-0"
+            style={{ fontSize: "0.875rem" }}
+          >
+            <colgroup>
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
+              <col style={{ width: "16rem" }} /> {/* 강의명 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
+              <col style={{ width: "12rem" }} /> {/* 과이름 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
+              <col style={{ width: "15rem" }} /> {/* 학기 */}
+              <col style={{ width: "9rem" }} />  {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "7rem" }} />  {/* 상세보기 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 수정 (추가) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(종강) */}
+            </colgroup>
+            <thead className="table-light text-center">
+              <tr>
+                <th>체크</th>
+                <th className="text-start">강의명</th>
+                <th>이수구분</th>
+                <th>학년</th>
+                <th className="text-start">과이름</th>
+                <th>담당교수</th>
+                <th>학기</th>
+                <th>수업 요일</th>
+                <th>총원</th>
+                <th>현재원</th>
+                <th>학점</th>
+                <th>상세보기</th>
+                <th>상태</th>
+                <th>수정</th> {/* 추가 */}
+                <th>기능</th> {/* 종강 하나만 사용하므로 colSpan 제거 */}
+              </tr>
+            </thead>
+            <tbody>
+              {inprogressLec.map((lec) => (
+                <tr key={lec.id}>
+                  <td className="text-center text-nowrap">
+                    <Form.Check type="checkbox" value={lec.id} onChange={addCompleSelect} />
+                  </td>
+                  <td className="text-start">{lec.name}</td>
+                  <td className="text-center">{typeMap2[lec.completionDiv]}</td>
+                  <td className="text-center">{lec.level}</td>
+                  <td className="text-start">{lec.majorName}</td>
+                  <td className="text-center">{lec.userName}</td>
+                  <td className="text-center">{splitStartDate(lec.startDate)}</td>
+                  {/* ─ 수업 요일 (추가) ─ */}
+                  <td className="text-center">{lec.lectureSchedules.map((s) => typeMap3[s.day])}</td>
+                  <td className="text-center">{lec.totalStudent}</td>
+                  <td className="text-center">{lec.nowStudent}</td>
+                  <td className="text-center">{lec.credit}</td>
+                  {/* ─ 상세보기 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={() => {
+                        setModalId(lec.id);
+                        setOpen(true);
+                      }}
+                    >
+                      상세
+                    </Button>
+                  </td>
+                  <td className="text-center">{typeMap[lec.status]}</td>
+                  {/* ─ 수정 버튼 (추가) ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-secondary"
+                      onClick={() => {
+                        navigate(`/lecupdateAd/${lec.id}`);
+                      }}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                  {/* ─ 종강 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => {
+                        stautsRequest(lec.id, "COMPLETED");
+                      }}
+                    >
+                      종강
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+
+          <div className="d-flex justify-content-end gap-2 mt-2">
+            <Button size="sm" variant="danger" onClick={lectureCompleted}>
+              일괄종강
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* ───────── 종강 목록 ───────── */}
+      <div className="mb-4">
+        <div className="fw-bold mb-2">종강 목록</div>
+        <div className="table-responsive">
+          <Table
+            bordered
+            hover
+            size="sm"
+            className="align-middle table-sm small mb-0"
+            style={{ fontSize: "0.875rem" }}
+          >
+            <colgroup>
+              <col style={{ width: "3rem" }} />  {/* 체크박스 */}
+              <col style={{ width: "16rem" }} /> {/* 강의명 */}
+              <col style={{ width: "7rem" }} />  {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />  {/* 학년 */}
+              <col style={{ width: "12rem" }} /> {/* 과이름 */}
+              <col style={{ width: "7rem" }} />  {/* 담당교수 */}
+              <col style={{ width: "15rem" }} /> {/* 학기 */}
+              <col style={{ width: "9rem" }} />  {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} />  {/* 총원 */}
+              <col style={{ width: "5rem" }} />  {/* 현재원 */}
+              <col style={{ width: "4rem" }} />  {/* 학점 */}
+              <col style={{ width: "7rem" }} />  {/* 상세보기 */}
+              <col style={{ width: "5rem" }} />  {/* 상태 */}
+              <col style={{ width: "6rem" }} />  {/* 수정 (추가) */}
+              <col style={{ width: "6rem" }} />  {/* 기능(재개강) */}
+            </colgroup>
+            <thead className="table-light text-center">
+              <tr>
+                <th>체크</th>
+                <th className="text-start">강의명</th>
+                <th>이수구분</th>
+                <th>학년</th>
+                <th className="text-start">과이름</th>
+                <th>담당교수</th>
+                <th>학기</th>
+                <th>수업 요일</th>
+                <th>총원</th>
+                <th>현재원</th>
+                <th>학점</th>
+                <th>상세보기</th>
+                <th>상태</th>
+                <th>수정</th> {/* 추가 */}
+                <th>기능</th> {/* 재개강 하나만 사용 */}
+              </tr>
+            </thead>
+            <tbody>
+              {completedLec.map((lec) => (
+                <tr key={lec.id}>
+                  <td className="text-center text-nowrap">
+                    <Form.Check type="checkbox" value={lec.id} onChange={addRejectSelect} />
+                  </td>
+                  <td className="text-start">{lec.name}</td>
+                  <td className="text-center">{typeMap2[lec.completionDiv]}</td>
+                  <td className="text-center">{lec.level}</td>
+                  <td className="text-start">{lec.majorName}</td>
+                  <td className="text-center">{lec.userName}</td>
+                  <td className="text-center">{splitStartDate(lec.startDate)}</td>
+                  {/* ─ 수업 요일 ─ */}
+                  <td className="text-center">{lec.lectureSchedules.map((s) => typeMap3[s.day])}</td>
+                  <td className="text-center">{lec.totalStudent}</td>
+                  <td className="text-center">{lec.nowStudent}</td>
+                  <td className="text-center">{lec.credit}</td>
+                  {/* ─ 상세보기 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={() => {
+                        setModalId(lec.id);
+                        setOpen(true);
+                      }}
+                    >
+                      상세
+                    </Button>
+                  </td>
+                  <td className="text-center">{typeMap[lec.status]}</td>
+                  {/* ─ 수정 버튼 (추가) ─ */}
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-secondary"
+                      onClick={() => {
+                        navigate(`/lecupdateAd/${lec.id}`);
+                      }}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                  {/* ─ 재개강 버튼 ─ */}
+                  <td className="text-center">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        stautsRequest(lec.id, "INPROGRESS");
+                      }}
+                    >
+                      재개강
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <div className="d-flex justify-content-end gap-2 mt-2">
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={(e) => {
+                lectureInprogress(e, rejecSelected);
+              }}
+            >
+              일괄 재개강
+            </Button>
+          </div>
+        </div>
+      </div>
+=======
       <Tabs
         id="lecture-tabs-2"
         defaultActiveKey="inprogress"
@@ -558,6 +794,7 @@ function App() {
           </div>
         </Tab>
       </Tabs>
+>>>>>>> origin/develop
 
       <Modal
         show={open}
@@ -611,6 +848,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 점수 산출 비율 */}
+=======
+>>>>>>> origin/develop
           <div className="mb-3">
             <div className="text-muted small mb-2">점수 산출 비율</div>
             <div className="table-responsive">
@@ -625,6 +866,10 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
+<<<<<<< HEAD
+                    {/* 값은 사용자가 채울 예정 */}
+=======
+>>>>>>> origin/develop
                     <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
@@ -635,6 +880,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 첨부파일 */}
+=======
+>>>>>>> origin/develop
           <div>
             <div className="text-muted small mb-2">첨부파일</div>
             <div className="d-flex align-items-center justify-content-between">

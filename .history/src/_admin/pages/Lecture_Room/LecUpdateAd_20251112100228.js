@@ -155,6 +155,11 @@ function App() {
               alert('소속 단과대학을 선택해주세요.')
               return;
             }
+<<<<<<< HEAD
+
+            if(lecture.startDate.length){
+
+=======
              if (!isAllowedStartMonth(lecture.startDate)) {
             alert("시작 월은 1, 3, 9, 12만 가능합니다.");
             return;
@@ -166,6 +171,7 @@ function App() {
             if (invalidTime) {
             alert("각 수업의 '종료 교시'는 ‘시작 교시’보다 늦어야 합니다.");
             return;
+>>>>>>> origin/develop
             }
 
             console.log(lecture);
@@ -213,6 +219,8 @@ function App() {
     setFiles(files.filter((_, idx) => idx !== i));
     };   
 
+<<<<<<< HEAD
+=======
      const monthFromDateStr = (dateStr) => {
     if (!dateStr) return null;
     const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
@@ -227,6 +235,7 @@ function App() {
     };
 
 
+>>>>>>> origin/develop
 
     return (
   <>

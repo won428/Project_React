@@ -213,6 +213,8 @@ function App() {
     setFiles(files.filter((_, idx) => idx !== i));
     };   
 
+<<<<<<< HEAD
+=======
      const monthFromDateStr = (dateStr) => {
     if (!dateStr) return null;
     const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
@@ -227,6 +229,7 @@ function App() {
     };
 
 
+>>>>>>> origin/develop
 
     return (
   <>

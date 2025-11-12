@@ -338,7 +338,10 @@ function App() {
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
                         <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
                         <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+<<<<<<< HEAD
                         <Route path='/ManageAppeal/:lectureId' element={<ManageAppeal />} ></Route>
+=======
+>>>>>>> origin/develop
                     </Route>
 
 

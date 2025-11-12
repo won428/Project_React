@@ -456,9 +456,16 @@ function UsersSkeleton() {
           다음
         </Pagination.Next>
         <Pagination.Last
+<<<<<<< HEAD
+          onClick={() => {
+            const gotoPage = paging.totalPages - 1;
+            console.log(`Last 버튼 클릭(${gotoPage} 페이지로 이동)`)
+            setPaging((previous) => ({ ...previous, pageNumber: gotoPage }))
+=======
           onClick={()=>{
             const gotoPage = paging.totalPages -1;
             setPaging((previous)=>({...previous, pageNumber: gotoPage}));
+>>>>>>> origin/develop
           }}
           disabled={paging.pageNumber >= Math.floor(paging.totalPages / paging.pageCount) * paging.pageCount}
           as="button"

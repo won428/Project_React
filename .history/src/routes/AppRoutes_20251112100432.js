@@ -214,8 +214,6 @@ function App() {
                         <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                         <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                         <Route path='/user/UserList' element={<UserList />}></Route>
-                        <Route path='/user/StMList' element={<StMList />}></Route>
-                        <Route path='/user/StatusManage/:recordId' element={<StatusManage />}></Route>
                         <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
                         <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
                     </Route>
@@ -293,6 +291,11 @@ function App() {
                         <Route path='/CreditAppeal/:lectureId' element={<CreditAppeal />} ></Route>
                         <Route path='/CreditAppealList' element={<CreditAppealList />} ></Route>
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> origin/develop
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
 
@@ -338,7 +341,10 @@ function App() {
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
                         <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
                         <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+<<<<<<< HEAD
                         <Route path='/ManageAppeal/:lectureId' element={<ManageAppeal />} ></Route>
+=======
+>>>>>>> origin/develop
                     </Route>
 
 

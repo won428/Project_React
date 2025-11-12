@@ -26,7 +26,7 @@ function CreditAppeal() {
         receiverId: professorId || '',
         title: '',
         content: '',
-        appealType: 'ASSIGNMENT',
+        appealType: '',
         attachmentDtos: []
     });
 

@@ -998,6 +998,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 강의설명 */}
+=======
+>>>>>>> origin/develop
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
             <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
@@ -1005,6 +1009,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 점수 산출 비율 */}
+=======
+>>>>>>> origin/develop
           <div className="mb-3">
             <div className="text-muted small mb-2">점수 산출 비율</div>
             <div className="table-responsive">
@@ -1019,6 +1027,10 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
+<<<<<<< HEAD
+                    {/* 값은 사용자가 채울 예정 */}
+=======
+>>>>>>> origin/develop
                     <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
@@ -1029,6 +1041,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 첨부파일 */}
+=======
+>>>>>>> origin/develop
           <div>
             <div className="text-muted small mb-2">첨부파일</div>
             <div className="d-flex align-items-center justify-content-between">

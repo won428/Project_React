@@ -827,6 +827,106 @@ function App() {
         </div>
       </Tab>
 
+<<<<<<< HEAD
+      {/* ───────── 승인 거부 목록 ───────── */}
+      <div className="mb-4">
+        <div className="fw-bold mb-2">승인 거부 목록</div>
+        <div className="table-responsive">
+          <Table
+            bordered
+            hover
+            size="sm"
+            className="align-middle table-sm small mb-0"
+            style={{ fontSize: "0.875rem" }}
+          >
+            <colgroup>
+              <col style={{ width: "3rem" }} />   {/* 체크박스 */}
+              <col style={{ width: "16rem" }} />  {/* 강의명 */}
+              <col style={{ width: "7rem" }} />   {/* 이수구분 */}
+              <col style={{ width: "3rem" }} />   {/* 학년 */}
+              <col style={{ width: "12rem" }} />  {/* 과이름 */}
+              <col style={{ width: "7rem" }} />   {/* 담당교수 */}
+              <col style={{ width: "13rem" }} />  {/* 학기 */}
+              <col style={{ width: "9rem" }} />   {/* 수업 요일 */}
+              <col style={{ width: "5rem" }} />   {/* 총원 */}
+              <col style={{ width: "5rem" }} />   {/* 현재원 */}
+              <col style={{ width: "4rem" }} />   {/* 학점 */}
+              <col style={{ width: "7rem" }} />   {/* 상세보기 */}
+              <col style={{ width: "5rem" }} />   {/* 상태 */}
+              <col style={{ width: "6rem" }} />   {/* 수정 */}
+              <col style={{ width: "6rem" }} />   {/* 기능(개강) */}
+              <col style={{ width: "6rem" }} />   {/* 기능(폐강) */}
+            </colgroup>
+            <thead className="table-light text-center">
+              <tr>
+                <th>체크</th>
+                <th className="text-start">강의명</th>
+                <th>이수구분</th>
+                <th>학년</th>
+                <th className="text-start">과이름</th>
+                <th>담당교수</th>
+                <th>학기</th>
+                <th>수업 요일</th>
+                <th>총원</th>
+                <th>현재원</th>
+                <th>학점</th>
+                <th>상세보기</th>
+                <th>상태</th>
+                <th>수정</th>
+                <th colSpan={2}>기능</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rejectedLec.map((lec) => (
+                <tr key={lec.id}>
+                  <td className="text-center text-nowrap">
+                    <Form.Check type="checkbox" value={lec.id} onChange={addRejecSelect} />
+                  </td>
+                  <td className="text-start">{lec.name}</td>
+                  <td className="text-center">{typeMap2[lec.completionDiv]}</td>
+                  <td className="text-center">{lec.level}</td>
+                  <td className="text-start">{lec.majorName}</td>
+                  <td className="text-center">{lec.userName}</td>
+                  <td className="text-center">{splitStartDate(lec.startDate)}</td>
+                  {/* ✅ 수정: 기존에 join을 잘못 썼던 부분 교정 */}
+                  <td className="text-center">
+                    {(lec.lectureSchedules ?? [])
+                      .map(s => typeMap3[s.day] ?? s.day)
+                      .join(", ")}
+                  </td>
+                  <td className="text-center">{lec.totalStudent}</td>
+                  <td className="text-center">{lec.nowStudent}</td>
+                  <td className="text-center">{lec.credit}</td>
+                  <td className="text-center">
+                    <Button
+                      size="sm"
+                      variant="outline-dark"
+                      onClick={() => {
+                        setModalId(lec.id)
+                        setOpen(true)
+                      }}
+                    >
+                      상세
+                    </Button>
+                  </td>
+                  <td className="text-center">{typeMap[lec.status]}</td>
+                  <td className="text-center">
+                    <Button size="sm" variant="outline-secondary" onClick={() => {
+                      navigate(`/lecupdateAd/${lec.id}`)
+                    }}>
+                      수정
+                    </Button>
+                  </td>
+                  <td className="text-center" colSpan={2}>
+                    <Button variant="outline-primary" size="sm"
+                      onClick={() => {
+                        stautsRequest(lec.id, "APPROVED")
+                      }}
+                    >
+                      재승인
+                    </Button>
+                  </td>
+=======
       {/* ───────── 승인 거부 목록 탭 ───────── */}
       <Tab eventKey="rejected" title={`거부 (${rejectedLec.length})`}>
         {/* ───────── 승인 거부 목록 ───────── */}
@@ -875,6 +975,7 @@ function App() {
                   <th>상태</th>
                   <th>수정</th>
                   <th colSpan={2}>기능</th>
+>>>>>>> origin/develop
                 </tr>
               </thead>
               <tbody>
@@ -953,8 +1054,15 @@ function App() {
       </Tab>
     </Tabs>
 
+<<<<<<< HEAD
+      </div>
+
+      {/* ───────── 상세 모달 UI ───────── */}
+            <Modal
+=======
     {/* ───────── 상세 모달 UI (변경 없음) ───────── */}
          <Modal
+>>>>>>> origin/develop
         show={open}
         onHide={() => setOpen(false)}
         centered
@@ -998,6 +1106,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 강의설명 */}
+=======
+>>>>>>> origin/develop
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
             <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
@@ -1005,6 +1117,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 점수 산출 비율 */}
+=======
+>>>>>>> origin/develop
           <div className="mb-3">
             <div className="text-muted small mb-2">점수 산출 비율</div>
             <div className="table-responsive">
@@ -1019,6 +1135,10 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
+<<<<<<< HEAD
+                    {/* 값은 사용자가 채울 예정 */}
+=======
+>>>>>>> origin/develop
                     <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
@@ -1029,6 +1149,10 @@ function App() {
             </div>
           </div>
 
+<<<<<<< HEAD
+          {/* 첨부파일 */}
+=======
+>>>>>>> origin/develop
           <div>
             <div className="text-muted small mb-2">첨부파일</div>
             <div className="d-flex align-items-center justify-content-between">
