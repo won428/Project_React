@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
             const decoded = jwtDecode(newToken);
             localStorage.setItem("accessToken", newToken);
             setUser({
-                email: decoded.sub,
+                username: decoded.sub,
                 id: decoded?.uid ? Number(decoded.uid) : undefined,
                 roles: [decoded.role],
                 name: decoded.uname,

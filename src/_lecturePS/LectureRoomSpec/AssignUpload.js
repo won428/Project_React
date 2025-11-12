@@ -46,7 +46,6 @@ function App() {
         subfiles.forEach(file => {
             formData.append("files", file.file)
         })
-        console.log(formData.get("email"));
 
         const respone = await axios.post(url, formData, {
             headers: { "Content-Type": "multipart/form-data" }

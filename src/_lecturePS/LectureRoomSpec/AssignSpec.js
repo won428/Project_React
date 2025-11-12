@@ -29,10 +29,10 @@ const ProfessorSubmitTable = ({ resdata, API_BASE_URL }) => (
                                 <td>{item.content.length > 30 ? item.content.slice(0, 30) + "..." : item.content}</td>
                                 <td>{new Date(item.updateAt).toLocaleDateString("ko-KR")}</td>
                                 <td>
-                                    {resdata.attachmentSubmittedDto?.length ? (
+                                    {item.attachmentSubmittedDto?.length ? (
                                         <ul className="mt-2 mb-0">
-                                            {resdata.attachmentSubmittedDto.map((file, j) => (
-                                                <li key={j}>
+                                            {item.attachmentSubmittedDto.map((file, j) => (
+                                                <li key={j} style={{ display: 'block' }}>
                                                     <a href={`${API_BASE_URL}/notice/files/download/${file.storedKey}`} target="_blank" rel="noopener noreferrer">{file.name}</a>
                                                 </li>
                                             ))}
@@ -211,9 +211,13 @@ const ModisFailure = ({ resdata, API_BASE_URL, handleEdit }) => {
                             <td>{new Date(resdata.submittedOne.updateAt).toLocaleString("ko-KR")}</td>
                             <td>
                                 {resdata.attachmentSubmittedDto?.length ? (
-                                    resdata.attachmentSubmittedDto.map((f, i) => (
-                                        <a key={i} href={`${API_BASE_URL}/notice/files/download/${f.storedKey}`} target="_blank" rel="noreferrer">{f.name}</a>
-                                    ))
+                                    <ul className="mt-1 mb-1">
+                                        {resdata.attachmentSubmittedDto.map((file, j) => (
+                                            <li key={j} style={{ display: 'block' }}>
+                                                <a href={`${API_BASE_URL}/notice/files/download/${file.storedKey}`} target="_blank" rel="noopener noreferrer">{file.name}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 ) : <span className="text-muted">첨부 없음</span>}
                             </td>
                         </tr>
@@ -276,6 +280,7 @@ function App() {
     const data = location?.state;
     const { lectureId } = useLectureStore();
     const [mod, setMod] = useState(false);
+    const [pmod, setPMod] = useState(false);
     const [resdata, setResData] = useState({});
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -302,7 +307,7 @@ function App() {
 
     // 1. 신규 제출 로직
     const SubmitAssign = async () => {
-        if (currentDate < DueDate) {
+        if (currentDate > DueDate) {
             alert("제출 기한이 아닙니다.")
             navigate("/asnlst")
         }
@@ -329,9 +334,10 @@ function App() {
     // 2. 학생 제출 내역 수정 로직
     const SubmitMod = async () => {
 
-        if (currentDate < DueDate) {
+        if (currentDate > DueDate) {
             alert("제출 기한이 아닙니다.")
             navigate("/asnlst")
+            return;
         }
         const url = `${API_BASE_URL}/assign/update/${resdata.id}`;
 
@@ -464,7 +470,7 @@ function App() {
                 storedKey: file.storedKey
             })))
         }
-        setMod(true)
+        setPMod(true)
     }
 
 
@@ -489,7 +495,7 @@ function App() {
     return (
         <Container style={{ maxWidth: "1000px", marginTop: "2rem" }}>
             {/* 과제 상세 */}
-            {mod
+            {pmod
                 ?
                 <Card>
                     <CardBody>
@@ -558,7 +564,7 @@ function App() {
                         <CardTitle>
                             <h3 className="fw-bold mb-3">{resdata.title}</h3>
                             <div className="text-muted mb-3" style={{ fontSize: "14px" }}>
-                                작성자: {resdata.username} | 등록일: {new Date(resdata.createAt).toLocaleString()}
+                                작성자: {resdata.username} | 등록일: {new Date(resdata.createAt).toLocaleString()} | 마감일 : {new Date(resdata.dueAt).toLocaleString()}
                             </div>
                         </CardTitle>
                         <div className="p-3 border rounded mb-4" style={{ whiteSpace: "pre-wrap", minHeight: "200px" }}>
