@@ -54,7 +54,7 @@ import { useAuth } from "../../public/context/UserContext";
         })
     },[])
 
-  
+    const toMin = (t) => t ? (+t.slice(0,2))*60 + (+t.slice(3,5)) : null; // 시간을 0,2만큼 자르고 * 60 분으로 바꿈 + 나머지 분자리인 3,5만큼 잘라서 시간을 분으로 치환한 값에 더해줌.
     const signup = async (e) => {
       try {
         e.preventDefault();
@@ -78,10 +78,28 @@ import { useAuth } from "../../public/context/UserContext";
           return;
         }
 
+        if (lecture.status === null || lecture.status === "") {
+          alert("상태를 선택해주세요.");
+          return;
+        }
+        if (college === null) {
+          alert("소속 단과대학을 선택해주세요.");
+          return;
+        }
+
          if (!isAllowedStartMonth(lecture.startDate)) {
-            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            alert("시작 월은 3, 6, 9, 12만 가능합니다.");
             return;
         }
+
+        const invalidTime = schedule.some(r =>
+        !r.day || !r.startTime || !r.endTime || toMin(r.endTime) <= toMin(r.startTime)
+        );
+        if (invalidTime) {
+          alert("각 수업의 '종료 교시'는 ‘시작 교시’보다 늦어야 합니다.");
+          return;
+        }
+
 
         const formData = new FormData();
         formData.append("lecture", new Blob([JSON.stringify(lecture)], { type: "application/json" }));
