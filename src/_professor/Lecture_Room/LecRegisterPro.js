@@ -78,15 +78,6 @@ import { useAuth } from "../../public/context/UserContext";
           return;
         }
 
-        if (lecture.status === null || lecture.status === "") {
-          alert("상태를 선택해주세요.");
-          return;
-        }
-        if (college === null) {
-          alert("소속 단과대학을 선택해주세요.");
-          return;
-        }
-
          if (!isAllowedStartMonth(lecture.startDate)) {
             alert("시작 월은 3, 6, 9, 12만 가능합니다.");
             return;
