@@ -7,8 +7,8 @@ import { API_BASE_URL } from "../public/config/config";
 function App() {
     const navigate = useNavigate();
     const location = useLocation();
-    const email = location?.state.email;
-    if (!email) {
+    const username = location?.state.username;
+    if (!username) {
         navigate('/findPW');
     }
     const [error, setError] = useState("");
@@ -26,7 +26,7 @@ function App() {
 
         const url = `${API_BASE_URL}/auth/SetPw`
         const parameter = {
-            email,
+            username,
             newPassword: pw
         };
         try {

@@ -1,12 +1,14 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useLectureStore } from "../LectureRoomSpec/store/lectureStore";
+import { useAuth } from "../../public/context/UserContext";
 
 
 
 export const Layout_lecRoomP = () => {
     const navigate = useNavigate();
     const { lectureId } = useLectureStore();
+    const { user } = useAuth();
     return (
 
         <Row className="pt-0 mt-0 min-vh-100">
@@ -28,12 +30,17 @@ export const Layout_lecRoomP = () => {
                         <Nav.Link
                             onClick={() => navigate(`/Lec`)}
                             className="text-white">강의</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/lectureSession/${lectureId}`, { state: { lectureId } })}
-                            className="text-white">출결 관리</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/gradeCalculation/${lectureId}`, { state: { lectureId } })}
-                            className="text-white">성적 관리</Nav.Link>
+                        {user.roles.includes('PROFESSOR') ?
+                            <> <Nav.Link
+                                onClick={() => navigate(`/lectureSession/${lectureId}`, { state: { lectureId } })}
+                                className="text-white">출결 관리</Nav.Link>
+                                <Nav.Link
+                                    onClick={() => navigate(`/gradeCalculation/${lectureId}`, { state: { lectureId } })}
+                                    className="text-white">성적 관리</Nav.Link>
+                            </>
+                            :
+                            <></>
+                        }
                     </Nav>
                 </Container>
             </Col>

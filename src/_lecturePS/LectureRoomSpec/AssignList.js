@@ -30,7 +30,7 @@ function App() {
                 setPageInfo(res.data);
             })
             .catch(console.error);
-    }, [page, user.email]);
+    }, [page, user]);
 
     console.log(post);
 

@@ -75,8 +75,15 @@ function LectureList() {
     const [filtering, setFiltering] = useState(false);
     const [selectedTerm, setSelectedTerm] = useState(currentTermValue);
     console.log(selectedTerm);
+    const username = user?.username;
+    console.log(username);
 
     useEffect(() => {
+        if (!username) {
+            setLoading(false);
+            setLecRoom([]);
+            return;
+        }
         if (!loading) {
             setFiltering(true);
         }
@@ -85,7 +92,7 @@ function LectureList() {
 
         axios.get(url, {
             params: {
-                email: user.email,
+                username: username,
                 sortKey: selectedTerm // 'selectedTerm' state를 직접 사용
             }
         })
@@ -94,6 +101,7 @@ function LectureList() {
             })
             .catch((e) => {
                 console.log(e);
+                setLecRoom([]);
             })
             .finally(() => {
                 // 모든 로딩 스피너를 비활성화
@@ -103,8 +111,9 @@ function LectureList() {
 
         // [★ 핵심 3] 'useEffect'의 의존성 배열
         // 'user' 또는 'selectedTerm'이 변경될 때마다 이 useEffect를 '다시' 실행
-    }, [user, selectedTerm]);
+    }, [user, username, selectedTerm]);
     console.log(lecRoom);
+
 
     if (loading) {
         return (

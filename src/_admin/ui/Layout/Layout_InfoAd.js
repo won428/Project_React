@@ -16,18 +16,18 @@ export const LayoutStInfo = () => {
                 <Container>
                     <Nav
                         className="flex-column">
-                        <Nav.Link
-                            onClick={() => navigate(`/InfoHome`)}
+                        {/* <Nav.Link
+                            onClick={() => navigate(`/infohome/ad`)}
                             className="text-white"
-                        >학적 홈</Nav.Link>
-                        <Nav.Link
+                        >학적 홈</Nav.Link> */}
+                        {/* <Nav.Link
                             onClick={() => navigate(`/This_Credit`)}
                             className="text-white"
                         >당학기 성적 관리</Nav.Link>
                         <Nav.Link
                             onClick={() => navigate(`/etrcdt`)}
                             className="text-white"
-                        >전체 성적 관리 </Nav.Link>
+                        >전체 성적 관리 </Nav.Link> */}
 
                         <Nav.Link
                             onClick={() => navigate(`/collist`)}

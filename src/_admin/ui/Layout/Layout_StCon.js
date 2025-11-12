@@ -16,10 +16,10 @@ export const LayoutStCon = () => {
                 <Container>
                     <Nav
                         className="flex-column">
-                        <Nav.Link
+                        {/* <Nav.Link
                             onClick={() => navigate(`/sthm/ad`)}
                             className="text-white"
-                        >구성원 관리 홈</Nav.Link>
+                        >구성원 관리 홈</Nav.Link> */}
                         <Nav.Link
                             onClick={() => navigate(`/user/insert_user`)}
                             className="text-white"
