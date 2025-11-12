@@ -25,6 +25,10 @@ export const LayoutStInfost = () => {
                             className="text-white"
                         >성적 조회</Nav.Link>
                         <Nav.Link
+                            onClick={() => navigate(`/CheckAttendance`)}
+                            className="text-white"
+                        >출결 조회</Nav.Link>
+                        <Nav.Link
                             onClick={() => navigate(`/Change_Status`)}
                             className="text-white"
 
@@ -34,7 +38,7 @@ export const LayoutStInfost = () => {
                             className="text-white"
                         >1:1 문의 </Nav.Link>
                         <Nav.Link>
-                        학적 변경 </Nav.Link>
+                            학적 변경 </Nav.Link>
 
 
 
