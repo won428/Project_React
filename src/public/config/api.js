@@ -37,11 +37,11 @@ API.interceptors.response.use(
             originalRequest._retry = true;
         }
         try {
-            const email = sessionStorage.getItem("email");
+            const username = sessionStorage.getItem("username");
             const refresh = sessionStorage.getItem("refreshToken")
 
             const responese = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-                email,
+                username,
                 refreshToken: refresh
             });
 

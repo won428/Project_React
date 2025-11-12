@@ -37,7 +37,7 @@ function App() {
     const SubmitAssign = async (evt) => {
         const url = `${API_BASE_URL}/assign/insert`
         const formData = new FormData();
-        formData.append("email", user?.email);
+        formData.append("username", user?.username);
         formData.append("lectureId", lectureId)
         formData.append("title", title);
         formData.append("content", content);
@@ -46,7 +46,6 @@ function App() {
         subfiles.forEach(file => {
             formData.append("files", file.file)
         })
-        console.log(formData.get("email"));
 
         const respone = await axios.post(url, formData, {
             headers: { "Content-Type": "multipart/form-data" }

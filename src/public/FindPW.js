@@ -5,22 +5,22 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function App() {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const navigate = useNavigate();
     const ValidatePW = async (evt) => {
-        console.log(email);
+        console.log(username);
 
 
         evt.preventDefault();
         const url = `${API_BASE_URL}/auth/FindPW`;
-        const parameter = { email };
+        const parameter = { username };
         const respone = await axios.post(url, parameter);
         console.log(respone.status);
 
         if (respone.status === 400) {
             alert("존재하지 않는 Email입니다. 다시 입력해주세요.")
         } else {
-            navigate("/setPw", { state: { email } })
+            navigate("/setPw", { state: { username } })
         }
 
     }
@@ -40,13 +40,13 @@ function App() {
                                     <FormLabel
                                         type="text"
                                     >
-                                        Email을 입력해주세요.
+                                        학번을 입력해주세요.
                                     </FormLabel>
                                     <Form.Control
-                                        type="email"
-                                        placeholder="Email"
-                                        value={email}
-                                        onChange={(evt) => setEmail(evt.target.value)}
+                                        type="text"
+                                        placeholder="학번"
+                                        value={username}
+                                        onChange={(evt) => setUsername(evt.target.value)}
                                         required
                                     />
                                 </Form.Group>

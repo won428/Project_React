@@ -128,7 +128,7 @@
         }
 
          if (!isAllowedStartMonth(lecture.startDate)) {
-            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            alert("시작 월은 3, 6, 9, 12만 가능합니다.");
             return;
         }
 
@@ -181,7 +181,7 @@
     return Number.isNaN(m) ? null : m;
     };
 
-    const ALLOWED_MONTHS = [1, 3, 9, 12];
+    const ALLOWED_MONTHS = [3, 6, 9, 12];
 
     const isAllowedStartMonth = (dateStr) => {
     const m = monthFromDateStr(dateStr);

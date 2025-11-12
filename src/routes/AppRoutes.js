@@ -1,7 +1,7 @@
 
 import PrivateRoute from "./PrivateRoute";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Lecture_Home from '../_admin/pages/Lecture_Room/Lecture_Home';
+import Lecture_Home from '../_student/pages/Lecture_Home';
 import ToDoList from '../_admin/pages/Lecture/ToDoList';
 import InfoHome from '../_student/pages/Integrated_Info/InfoHome';
 import This_Credit from '../_student/pages/Integrated_Info/Student_Credit';
@@ -22,6 +22,8 @@ import Lecture_Room from '../_student/pages/LectureRoom/Lecture_Room';
 import InfohomeAD from '../_admin/ui/Home/InfoHomeAD';
 import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
 import StHomeAD from '../_admin/ui/Home/StHomeAd';
+import AcheIns from '../public/pages/Schedule/Academic_ScheduleIns';
+import AcheUp from '../public/pages/Schedule/Academic_ScheduleUpdate';
 
 
 import CollegeList from '../_admin/pages/College/CollegeList';
@@ -42,9 +44,9 @@ import LectureRequest from '../_admin/pages/Lecture_Room/LectureRequest';
 import LectureListPro from '../_professor/Lecture_Room/LectureListPro';
 import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
-import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
+// import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
 import LecUpdateAd from '../_admin/pages/Lecture_Room/LecUpdateAd'
-import CourseRegHistory from '../_student/pages/LectureRoom/CourseRegHistory'
+
 import InquiryForAd from '../_admin/pages/StudentCon/InquiryForAd';
 
 
@@ -181,6 +183,11 @@ function App() {
                         <Route path='/lecins' element={<LectureInsert />} ></Route>
                         <Route path='/Lec' element={<Lecture />} ></Route>
                         <Route path='/LecSpec' element={<LectureSpec />} ></Route>
+
+                        {/* 교수 전용 */}
+                        <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
+                        <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+
                     </Route>
                 </Route>
 
@@ -244,7 +251,6 @@ function App() {
                         <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
                         <Route path='/lectureList' element={<LectureList />} ></Route>
                         <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
-                        <Route path='/inprolecList' element={<InproLecList />} ></Route>
                         <Route path='/lecUpdateAd/:id' element={<LecUpdateAd />} ></Route>
 
 
@@ -254,6 +260,8 @@ function App() {
 
                     {/* Schedule Tab */}
                     <Route path='/acschemod' element={<Academic_ScheduleMod />} ></Route>
+                    <Route path='/acscheIns' element={<AcheIns />} ></Route>
+                    <Route path='/acschemod/up' element={<AcheUp />} ></Route>
 
 
                 </Route>
@@ -267,8 +275,6 @@ function App() {
 
 
             </Route>
-
-
 
             {/* STUDENT */}
             <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
@@ -303,7 +309,7 @@ function App() {
 
                         {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
                         <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
-                        <Route path='/coursReg/history' element={<CourseRegHistory />} ></Route>
+                  
                     </Route>
 
 
@@ -328,8 +334,7 @@ function App() {
 
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
                         <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
-                        <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
-                        <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+
                     </Route>
 
 

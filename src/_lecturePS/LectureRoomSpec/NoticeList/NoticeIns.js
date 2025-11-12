@@ -29,7 +29,7 @@ function App() {
         const url = `${API_BASE_URL}/notice/insert`
         const formData = new FormData();
         formData.append("id", lectureId);
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("title", title);
         formData.append("content", content);
         subfiles.forEach(file => {
@@ -103,9 +103,21 @@ function App() {
                                             value={title}
                                             onChange={(evt) => setTitle(evt.target.value)}
                                         />
-
-
                                     </Form.Group>
+                                    <Form.Group className="mb-3" onSubmit={PostNotice}>
+                                        <Form.Label>
+                                            제목
+                                        </Form.Label>
+                                        <Form.Control
+                                            as="textarea"
+                                            row={10}
+                                            type="text"
+                                            placeholder="내용을 입력하세요"
+                                            value={content}
+                                            onChange={(evt) => setContent(evt.target.value)}
+                                        />
+                                    </Form.Group>
+
                                     <Form.Group>
                                         <Form.Label>Files</Form.Label>
                                         <Form.Control
