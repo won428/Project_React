@@ -1,13 +1,12 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useAuth } from "../../public/context/UserContext";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { API_BASE_URL } from "../../config/config";
 import { Button, Col, Row, Container, Form, Modal, Table } from "react-bootstrap";
 import axios from "axios";
 
-
-/* ====== 여기: EightLineForm을 최상위로 이동 ====== */
-function EightLineForm({ value, onChange, weights }) {
+/* ====== 여기: EightLineForm ====== */
+function EightLineForm({ value, onChange, weights, errors = {} }) {
     const DEFAULT_FORM = {
         name: "",
         userCode: "",
@@ -21,10 +20,6 @@ function EightLineForm({ value, onChange, weights }) {
     const v = value ?? DEFAULT_FORM;
 
     const allowDecimal = (raw) => raw === "" || /^\d*\.?\d*$/.test(raw);
-    const clamp = (raw, max) => {
-        const n = Math.max(0, Math.min(Number.parseFloat(raw) || 0, max));
-        return String(n);
-    };
 
     const handle = (e) => {
         const { name, value } = e.target;
@@ -75,7 +70,11 @@ function EightLineForm({ value, onChange, weights }) {
                         min="0"
                         max={weights.attendance}
                         disabled
+                        isInvalid={!!errors.attendance}
                     />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.attendance}
+                    </Form.Control.Feedback>
                 </Col>
             </Form.Group>
 
@@ -89,9 +88,12 @@ function EightLineForm({ value, onChange, weights }) {
                         name="asScore"
                         value={v.asScore ?? ""}
                         onChange={handle}
-                        onBlur={(e) => onChange("asScore", clamp(e.target.value, weights.assignment))}   // ← 100으로
                         placeholder={`0 ~ ${weights.assignment}`}
+                        isInvalid={!!errors.asScore}
                     />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.asScore}
+                    </Form.Control.Feedback>
                     <Form.Text muted>최대 {weights.assignment}점</Form.Text>
                 </Col>
             </Form.Group>
@@ -106,9 +108,12 @@ function EightLineForm({ value, onChange, weights }) {
                         name="tScore"
                         value={v.tScore ?? ""}
                         onChange={handle}
-                        onBlur={(e) => onChange("tScore", clamp(e.target.value, weights.midterm))}    // ← 100으로
                         placeholder={`0 ~ ${weights.midterm}`}
+                        isInvalid={!!errors.tScore}
                     />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.tScore}
+                    </Form.Control.Feedback>
                     <Form.Text muted>최대 {weights.midterm}점</Form.Text>
                 </Col>
             </Form.Group>
@@ -122,14 +127,17 @@ function EightLineForm({ value, onChange, weights }) {
                         name="ftScore"
                         value={v.ftScore ?? ""}
                         onChange={handle}
-                        onBlur={(e) => onChange("ftScore", clamp(e.target.value, weights.final))}   // ← 100으로
+                        isInvalid={!!errors.ftScore}
                         placeholder={`0 ~ ${weights.final}`}
                     />
+                    <Form.Control.Feedback type="invalid">
+                        {errors.ftScore}
+                    </Form.Control.Feedback>
                     <Form.Text muted>최대 {weights.final}점</Form.Text>
                 </Col>
             </Form.Group>
 
-            {/* 총점 */}
+            {/* 총점(서버 계산 결과를 보여줄 자리. 현재는 읽기전용 표시만 유지) */}
             <Form.Group as={Row} className="mt-3" controlId="f-total">
                 <Form.Label column sm={3}>총점</Form.Label>
                 <Col sm={9}>
@@ -143,7 +151,7 @@ function EightLineForm({ value, onChange, weights }) {
         </Form>
     );
 }
-/* ====== 여기까지 최상위 이동 ====== */
+/* ====== 여기까지 EightLineForm ====== */
 
 function GradeCalculation() {
     const { state } = useLocation();
@@ -156,8 +164,6 @@ function GradeCalculation() {
         return Number.isFinite(n) ? n : undefined;
     })();
 
-    const navigate = useNavigate();
-
     const [loading, setLoading] = useState(false);
     const [studentLoading, setStudentLoading] = useState(false);
 
@@ -167,7 +173,6 @@ function GradeCalculation() {
     const [studentBasic, setStudentBasic] = useState(null);
     const [lecture, setLecture] = useState({});
     const [saveGradeStudent, setSaveGradeStudent] = useState({});
-    const [isLocked, setIslocked] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
 
     const selectedLocked = !!(selectedId && saveGradeStudent && saveGradeStudent[selectedId]);
@@ -183,8 +188,7 @@ function GradeCalculation() {
         total_score: null,
         gpa: null,
     };
-    const [form, setForm] = useState(DEFAULT_FORM); // 그대로 두셔도 됩니다(미사용)
-
+    const [form, setForm] = useState(DEFAULT_FORM); // (미사용이지만 변수명 유지)
     const DEFAULT_ATTENDANCE = {
         total: 0,
         present: 0,
@@ -210,21 +214,49 @@ function GradeCalculation() {
     const [formsById, setFormsById] = useState({});
     const [show, setShow] = useState(false);
 
-
     const dirtyRef = useRef(false);
     const [modalForm, setModalForm] = useState(DEFAULT_FORM);
 
-    // 점수 3개가 모두 입력(빈문자 아님) + 숫자 + 0 이상일 때만 저장 가능
-    const canSave = useMemo(() => {
-        const isNum = (v) => {
-            const s = String(v ?? "").trim();
-            if (s === "") return false;               // 빈값 불가
-            const n = Number(s);
-            return Number.isFinite(n) && n >= 0;      // 숫자 && 0 이상
-        };
-        return isNum(modalForm.asScore) && isNum(modalForm.tScore) && isNum(modalForm.ftScore);
-    }, [modalForm.asScore, modalForm.tScore, modalForm.ftScore]);
+    // 숫자 변환 유틸
+    const toNum = (v) => {
+        const n = Number(v);
+        return Number.isFinite(n) ? n : NaN;
+    };
 
+    // 가중치(만점) 초과/음수 등 검증
+    const errors = useMemo(() => {
+        const e = {};
+        const as = toNum(modalForm.asScore);
+        const mid = toNum(modalForm.tScore);
+        const fin = toNum(modalForm.ftScore);
+
+        if (String(modalForm.asScore ?? '').trim() === '') e.asScore = '필수 입력';
+        else if (Number.isNaN(as)) e.asScore = '숫자를 입력하세요';
+        else if (as < 0) e.asScore = '0 이상';
+        else if (as > (weights.assignment || 0)) e.asScore = `최대 ${weights.assignment}점 이하`;
+
+        if (String(modalForm.tScore ?? '').trim() === '') e.tScore = '필수 입력';
+        else if (Number.isNaN(mid)) e.tScore = '숫자를 입력하세요';
+        else if (mid < 0) e.tScore = '0 이상';
+        else if (mid > (weights.midterm || 0)) e.tScore = `최대 ${weights.midterm}점 이하`;
+
+        if (String(modalForm.ftScore ?? '').trim() === '') e.ftScore = '필수 입력';
+        else if (Number.isNaN(fin)) e.ftScore = '숫자를 입력하세요';
+        else if (fin < 0) e.ftScore = '0 이상';
+        else if (fin > (weights.final || 0)) e.ftScore = `최대 ${weights.final}점 이하`;
+
+        // 출결(읽기전용)도 서버와 불일치 방지 차원에서 경고만
+        const att = toNum(modalForm.attendance);
+        if (!Number.isNaN(att) && att > (weights.attendance || 0)) {
+            e.attendance = `출결점수가 만점(${weights.attendance})을 초과했습니다`;
+        }
+        return e;
+    }, [modalForm, weights]);
+
+    const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
+    const canSave = useMemo(() => !hasErrors, [hasErrors]);
+
+    // 데이터 로딩
     useEffect(() => {
         if (!lectureId) return;
         const ac = new AbortController();
@@ -301,30 +333,24 @@ function GradeCalculation() {
         return () => ac.abort();
     }, [selectedId, lectureId, studentList]);
 
-
+    // 저장된 점수 목록 로딩
     useEffect(() => {
         if (!lectureId) return;
-
-        const idAtRequest = selectedId;
-        const minScore = 0;
         const controller = new AbortController();
 
         (async () => {
-            setStudentLoading(true); // async 위로 빼면 목록 바뀔때마다 계속 호출됨.
+            setStudentLoading(true);
             try {
                 const { data } = await axios.get(
-                    `${API_BASE_URL}/grade/listByGrade`, {
-                    params: { lectureId },
-                    signal: controller.signal
-                });
-
+                    `${API_BASE_URL}/grade/listByGrade`,
+                    { params: { lectureId }, signal: controller.signal }
+                );
                 const dict = Object.fromEntries(
                     (Array.isArray(data) ? data : []).map(row => [
                         row.userId,
                         { totalScore: row.totalScore, lectureGrade: row.lectureGrade }
                     ])
                 );
-                // 변수명은 그대로 사용: saveGradeStudent에 딕셔너리 저장
                 setSaveGradeStudent(dict);
             } catch (err) {
                 console.error(err);
@@ -336,6 +362,7 @@ function GradeCalculation() {
         return () => controller.abort();
     }, [lectureId]);
 
+    // 폼 기본값 준비
     useEffect(() => {
         setFormsById((prev) => {
             const next = { ...prev };
@@ -377,93 +404,46 @@ function GradeCalculation() {
         setModalForm((prev) => ({ ...prev, [name]: value }));
     }, []);
 
-    // (추가) 가중치 정규화: 합이 100이 아니어도 자동 보정
-    const normalizeWeights = (w) => {
-        const a = Number(w.attendance) || 0;
-        const b = Number(w.assignment) || 0;
-        const m = Number(w.midterm) || 0;
-        const f = Number(w.final) || 0;
-        const sum = a + b + m + f;
-        if (!sum) return { attendance: 25, assignment: 25, midterm: 25, final: 25 };
-        return {
-            attendance: (a / sum) * 100,
-            assignment: (b / sum) * 100,
-            midterm: (m / sum) * 100,
-            final: (f / sum) * 100,
-        };
-    };
-
-    // (추가) 0~100 클램프
-    const clamp01 = (x) => {
-        const n = Number(x);
-        if (!Number.isFinite(n)) return 0;
-        return Math.max(0, Math.min(100, n));
-    };
-
-    // (교체) 총점/학점 계산: 입력은 0~100% 기준, 가중치 비율대로 100점 만점으로 합산
-    const gradeCalcul = () => {
-        // 각 영역의 만점(가중치)
-        const maxA = Number(weights.attendance) || 0;
-        const maxAs = Number(weights.assignment) || 0;
-        const maxMid = Number(weights.midterm) || 0;
-        const maxFin = Number(weights.final) || 0;
-
-        const denom = maxA + maxAs + maxMid + maxFin || 1; // 분모 보호
-
-        // 사용자가 입력한 "원점"을 각 만점으로 클램프
-        const att = Math.min(Number(modalForm.attendance) || 0, maxA); // 출석은 이미 백엔드 계산값
-        const as = Math.min(Number(modalForm.asScore) || 0, maxAs);
-        const mid = Math.min(Number(modalForm.tScore) || 0, maxMid);
-        const fin = Math.min(Number(modalForm.ftScore) || 0, maxFin);
-
-        // 원점 합계 → 100점 만점으로 환산
-        const totalPoints = att + as + mid + fin;                 // 최대 denom
-        const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
-        const gpa = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
-
-        setModalForm(prev => ({ ...prev, total_score: total, gpa }));
-    };
-
     const handleSave = async () => {
         if (!selectedId) return;
         if (!canSave) {
-            alert("과제/중간/기말 점수를 모두 입력하세요. 0도 입력 가능합니다.");
+            alert("입력값을 확인하세요. 가중치(만점)를 초과했거나 유효하지 않습니다.");
             return;
         }
-
-        // 1) 가중치(만점) 가져오기
-        const maxA = Number(weights.attendance) || 0;
-        const maxAs = Number(weights.assignment) || 0;
-        const maxMid = Number(weights.midterm) || 0;
-        const maxFin = Number(weights.final) || 0;
-        const denom = Math.max(1, maxA + maxAs + maxMid + maxFin); // 0 나눗셈 보호
-
-        // 2) 입력값 클램프 & 합산 (점수산출 버튼 안 눌러도 여기서 계산)
-        const att = Math.min(Number(modalForm.attendance) || 0, maxA);
-        const as = Math.min(Number(modalForm.asScore) || 0, maxAs);
-        const mid = Math.min(Number(modalForm.tScore) || 0, maxMid);
-        const fin = Math.min(Number(modalForm.ftScore) || 0, maxFin);
-        const totalPoints = att + as + mid + fin;                    // 원점 합
-        const total = Math.round((totalPoints / denom * 100) * 100) / 100; // 0~100
-        const gpa = Math.round(((total / 100) * 4.5) * 100) / 100;       // 0~4.5
 
         const payload = {
             userId: selectedId,
             lectureId,
-            attendance: att, // 원점수(가중치 점수)
-            asScore: as,           // 0~100
-            tScore: mid,            // 0~100
-            ftScore: fin,           // 0~100
-            totalScore: total,                      // 0~100
-            gpa: gpa,                        // 0~4.5
+            attendance: Number(modalForm.attendance) || 0,
+            asScore: Number(modalForm.asScore) || 0,
+            tScore: Number(modalForm.tScore) || 0,
+            ftScore: Number(modalForm.ftScore) || 0,
         };
-        console.log('payload ->', payload); // 보내기 전 확인
-        await axios.post(`${API_BASE_URL}/grade/insertGrades`, payload);
+        console.log('payload ->', payload);
 
-        setSaveGradeStudent(prev => ({
-            ...prev,
-            [selectedId]: { totalScore: total, lectureGrade: gpa }
-        }));
+        const { data: saved } = await axios.post(
+            `${API_BASE_URL}/grade/insertGrades`,
+            payload
+        );
+
+        // 서버 계산 결과 반영 또는 재조회
+        if (saved && (saved.totalScore != null || saved.lectureGrade != null || saved.gpa != null)) {
+            setSaveGradeStudent(prev => ({
+                ...prev,
+                [selectedId]: {
+                    totalScore: saved.totalScore ?? 0,
+                    lectureGrade: saved.lectureGrade ?? saved.gpa ?? 0,
+                }
+            }));
+        } else {
+            const { data: rows } = await axios.get(`${API_BASE_URL}/grade/listByGrade`, { params: { lectureId } });
+            const dict = Object.fromEntries((Array.isArray(rows) ? rows : []).map(r => [
+                r.userId,
+                { totalScore: r.totalScore, lectureGrade: r.lectureGrade }
+            ]));
+            setSaveGradeStudent(dict);
+        }
+
         alert("점수 저장이 완료되었습니다.");
         closeModal();
     };
@@ -488,10 +468,11 @@ function GradeCalculation() {
                 </thead>
                 <tbody>
                     {studentList.map((it) => {
-                        const info = saveGradeStudent?.[it.id]; // { totalScore, lectureGrade } | undefined  
+                        const info = saveGradeStudent?.[it.id]; // { totalScore, lectureGrade } | undefined
                         const locked = !!info; // 이미 점수 저장된 학생
                         return (
-                            <tr key={it.id}
+                            <tr
+                                key={it.id}
                                 style={{ cursor: locked ? "not-allowed" : "pointer", opacity: locked ? 0.6 : 1 }}
                                 onClick={() => { if (!locked) openModal(it.id); }}>
                                 <td>{it.userCode}</td>
@@ -523,6 +504,7 @@ function GradeCalculation() {
                         value={modalForm}
                         onChange={onModalChange}
                         weights={weights}
+                        errors={errors}
                     />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">
@@ -531,8 +513,9 @@ function GradeCalculation() {
                     </div>
                     <div className="d-flex gap-2">
                         <Button variant="outline-secondary" onClick={closeModal}>닫기</Button>
-                        <Button variant="outline-secondary" onClick={gradeCalcul}>점수 산출</Button>
-                        <Button variant="primary" onClick={handleSave} disabled={studentLoading || selectedLocked || !canSave}>점수 저장</Button>
+                        <Button variant="primary" onClick={handleSave} disabled={studentLoading || selectedLocked || !canSave}>
+                            점수 저장
+                        </Button>
                     </div>
                 </Modal.Footer>
             </Modal>

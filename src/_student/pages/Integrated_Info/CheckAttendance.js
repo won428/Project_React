@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Container, Form, Button, Row, Col, Table, Modal, Spinner } from 'react-bootstrap';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -84,6 +84,11 @@ function App() {
 
     const navigate = useNavigate();
 
+    const [lectures, setLectures] = useState([]);
+    const [years, setYears] = useState([]);
+    const [selectedYear, setSelectedYear] = useState('');
+    const [selectedSemester, setSelectedSemester] = useState(null);
+
     const [error, setError] = useState(null);
 
     // 상세보기 모달 On/Off
@@ -116,6 +121,26 @@ function App() {
         EARLY_LEAVE: '조퇴',
         EXCUSED: '공결',
     }
+
+    // 학기 계산기
+    const groupLecturesByYear = (l) => {
+        return l.reduce((acc, lecture) => {
+            const d = lecture?.startDate ? new Date(lecture.startDate) : null;
+            if (!d || Number.isNaN(d.getTime())) return acc;           // 시작일 없거나 잘못되면 스킵
+
+            const year = d.getUTCFullYear().toString(); // 연도
+            const month = d.getUTCMonth() + 1; // 월
+
+            let semester = null;
+            if (month >= 3 && month <= 6) semester = 1;
+            else if (month >= 9 && month <= 12) semester = 2;
+            else if (month >= 1 && month <= 2) semester = 3;
+            else if (month >= 7 && month <= 8) semester = 4;
+
+            (acc[year] ??= []).push({ ...lecture, semester });
+            return acc;
+        }, {});
+    };
 
     // 모달 창 열기
     const openModal = async (row) => {
@@ -188,7 +213,7 @@ function App() {
         total: 0,
     });
     const handleExited = () => {
-        setModalLoading(false);          // 선택
+        setModalLoading(false);
         setModalForm(makeEmptyForm());
         setAttendanceRows([]);
     };
@@ -224,10 +249,67 @@ function App() {
         })();
     }, [userId]);
 
+    const [raw, setRaw] = useState([]);
+    useEffect(() => {
+        axios.get(`${API_BASE_URL}/api/grades/semester/lectures`, { params: { userId } })
+            .then(res => { setRaw(res.data); setError(null); })
+            .catch(() => { setError('불러오기 실패'); setRaw([]); });
+    }, [userId]);
 
+    const grouped = useMemo(() => groupLecturesByYear(raw), [raw]);
 
-    // 학생이 상세보기를 눌렀을 때 강의차시, 강의일, 출결상태, 출결점수(받은점수/만점) 가져오기
+    useEffect(() => {
+        const ys = Object.keys(grouped).sort((a, b) => b.localeCompare(a)); // 최신년도가 먼저
+        setYears(ys);
 
+        // 최초 진입: 기본 연/학기 자동 선택
+        if (!selectedYear && ys.length) {
+            const y = ys[0];
+            setSelectedYear(y);
+            const semesters = [...new Set((grouped[y] || [])
+                .map(l => l.semester)
+                .filter(Boolean))].sort((a, b) => a - b);
+            setSelectedSemester(semesters[0] ?? null);
+            return;
+        }
+
+        // 선택된 연도가 사라졌거나, 선택 학기가 그 연도에 없으면 보정
+        if (selectedYear) {
+            const semesters = [...new Set((grouped[selectedYear] || [])
+                .map(l => l.semester)
+                .filter(Boolean))].sort((a, b) => a - b);
+            if (semesters.length && !semesters.includes(selectedSemester)) {
+                setSelectedSemester(semesters[0]);
+            }
+        }
+    }, [grouped]);
+
+    useEffect(() => {
+        if (!selectedYear || !selectedSemester) {
+            setLectures([]);
+            return;
+        }
+        // 선택된 연/학기에 해당하는 lectureId 집합
+        const ids = new Set(
+            (grouped[selectedYear] || [])
+                .filter(l => l.semester === selectedSemester)
+                .map(l => l.lectureId)
+        );
+        // enrollment 목록에서 해당 lectureId만 남김(열에 enrollmentId 등 유지)
+        const filtered = lectureList.filter(l => ids.has(l.lectureId));
+        setLectures(filtered);
+    }, [grouped, selectedYear, selectedSemester, lectureList]);
+
+    const handleYearChange = (e) => {
+        const y = e.target.value;
+        setSelectedYear(y);
+        const semesters = [...new Set((grouped[y] || []).map(l => l.semester).filter(Boolean))];
+        setSelectedSemester(semesters[0] ?? null); // 여기서 추가 fetch 없음!
+    };
+
+    const handleSemesterChange = (e) => {
+        setSelectedSemester(parseInt(e.target.value, 10)); // 추가 fetch 없음!
+    };
 
     return (
         <Container style={{ marginTop: 24 }}>
@@ -237,13 +319,13 @@ function App() {
             </div>
             {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
             <Row>
-                {/* <Col md={3} style={{ maxHeight: '60vh', overflowY: 'auto', borderRight: '1px solid #ddd' }}>
+                <Col md={3} style={{ maxHeight: '60vh', overflowY: 'auto', borderRight: '1px solid #ddd' }}>
                     <Form>
                         <Form.Select name="year" value={selectedYear} onChange={handleYearChange}>
                             <option value="" disabled>년도 선택</option>
                             {years.map(year => (
                                 <option key={year} value={year}>
-                                    {year.slice(-2)}년
+                                    {year}년
                                 </option>
                             ))}
                         </Form.Select>
@@ -252,16 +334,16 @@ function App() {
                             <option value="" disabled>학기 선택</option>
                             <option value={1}>1학기 (3~6월)</option>
                             <option value={2}>2학기 (9~12월)</option>
-                            <option value={3}>계절학기 1 (1~2월)</option>
-                            <option value={4}>계절학기 2 (7~8월)</option>
+                            <option value={3}>계절학기_상반기 (1~2월)</option>
+                            <option value={4}>계절학기_하반기 (7~8월)</option>
                         </Form.Select>
                     </Form>
-                </Col> */}
+                </Col>
             </Row>
 
             <Row style={{ marginTop: 24 }}>
                 <Col md={12} style={{ overflowX: 'auto' }}>
-                    {lectureList.length === 0 ? (
+                    {lectures.length === 0 ? (
                         <div>선택한 학기에 수강한 강의가 없습니다.</div>
                     ) : (
                         <Table bordered hover size="sm" style={{ minWidth: 700 }}>
@@ -276,7 +358,7 @@ function App() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {lectureList.map((l) => (
+                                {lectures.map((l) => (
                                     <tr key={l.lectureId ?? `${l.lectureName}-${l.userName}`}>
                                         <td>{l.lectureName}</td>
                                         <td>{l.userName}</td>

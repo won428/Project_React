@@ -30,6 +30,20 @@ function App() {
         { key: 'lectureGrade', label: '학점' }
     ];
 
+    const toLetterGrade = (g) => {
+        const n = Number(g);
+        if (!Number.isFinite(n)) return '-';
+        if (n >= 4.5) return 'A+';
+        if (n >= 4.0) return 'A';
+        if (n >= 3.5) return 'B+';
+        if (n >= 3.0) return 'B';
+        if (n >= 2.5) return 'C+';
+        if (n >= 2.0) return 'C';
+        if (n >= 1.5) return 'D+';
+        if (n >= 1.0) return 'D';
+        return 'F';
+    };
+
     const getGradeValue = (grade, key) => {
         if (!grade) return '-';
         return grade[key] ?? grade[key.toLowerCase()] ?? '-';
@@ -195,6 +209,7 @@ function App() {
                                     {metrics.map(metric => (
                                         <th key={metric.key}>{metric.label}</th>
                                     ))}
+                                    <th>등급</th>
                                     <th>이의제기</th> {/* 버튼 컬럼 추가 */}
                                 </tr>
                             </thead>
@@ -218,6 +233,10 @@ function App() {
                                     const total = scores.reduce((sum, val) => sum + val, 0);
                                     const average = (total / scores.length).toFixed(2);
 
+                                    // GPA(학점) 꺼내서 등급 계산
+                                    const gpaValue = getGradeValue(grade, 'lectureGrade'); // 예: 4.02, '4.02', '-'
+                                    const letter = toLetterGrade(gpaValue);
+
                                     return (
                                         <tr key={lecture.id}>
                                             <td>{lecture.lecName}</td>
@@ -225,14 +244,13 @@ function App() {
                                                 let value;
                                                 if (metric.key === 'totalScore') {
                                                     value = total.toFixed(2);
-                                                } else if (metric.key === 'lectureGrade') {
-                                                    value = average;
                                                 } else {
                                                     value = getGradeValue(grade, metric.key);
                                                     if (typeof value === 'number') value = value.toFixed(2);
                                                 }
                                                 return <td key={metric.key}>{value}</td>;
                                             })}
+                                            <td>{letter}</td>
                                             {/* 각 강의 끝에 이의제기 신청 버튼 추가 */}
                                             <td>
                                                 <Link
