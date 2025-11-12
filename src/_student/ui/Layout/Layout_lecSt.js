@@ -30,10 +30,7 @@ export const LayoutStLecst = () => {
                         <Nav.Link
                             onClick={() => navigate(`/courseRegistration`)}
                           className="text-white">수강신청</Nav.Link>
-                        <Nav.Link
-                            onClick={() => navigate(`/coursReg/history`)}
-                            className="text-white">수강신청 이력</Nav.Link>
-
+           
 
 
                     </Nav>

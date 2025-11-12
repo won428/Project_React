@@ -44,7 +44,7 @@ import LectureDetail from '../_professor/Lecture_Room/LectureDetail';
 import CourseRegistration from '../_student/pages/LectureRoom/CourseRegistration';
 // import InproLecList from '../_admin/pages/Lecture_Room/InprogressLetureList';
 import LecUpdateAd from '../_admin/pages/Lecture_Room/LecUpdateAd'
-import CourseRegHistory from '../_student/pages/LectureRoom/CourseRegHistory'
+
 import InquiryForAd from '../_admin/pages/StudentCon/InquiryForAd';
 
 
@@ -302,7 +302,7 @@ function App() {
 
                         {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
                         <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
-                        <Route path='/coursReg/history' element={<CourseRegHistory />} ></Route>
+                  
                     </Route>
 
 
