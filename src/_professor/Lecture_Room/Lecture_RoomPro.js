@@ -87,7 +87,7 @@ function LectureList() {
 
         axios.get(url, {
             params: {
-                email: user.email,
+                username: user.username,
                 sortKey: selectedTerm // 'selectedTerm' state를 직접 사용
             }
         })
@@ -145,13 +145,12 @@ function LectureList() {
             </Row>
             <br />
             <Row xs={1} md={2} lg={3} className="g-3">
-                {/* 필터링 중일 때 스피너 (선택 사항) */}
                 {filtering ? (
                     <Container className="text-center mt-5">
                         <Spinner animation="border" size="sm" /> <div>목록 갱신 중...</div>
                     </Container>
                 ) : (
-                    <> {/* lecRoom 렌더링 */}
+                    <>
                         {lecRoom.length > 0 ? (
                             lecRoom.map((item) => (
                                 <Col key={item.id}>

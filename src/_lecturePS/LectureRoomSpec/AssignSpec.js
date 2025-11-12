@@ -288,15 +288,15 @@ function App() {
     const DueDate = new Date(resdata.dueAt)
     // 📦 과제 상세 데이터 로드
     useEffect(() => {
-        if (!data || !user?.email) { return; }
+        if (!data || !user?.username) { return; }
         const url = `${API_BASE_URL}/assign/specific`;
-        axios.get(url, { params: { id: data, email: user.email } })
+        axios.get(url, { params: { id: data, username: user.username } })
             .then(res => {
                 setResData(res.data);
                 console.log(res.data);
             })
             .catch(console.error);
-    }, [data, user?.email]);
+    }, [data, user?.username]);
 
 
 
@@ -308,7 +308,7 @@ function App() {
         }
         const url = `${API_BASE_URL}/assign/submit`;
         const formData = new FormData();
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("lectureId", lectureId);
         formData.append("assignId", resdata.id);
         formData.append("title", title);
@@ -336,7 +336,7 @@ function App() {
         const url = `${API_BASE_URL}/assign/update/${resdata.id}`;
 
         const formData = new FormData();
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("lectureId", lectureId);
         formData.append("title", title);
         formData.append("content", content);
@@ -368,7 +368,7 @@ function App() {
 
         const url = `${API_BASE_URL}/assign/assignupdate/${resdata.id}`;
         const formData = new FormData();
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("lectureId", lectureId);
         formData.append("assignId", resdata.id);
         formData.append("title", title);

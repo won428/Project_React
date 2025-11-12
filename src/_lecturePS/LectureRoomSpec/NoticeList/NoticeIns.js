@@ -29,7 +29,7 @@ function App() {
         const url = `${API_BASE_URL}/notice/insert`
         const formData = new FormData();
         formData.append("id", lectureId);
-        formData.append("email", user.email);
+        formData.append("username", user.username);
         formData.append("title", title);
         formData.append("content", content);
         subfiles.forEach(file => {

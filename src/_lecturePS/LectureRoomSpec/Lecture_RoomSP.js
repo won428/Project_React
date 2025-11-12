@@ -85,7 +85,7 @@ function LectureList() {
 
         axios.get(url, {
             params: {
-                email: user.email,
+                username: user.username,
                 sortKey: selectedTerm // 'selectedTerm' state를 직접 사용
             }
         })
