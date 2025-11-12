@@ -219,9 +219,17 @@ function App() {
     try {
       const response = await axios.post(url, selected, { params: { id: user.id } });
       if (response.data.success) {
-        alert('등록 성공'); setSelected([]); fetchLectures();
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+        fetchLectures();
       } else {
-        alert('등록 성공'); setSelected([]); fetchLectures();
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+        fetchLectures();
       }
     } catch (error) {
       const err = error.response;
@@ -241,9 +249,48 @@ function App() {
         { params: { id: user.id }, headers: { 'Content-Type': 'application/json' } }
       );
       if (response.data.success) {
-        alert('등록 성공'); setSelected([]); fetchLectures();
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]); 
+        fetchLectures();
       } else {
-        alert('등록 성공'); setSelected([]); fetchLectures();
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+        fetchLectures();
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+    }
+  };
+
+  const statusAll = async (selected,status) => {
+    const url = `${API_BASE_URL}/courseReg/statusAll`;
+    const id = user.id
+    try {
+
+      const response = await axios.patch(
+        url,
+        null,
+        { params: { id, status, selected }, headers: { 'Content-Type': 'application/json' } }
+      );
+      if (response.data.success) {
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+        fetchLectures();
+      } else {
+        alert('등록 성공');
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+        fetchLectures();
       }
     } catch (error) {
       const err = error.response;
@@ -258,7 +305,12 @@ function App() {
     const id = user.id
     try {
       const response = await axios.put(url, null, { params: { status, lecId, id } });
-      if (response.status === 200) { alert("처리 완료"); fetchLectures(); }
+      if (response.status === 200) {
+        alert("처리 완료"); fetchLectures();
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+      }
     } catch (error) {
       const err = error.response;
       if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
@@ -272,7 +324,33 @@ function App() {
     const id = user.id
     try {
       const response = await axios.patch(url, null, { params: { lecId, id } });
-      if (response.status === 200) { alert("처리 완료"); fetchLectures(); }
+      if (response.status === 200) { 
+        alert("처리 완료");
+        fetchLectures();
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+      }
+    } catch (error) {
+      const err = error.response;
+      if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+    }
+  };
+
+  const deleteCoursRegAll = async () => {
+    const url = `${API_BASE_URL}/courseReg/delete/all`;
+    const id = user.id
+    try {
+      
+      const response = await axios.patch(url, null, { params: { cancelSelected, id } });
+      if (response.status === 200) { 
+        alert("처리 완료"); fetchLectures();
+        setSelected([]);
+        setBackSelected([]);
+        setCancelSelected([]);
+      }
     } catch (error) {
       const err = error.response;
       if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
@@ -682,7 +760,7 @@ function App() {
                   {approvedLecList.map((lec) => (
                     <tr key={lec.id}>
                        <td className="text-center text-nowrap">
-                        <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                        <Form.Check type="checkbox" value={lec.id} onChange={cancelSelect} />
                       </td>
                       <td className="fw-semibold">
                         <span className="d-inline-block text-truncate w-100">{lec.name}</span>
@@ -730,8 +808,12 @@ function App() {
               </Table>
 
               <div className="d-flex justify-content-end gap-2 mb-4">
-                <Button size="sm" variant="primary" className="fw-semibold px-3">일괄 확정</Button>
-                <Button size="sm" variant="danger" className="fw-semibold px-3">일괄 취소</Button>
+                <Button size="sm" variant="primary" className="fw-semibold px-3"
+                  onClick={()=>{ const status = "SUBMITTED"; statusAll(cancelSelected,status)}}
+                >일괄 확정</Button>
+                <Button size="sm" variant="danger" className="fw-semibold px-3"
+                  onClick={()=>{deleteCoursRegAll()}}
+                >일괄 취소</Button>
               </div>
             </Tab>
 
@@ -777,7 +859,7 @@ function App() {
                   {submitLecList.map((lec) => (
                     <tr key={lec.id}>
                        <td className="text-center text-nowrap">
-                        <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                        <Form.Check type="checkbox" value={lec.id} onChange={backSelect} />
                       </td>
                       <td className="fw-semibold">
                         <span className="d-inline-block text-truncate w-100">{lec.name}</span>
@@ -817,7 +899,9 @@ function App() {
               </Table>
 
               <div className="d-flex justify-content-end mb-4">
-                <Button size="sm" variant="danger" className="fw-semibold px-3">
+                <Button size="sm" variant="danger" className="fw-semibold px-3"
+                  onClick={()=>{const status = "PENDING"; statusAll(backSelected, status)}}
+                >
                   일괄 취소
                 </Button>
               </div>
