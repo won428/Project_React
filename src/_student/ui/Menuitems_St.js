@@ -49,7 +49,7 @@ function MenuSt() {
                         </Nav>
                         <Nav>
                             <Navbar.Text className="text-white">
-                                {user.email}님
+                                {user.name}님
                             </Navbar.Text>
                             <Button size="sm" onClick={logoutAction} >Logout</Button>
 

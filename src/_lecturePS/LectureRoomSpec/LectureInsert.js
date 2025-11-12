@@ -37,7 +37,7 @@ function App() {
     const SubmitOnlineLec = async (evt) => {
         const url = `${API_BASE_URL}/online/insert`
         const formData = new FormData();
-        formData.append("email", user?.email);
+        formData.append("username", user?.username);
         formData.append("lectureId", lectureId)
         formData.append("title", title);
         formData.append("startDate", format(startDate, "yyyy-MM-dd"));

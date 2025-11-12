@@ -12,7 +12,6 @@ import { useLectureStore } from "./store/lectureStore";
 function App() {
 
     const { user } = useAuth();
-    // const { data } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const data = location?.state;
@@ -46,7 +45,7 @@ function App() {
 
             })
             .catch((e) => console.log(e))
-    }, [data])
+    }, [data, user])
 
     if (!resdata) {
         return <Container><div>강의 정보를 불러오는 중...</div></Container>;

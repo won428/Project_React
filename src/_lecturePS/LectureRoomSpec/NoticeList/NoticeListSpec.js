@@ -45,7 +45,7 @@ function App() {
     const submitMod = async () => {
         const url = `${API_BASE_URL}/notice/update/${resdata.id}`
         const formData = new FormData();
-        formData.append("email", user.email)
+        formData.append("username", user.username)
         formData.append("title", title)
         formData.append("content", content)
         if (subfiles != null && subfiles.length > 0) {

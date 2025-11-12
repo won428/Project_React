@@ -1,0 +1,84 @@
+.dashboard-container {
+    max-width: 1200px;
+}
+
+/* 사용자 정보 카드 */
+.user-info-card {
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 리스트 카드 공통 */
+.list-card {
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* 카드 헤더 */
+.list-header {
+    background-color: #fff;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+}
+
+/* 카드 아이템 */
+.item-card {
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.item-card:hover {
+    background-color: #f1f3f5;
+    transform: translateY(-2px);
+}
+
+.item-body {
+    padding: 1rem 1.5rem;
+}
+
+.item-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* 남은일 배지 */
+.badge-remain {
+    background-color: #ffc107;
+    color: #212529;
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.badge-expired {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Pagination 스타일 */
+.pagination .page-item .page-link {
+    border: none;
+    color: #495057;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #e9ecef;
+}
+
+/* 반응형 여백 조정 */
+@media (max-width: 767px) {
+    .dashboard-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}

@@ -22,6 +22,8 @@ import Lecture_Room from '../_student/pages/LectureRoom/Lecture_Room';
 import InfohomeAD from '../_admin/ui/Home/InfoHomeAD';
 import LHomeAD from '../_admin/ui/Home/Lecture_HomeAD';
 import StHomeAD from '../_admin/ui/Home/StHomeAd';
+import AcheIns from '../public/pages/Schedule/Academic_ScheduleIns';
+import AcheUp from '../public/pages/Schedule/Academic_ScheduleUpdate';
 
 
 import CollegeList from '../_admin/pages/College/CollegeList';
@@ -258,6 +260,8 @@ function App() {
 
                     {/* Schedule Tab */}
                     <Route path='/acschemod' element={<Academic_ScheduleMod />} ></Route>
+                    <Route path='/acscheIns' element={<AcheIns />} ></Route>
+                    <Route path='/acschemod/up' element={<AcheUp />} ></Route>
 
 
                 </Route>
@@ -271,8 +275,6 @@ function App() {
 
 
             </Route>
-
-
 
             {/* STUDENT */}
             <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
