@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
-import { Button, Form, Table, Row, Col, Modal } from "react-bootstrap";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Form, Table, Row, Col, Modal, Tabs, Tab } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../public/context/UserContext";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
+
+const YEAR_START = 1990;
 
 function App() {
 
@@ -13,9 +15,13 @@ function App() {
   const [submitLecList,setSubmitlecList] = useState([]);
   const [approvedLecList, setApprovedLecList] = useState([]) 
   const [majorList, setMajorList] = useState([]);
+  const [userList, setUserList] = useState([]); // ▼ 교수 콤보박스용(UI만)
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selected, setSelected] = useState([]);
+  const [cancelSelected, setCancelSelected] =useState([]);
+  const [backSelected, setBackSelected] =useState([]);
+  const [historyLecList, setHistoryLecList] = useState([]);
   
   const [paging, setPaging] = useState({
     totalElements : 0,
@@ -31,12 +37,24 @@ function App() {
     searchCredit: '',
     searchMode: '',
     searchKeyword:'',
+
+    // ▼ 참고 코드의 콤보박스 value 바인딩용 필드만 추가 (UI 상태 저장용)
+    searchYear: '',
+    searchStartDate: '',
+    searchUser: '',
+    searchSchedule: '',
   });
 
   // ───────── 상세 모달 상태 ─────────
   const [open, setOpen] = useState(false);
   const [modalId, setModalId] = useState('');
   const [modalLec, setModalLec] = useState({});
+
+  const years = useMemo(() => {
+    const end = new Date().getFullYear() + 1;
+    return Array.from({ length: end - YEAR_START + 1 }, (_, i) => YEAR_START + i);
+  }, []);
+  const yearsDesc = years.slice().reverse();
 
   const fetchLectures = useCallback(()=>{
     const url = `${API_BASE_URL}/lecture/apply/list`;
@@ -51,7 +69,7 @@ function App() {
         console.error("status:", error.response?.status);
         console.error("data:", error.response?.data);
       })
-  },[])
+  },[user?.id])
 
   useEffect(() => { fetchLectures(); }, [fetchLectures]);
 
@@ -59,12 +77,15 @@ function App() {
     const url = `${API_BASE_URL}/lecture/mylist`;
     axios
       .get(url, { params: { userId: user.id }})
-      .then((response) => { setMyLectureList(response.data) })
+      .then((response) =>
+         { setMyLectureList(response.data)
+            console.log(response.data)
+           })
       .catch((error) => {
         const err = error.response;
         if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
       })
-  }, [lectureList]);
+  }, [lectureList, user?.id]);
 
   useEffect(()=>{
     const url = `${API_BASE_URL}/major/all/list`;
@@ -86,18 +107,42 @@ function App() {
 
   useEffect(() => {
     if (!Array.isArray(myLectureList)) return;
-    setSubmitlecList(myLectureList.filter(lec => lec.status === 'SUBMITTED'))
-    setApprovedLecList(myLectureList.filter(lec => lec.status === 'PENDING' ))
+     setApprovedLecList(
+    myLectureList.filter(lec => lec.status === 'PENDING')
+  );
+  setSubmitlecList(
+    myLectureList.filter(
+      lec => lec.status === 'SUBMITTED' && lec.lecStatus === 'APPROVED'
+    )
+  );
+  setHistoryLecList(
+    myLectureList.filter(
+      lec => ['INPROGRESS', 'COMPLETED'].includes(lec.lecStatus)
+    )
+  );
   }, [myLectureList]);
+
+  useEffect(() => {
+    const m = (majorList ?? []).find(v => String(v.id) === String(paging.searchMajor));
+    setUserList(m?.userList ?? []);
+    setPaging(prev => prev.searchUser !== '' ? { ...prev, searchUser: '' } : prev);
+  }, [paging.searchMajor, majorList]);
 
   const splitStartDate = (date) => {
     const [yyyy, mm] = date.split("-");
     const yaer = yyyy.slice(-2);
-    const m = Number(mm);
-    if (m >= 1 && m <= 2) return `${yaer}년도 겨울 계절학기`;
-    if (m >= 3 && m <= 6) return `${yaer}년도 1학기`;
-    if (m >= 7 && m <= 8) return `${yaer}년도 여름 계절학기`;
-    return `${yaer}년도 2학기`;
+    let splitMonth = Number(mm);
+    let splitDate = "";
+    if (splitMonth === 12) {
+      splitDate = `${yaer}년도 겨울 계절학기`;
+    } else if (splitMonth === 3) {
+      splitDate = `${yaer}년도 1학기`;
+    } else if (splitMonth === 6) {
+      splitDate = `${yaer}년도 여름 계절학기`;
+    } else if (splitMonth === 9) {
+      splitDate = `${yaer}년도 2학기`;
+    }
+    return splitDate;
   };
 
   const typeMap = {
@@ -147,6 +192,26 @@ function App() {
     );
   };
 
+   const cancelSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setCancelSelected(prev =>
+      checked
+        ? (prev.includes(value) ? prev : [...prev, value])
+        : prev.filter(v => v !== value)
+    );
+  };
+
+   const backSelect = (e) => {
+    const value = e.target.value;
+    const checked = e.target.checked;
+    setBackSelected(prev =>
+      checked
+        ? (prev.includes(value) ? prev : [...prev, value])
+        : prev.filter(v => v !== value)
+    );
+  };
+
   useEffect(() => { console.log(selected) }, [selected]);
 
   const apply = async () => {
@@ -188,10 +253,25 @@ function App() {
     }
   };
 
-  const stautsRequest = async (id, status) => {
+  const stautsRequest = async (lecId, status) => {
     const url = `${API_BASE_URL}/courseReg/applyStatus`;
+    const id = user.id
     try {
-      const response = await axios.put(url, null, { params: { status, id } });
+      const response = await axios.put(url, null, { params: { status, lecId, id } });
+      if (response.status === 200) { alert("처리 완료"); fetchLectures(); }
+    } catch (error) {
+      const err = error.response;
+      if (!err) { alert('네트워크 오류가 발생하였습니다'); return; }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+    }
+  };
+
+   const deleteCoursReg = async (lecId) => {
+    const url = `${API_BASE_URL}/courseReg/delete`;
+    const id = user.id
+    try {
+      const response = await axios.patch(url, null, { params: { lecId, id } });
       if (response.status === 200) { alert("처리 완료"); fetchLectures(); }
     } catch (error) {
       const err = error.response;
@@ -217,7 +297,6 @@ function App() {
         alert('오류');
       });
   }, [modalId]);
-
 
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`;
@@ -247,450 +326,589 @@ function App() {
       });
   };
 
-
-
   return (
     <>
-      <div className="table-responsive" style={{ overflowX: 'hidden' }}>
+      <div className="d-flex align-items-center flex-nowrap gap-2 mb-3">
+        <h4 className="mb-0 me-3 flex-shrink-0">강의 목록</h4>
 
-        {/* ───────── 수강신청 가능 목록: 필터/검색 UI ───────── */}
-        <Row className="g-2 mb-2 flex-wrap">
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학과(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMajor: value})) }}>
-              <option value="">학과</option>
-              {majorList.map((major)=>(
-                <option key={major.id} value={major.id}>{major.name}</option>
-              ))}
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="이수구분(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCompletionDiv: value})) }}>
-              <option value="">이수구분</option>
-              <option value="MAJOR_REQUIRED">전공  필수</option>
-              <option value="MAJOR_ELECTIVE">전공 선택</option>
-              <option value="LIBERAL_REQUIRED">교양 필수</option>
-              <option value="LIBERAL_ELECTIVE">교양 선택</option>
-              <option value="GENERAL_ELECTIVE">일반 선택</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학년(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchLevel: value})) }}>
-              <option value="">학년</option>
-              <option value={1}>1학년</option>
-              <option value={2}>2학년</option>
-              <option value={3}>3학년</option>
-              <option value={4}>4학년</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학점(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCredit: value})) }}>
-              <option value="">학점</option>
-              <option value={1}>1학점</option>
-              <option value={2}>2학점</option>
-              <option value={3}>3학점</option>
-              <option value={4}>4학점</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="검색조건(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMode: value})) }}>
-              <option value="">전체 검색</option>
-              <option value="name">강의명</option>
-              <option value="professor">담당교수</option>
-              <option value="major">학과</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchKeyword: value})) }}/>
-          </Col>
-        </Row>
+        {/* 년도 */}
+        <Form.Select id="filterYear" size="sm" className="w-auto"
+          value={paging.searchYear}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchYear : value}))
+          }}
+        >
+          <option value="">년도</option>
+          {yearsDesc.map(y => <option key={y} value={y}>{y}</option>)}
+        </Form.Select>
 
-        {/* ───────── 수강신청 가능 목록 ───────── */}
-        <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
-          <colgroup>
-            <col style={{ width: "3rem" }} />
-            <col style={{ width: "16rem" }} />
-            <col style={{ width: "12rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
-            <col style={{ width: "5rem" }} />
-            <col style={{ width: "4rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "8rem" }} />
-            <col style={{ width: "7.5rem" }} />
-          </colgroup>
+        {/* 학기 */}
+        <Form.Select
+          id="filterSemester"
+          aria-label="학기"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 120 }}
+          value={paging.searchStartDate}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchStartDate : value}))
+          }}
+        >
+          <option value="">학기</option>
+          {/* TODO: 백엔드 정의에 맞춰 value 조정 */}
+          <option value="3">1학기</option>
+          <option value="9">2학기</option>
+          <option value="6">여름 계절</option>
+          <option value="12">겨울 계절</option>
+        </Form.Select>
 
-          <tbody>
-            <tr className="table-secondary">
-              <td colSpan={13} className="fw-bold py-2">수강신청 가능 목록</td>
-            </tr>
-            <tr className="table-light">
-              <th className="text-center text-nowrap py-2">체크</th>
-              <th className="py-2">강의명</th>
-              <th className="py-2">과이름</th>
-              <th className="text-center text-nowrap py-2">이수 구분</th>
-              <th className="text-center text-nowrap py-2">학년</th>
-              <th className="text-nowrap py-2">담당교수</th>
-              <th className="text-center text-nowrap py-2">학기</th>
-              <th className="text-center text-nowrap py-2">수업 요일</th>
-              <th className="text-center text-nowrap py-2">총원</th>
-              <th className="text-center text-nowrap py-2">학점</th>
-              <th className="text-center text-nowrap py-2">자료</th>
-              <th className="text-center text-nowrap py-2">상태</th>
-              <th className="text-center text-nowrap py-2">상세</th>
-            </tr>
+        {/* 이수구분 */}
+        <Form.Select
+          id="filterCompletionDiv"
+          aria-label="이수구분"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 160 }}
+          value={paging.searchCompletionDiv}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchCompletionDiv : value}))
+          }}
+        >
+          <option value="">이수구분</option>
+          <option value="MAJOR_REQUIRED">전공필수</option>
+          <option value="MAJOR_ELECTIVE">전공선택</option>
+          <option value="LIBERAL_REQUIRED">교양필수</option>
+          <option value="LIBERAL_ELECTIVE">교양선택</option>
+          <option value="GENERAL_ELECTIVE">일반선택</option>
+        </Form.Select>
 
-            {lectureListSt.map((lec) => (
-              <tr key={lec.id}>
-                <td className="text-center text-nowrap">
-                  <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
-                </td>
-                <td className="fw-semibold">
-                  <span className="d-inline-block text-truncate w-100">{lec.name}</span>
-                </td>
-                <td>
-                  <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
-                </td>
-                <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
-                <td className="text-center text-nowrap">{lec.level}</td>
-                <td className="text-nowrap">{lec.userName}</td>
-                <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
-                <td className="text-center text-nowrap">
-                  {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
-                </td>
-                <td className="text-center text-nowrap">{lec.totalStudent}</td>
-                <td className="text-center text-nowrap">{lec.credit}</td>
-                <td className="text-center text-nowrap">
-                  <Button
-                    size="sm"
-                    variant="outline-dark"
-                    onClick={() => { setModalId(lec.id); setOpen(true); }}
-                  >
-                    상세
-                  </Button>
-                </td>
-                <td className="text-center text-nowrap">{typeMap[lec.status]}</td>
-                <td className="text-center text-nowrap">
-                  <Button
-                    size="sm"
-                    variant="outline-primary"
-                    className="fw-semibold px-3"
-                    value={lec.id}
-                    onClick={() => applyOne(Number(lec.id))}
-                  >
-                    수강 신청
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        {/* 학년 */}
+        <Form.Select
+          id="filterLevel"
+          aria-label="학년"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 120 }}
+          value={paging.searchLevel}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchLevel : value}))
+          }}
+        >
+          <option value="0">학년</option>
+          <option value="1">1학년</option>
+          <option value="2">2학년</option>
+          <option value="3">3학년</option>
+          <option value="4">4학년</option>
+        </Form.Select>
 
-        {/* ✅ 일괄 신청 */}
-        <div className="d-flex justify-content-end mb-4">
-          <Button size="sm" variant="primary" className="fw-semibold px-3" onClick={apply}>
-            일괄 신청
-          </Button>
-        </div>
+        {/* 소속학과 */}
+        <Form.Select
+          id="filterMajor"
+          aria-label="소속학과"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 180 }}
+          value={paging.searchMajor}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchMajor : value}))
+          }}
+        >
+          <option value="">소속학과</option>
+          {majorList.map((major)=>(
+            <option key={major.id} value={major.id}>{major.name}</option>
+          ))}
+        </Form.Select>
 
-        {/* ───────── 장바구니: 필터/검색 UI ───────── */}
-        <Row className="g-2 mb-2 flex-wrap">
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학과(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMajor: value})) }}>
-              <option value="">학과</option>
-              {majorList.map((major)=>(
-                <option key={major.id} value={major.id}>{major.name}</option>
-              ))}
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="이수구분(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCompletionDiv: value})) }}>
-              <option value="">이수구분</option>
-              <option value="MAJOR_REQUIRED">전공  필수</option>
-              <option value="MAJOR_ELECTIVE">전공 선택</option>
-              <option value="LIBERAL_REQUIRED">교양 필수</option>
-              <option value="LIBERAL_ELECTIVE">교양 선택</option>
-              <option value="GENERAL_ELECTIVE">일반 선택</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학년(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchLevel: value})) }}>
-              <option value="">학년</option>
-              <option value={1}>1학년</option>
-              <option value={2}>2학년</option>
-              <option value={3}>3학년</option>
-              <option value={4}>4학년</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학점(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCredit: value})) }}>
-              <option value="">학점</option>
-              <option value={1}>1학점</option>
-              <option value={2}>2학점</option>
-              <option value={3}>3학점</option>
-              <option value={4}>4학점</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="검색조건(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMode: value})) }}>
-              <option value="">전체 검색</option>
-              <option value="name">강의명</option>
-              <option value="professor">담당교수</option>
-              <option value="major">학과</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchKeyword: value})) }}/>
-          </Col>
-        </Row>
+        {/* 담당교수 */}
+        <Form.Select
+          id="filterProfessor"
+          aria-label="담당교수"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 150 }}
+          value={paging.searchUser}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchUser : value}))
+          }}
+        >
+          <option value="">담당교수</option>
+          {userList.map((user)=>(
+            <option key={user.id} value={user.id}>{user.name}</option>
+          ))}
+          {/* TODO: 옵션 추가 */}
+        </Form.Select>
 
-        {/* ───────── 장바구니 목록 ───────── */}
-        <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
-          <colgroup>
-            <col style={{ width: "3rem" }} />
-            <col style={{ width: "15rem" }} />
-            <col style={{ width: "11rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "9rem" }} />
-            <col style={{ width: "9rem" }} />
-            <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
-            <col style={{ width: "5rem" }} />
-            <col style={{ width: "4rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "7rem" }} />
-            <col style={{ width: "8rem" }} />
-            <col style={{ width: "7.5rem" }} />
-          </colgroup>
+        {/* 수업 요일 */}
+        <Form.Select
+          id="filterDay"
+          aria-label="수업 요일"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 140 }}
+          value={paging.searchSchedule}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchSchedule : value}))
+          }}
+        >
+          <option value="">수업 요일</option>
+          <option value="MONDAY">월요일</option>
+          <option value="TUESDAY">화요일</option>
+          <option value="WEDNESDAY">수요일</option>
+          <option value="THURSDAY">목요일</option>
+          <option value="FRIDAY">금요일</option>
+        </Form.Select>
 
-          <tbody>
-            <tr className="table-secondary">
-              <td colSpan={14} className="fw-bold py-2">장바구니</td>
-            </tr>
-            <tr className="table-light">
-              <th className="text-center text-nowrap py-2">체크</th>
-              <th className="py-2">강의명</th>
-              <th className="py-2">과이름</th>
-              <th className="text-center text-nowrap py-2">이수 구분</th>
-              <th className="text-center text-nowrap py-2">학년</th>
-              <th className="text-nowrap py-2">담당교수</th>
-              <th className="text-center text-nowrap py-2">학기</th>
-              <th className="text-center text-nowrap py-2">수업 요일</th>
-              <th className="text-center text-nowrap py-2">총원</th>
-              <th className="text-center text-nowrap py-2">학점</th>
-              <th className="text-center text-nowrap py-2">자료</th>
-              <th className="text-center text-nowrap py-2">상태</th>
-              <th className="text-center text-nowrap py-2" colSpan={2}>상세 </th>
-            </tr>
+        {/* 학점 */}
+        <Form.Select
+          id="filterCredit"
+          aria-label="학점"
+          size="sm"
+          className="w-auto flex-shrink-0"
+          style={{ minWidth: 120 }}
+          value={paging.searchCredit}
+          onChange={(e)=>{
+            const value = e.target.value;
+            setPaging((pre)=>({...pre, searchCredit : value}))
+          }}
+        >
+          <option value="0">학점</option>
+          <option value="1">1학점</option>
+          <option value="2">2학점</option>
+          <option value="3">3학점</option>
+          <option value="4">4학점</option>
+        </Form.Select>
 
-            {approvedLecList.map((lec) => (
-              <tr key={lec.id}>
-                <td className="text-center text-nowrap">{/* <Form.Check type="checkbox" value={lec.id} /> */}</td>
-                <td className="fw-semibold">
-                  <span className="d-inline-block text-truncate w-100">{lec.name}</span>
-                </td>
-                <td>
-                  <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
-                </td>
-                <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
-                <td className="text-center text-nowrap">{lec.level}</td>
-                <td className="text-nowrap">{lec.userName}</td>
-                <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
-                <td className="text-center text-nowrap">
-                  {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
-                </td>
-                <td className="text-center text-nowrap">{lec.totalStudent}</td>
-                <td className="text-center text-nowrap">{lec.credit}</td>
-                <td className="text-center text-nowrap">
-                  <Button
-                    size="sm"
-                    variant="outline-dark"
-                    onClick={() => { setModalId(lec.id); setOpen(true); }}
-                  >
-                    상세
-                  </Button>
-                </td>
-                <td className="text-center text-nowrap">{typeMap3[lec.lecStatus]}</td>
-                <td className="text-center text-nowrap" colSpan={2}>
-                  <Button
-                    size="sm"
-                    variant="outline-primary"
-                    className="fw-semibold px-3 me-4"
-                    onClick={() => { const status = "SUBMITTED"; stautsRequest(lec.id, status); }}
-                  >
-                    확정
-                  </Button>
-                  <Button size="sm" variant="outline-danger" className="fw-semibold px-3">
-                    취소
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-
-        <div className="d-flex justify-content-end gap-2 mb-4">
-          <Button size="sm" variant="primary" className="fw-semibold px-3">일괄 확정</Button>
-          <Button size="sm" variant="danger" className="fw-semibold px-3">일괄 취소</Button>
-        </div>
-
-        {/* ───────── 수강신청 완료 목록: 필터/검색 UI ───────── */}
-        <Row className="g-2 mb-2 flex-wrap">
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학과(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMajor: value})) }}>
-              <option value="">학과</option>
-              {majorList.map((major)=>(
-                <option key={major.id} value={major.id}>{major.name}</option>
-              ))}
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="이수구분(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCompletionDiv: value})) }}>
-              <option value="">이수구분</option>
-              <option value="MAJOR_REQUIRED">전공  필수</option>
-              <option value="MAJOR_ELECTIVE">전공 선택</option>
-              <option value="LIBERAL_REQUIRED">교양 필수</option>
-              <option value="LIBERAL_ELECTIVE">교양 선택</option>
-              <option value="GENERAL_ELECTIVE">일반 선택</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학년(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchLevel: value})) }}>
-              <option value="">학년</option>
-              <option value={1}>1학년</option>
-              <option value={2}>2학년</option>
-              <option value={3}>3학년</option>
-              <option value={4}>4학년</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="학점(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchCredit: value})) }}>
-              <option value="">학점</option>
-              <option value={1}>1학점</option>
-              <option value={2}>2학점</option>
-              <option value={3}>3학점</option>
-              <option value={4}>4학점</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={4} md={2}>
-            <Form.Select size="sm" aria-label="검색조건(가능)"
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchMode: value})) }}>
-              <option value="">전체 검색</option>
-              <option value="name">강의명</option>
-              <option value="professor">담당교수</option>
-              <option value="major">학과</option>
-            </Form.Select>
-          </Col>
-          <Col xs={6} sm={8} md={2}>
-            <Form.Control size="sm" placeholder="검색어 입력" aria-label="검색어(가능)" 
-              onChange={(e)=>{ const value = e.target.value; setPaging((previous)=>({...previous, searchKeyword: value})) }}/>
-          </Col>
-        </Row>
-
-        {/* ───────── 신청 확정 목록 ───────── */}
-        <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
-          <colgroup>
-            <col style={{ width: "3rem" }} />
-            <col style={{ width: "16rem" }} />
-            <col style={{ width: "12rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "10rem" }} />
-            <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
-            <col style={{ width: "5rem" }} />
-            <col style={{ width: "4rem" }} />
-            <col style={{ width: "6rem" }} />
-            <col style={{ width: "8rem" }} />
-            <col style={{ width: "7.5rem" }} />
-          </colgroup>
-
-          <tbody>
-            <tr className="table-secondary">
-              <td colSpan={13} className="fw-bold py-2">신청 확정</td>
-            </tr>
-            <tr className="table-light">
-              <th className="text-center text-nowrap py-2">체크</th>
-              <th className="py-2">강의명</th>
-              <th className="py-2">과이름</th>
-              <th className="text-center text-nowrap py-2">이수 구분</th>
-              <th className="text-center text-nowrap py-2">학년</th>
-              <th className="text-nowrap py-2">담당교수</th>
-              <th className="text-center text-nowrap py-2">학기</th>
-              <th className="text-center text-nowrap py-2">수업 요일</th>
-              <th className="text-center text-nowrap py-2">총원</th>
-              <th className="text-center text-nowrap py-2">학점</th>
-              <th className="text-center text-nowrap py-2">자료</th>
-              <th className="text-center text-nowrap py-2">상태</th>
-              <th className="text-center text-nowrap py-2">상세</th>
-            </tr>
-
-            {submitLecList.map((lec) => (
-              <tr key={lec.id}>
-                <td className="text-center text-nowrap">{/* <Form.Check type="checkbox" value={lec.id} /> */}</td>
-                <td className="fw-semibold">
-                  <span className="d-inline-block text-truncate w-100">{lec.name}</span>
-                </td>
-                <td>
-                  <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
-                </td>
-                <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
-                <td className="text-center text-nowrap">{lec.level}</td>
-                <td className="text-nowrap">{lec.userName}</td>
-                <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
-                <td className="text-center text-nowrap">
-                  {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
-                </td>
-                <td className="text-center text-nowrap">{lec.totalStudent}</td>
-                <td className="text-center text-nowrap">{lec.credit}</td>
-                <td className="text-center text-nowrap">
-                  <Button
-                    size="sm"
-                    variant="outline-dark"
-                    onClick={() => { setModalId(lec.id); setOpen(true); }}
-                  >
-                    상세
-                  </Button>
-                </td>
-                <td className="text-center text-nowrap">{typeMap3[lec.status]}</td>
-                <td className="text-center text-nowrap">
-                  <Button size="sm" variant="outline-danger" className="fw-semibold px-3">
-                    수강 취소
-                  </Button>   
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-
-        <div className="d-flex justify-content-end mb-4">
-          <Button size="sm" variant="danger" className="fw-semibold px-3">
-            일괄 취소
-          </Button>
-        </div>
-
+        <Button
+          variant="outline-secondary"
+          size="sm"
+          className="ms-auto w-auto flex-shrink-0"
+          onClick={() => navigate(-1)}
+        >
+          돌아가기
+        </Button>
       </div>
 
+      <div className="position-relative">
+        <div
+          className="position-absolute end-0 d-flex align-items-center gap-2 pe-2"
+          style={{ top: 6, zIndex: 10, pointerEvents: "none" }}
+        >
+          <Form.Select
+            id="tabSearchMode"
+            size="sm"
+            className="w-auto"
+            style={{ minWidth: 110, pointerEvents: "auto" }}
+            value={paging.searchMode}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPaging((prev) => ({ ...prev, searchMode: value, pageNumber: 0 }));
+            }}
+          >
+            <option value="all">전체</option>
+            <option value="name">강의명</option>
+            <option value="professor">교수명</option>
+            <option value="major">학과</option>
+          </Form.Select>
+
+          <Form.Control
+            id="tabSearchKeyword"
+            size="sm"
+            className="w-auto"
+            style={{ width: 220, pointerEvents: "auto" }}
+            placeholder="검색어"
+            value={paging.searchKeyword}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPaging((prev) => ({ ...prev, searchKeyword: value, pageNumber: 0 }));
+            }}
+          />
+        </div>
+      
+
+          <Tabs
+            defaultActiveKey="apply"
+            className="mb-3"
+            mountOnEnter
+            unmountOnExit={false}
+            style={{
+              '--bs-nav-link-color': '#6c757d',
+              '--bs-nav-link-hover-color': '#495057',
+              '--bs-nav-tabs-link-active-color': '#212529',
+              '--bs-nav-tabs-link-active-bg': '#f1f3f5',
+              '--bs-nav-tabs-link-active-border-color': '#dee2e6',
+              '--bs-nav-tabs-border-color': '#dee2e6',
+            }}
+          >
+            {/* 수강신청 가능 */}
+            <Tab eventKey="apply" title="수강신청 가능">
+              <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
+                <colgroup>
+                  <col style={{ width: "3rem" }} />
+                  <col style={{ width: "16rem" }} />
+                  <col style={{ width: "12rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
+                  <col style={{ width: "5rem" }} />
+                  <col style={{ width: "4rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "8rem" }} />
+                  <col style={{ width: "7.5rem" }} />
+                </colgroup>
+
+                <tbody>
+                  <tr className="table-secondary">
+                    <td colSpan={13} className="fw-bold py-2">수강신청 가능 목록</td>
+                  </tr>
+                  <tr className="table-light">
+                    <th className="text-center text-nowrap py-2">체크</th>
+                    <th className="py-2">강의명</th>
+                    <th className="py-2">과이름</th>
+                    <th className="text-center text-nowrap py-2">이수 구분</th>
+                    <th className="text-center text-nowrap py-2">학년</th>
+                    <th className="text-nowrap py-2">담당교수</th>
+                    <th className="text-center text-nowrap py-2">학기</th>
+                    <th className="text-center text-nowrap py-2">수업 요일</th>
+                    <th className="text-center text-nowrap py-2">총원</th>
+                    <th className="text-center text-nowrap py-2">학점</th>
+                    <th className="text-center text-nowrap py-2">자료</th>
+                    <th className="text-center text-nowrap py-2">상태</th>
+                    <th className="text-center text-nowrap py-2">상세</th>
+                  </tr>
+
+                  {lectureListSt.map((lec) => (
+                    <tr key={lec.id}>
+                      <td className="text-center text-nowrap">
+                        <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                      </td>
+                      <td className="fw-semibold">
+                        <span className="d-inline-block text-truncate w-100">{lec.name}</span>
+                      </td>
+                      <td>
+                        <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
+                      <td className="text-center text-nowrap">{lec.level}</td>
+                      <td className="text-nowrap">{lec.userName}</td>
+                      <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
+                      <td className="text-center text-nowrap">
+                        {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
+                      </td>
+                      <td className="text-center text-nowrap">{lec.totalStudent}</td>
+                      <td className="text-center text-nowrap">{lec.credit}</td>
+                      <td className="text-center text-nowrap">
+                        <Button
+                          size="sm"
+                          variant="outline-dark"
+                          onClick={() => { setModalId(lec.id); setOpen(true); }}
+                        >
+                          상세
+                        </Button>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap[lec.status]}</td>
+                      <td className="text-center text-nowrap">
+                        <Button
+                          size="sm"
+                          variant="outline-primary"
+                          className="fw-semibold px-3"
+                          value={lec.id}
+                          onClick={() => applyOne(Number(lec.id))}
+                        >
+                          수강 신청
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+
+              {/* ✅ 일괄 신청 */}
+              <div className="d-flex justify-content-end mb-4">
+                <Button size="sm" variant="primary" className="fw-semibold px-3" onClick={apply}>
+                  일괄 신청
+                </Button>
+              </div>
+            </Tab>
+
+            {/* 장바구니 */}
+            <Tab eventKey="cart" title="장바구니">
+              <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
+                <colgroup>
+                  <col style={{ width: "3rem" }} />
+                  <col style={{ width: "15rem" }} />
+                  <col style={{ width: "11rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "9rem" }} />
+                  <col style={{ width: "9rem" }} />
+                  <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
+                  <col style={{ width: "5rem" }} />
+                  <col style={{ width: "4rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "7rem" }} />
+                  <col style={{ width: "8rem" }} />
+                  <col style={{ width: "7.5rem" }} />
+                </colgroup>
+
+                <tbody>
+                  <tr className="table-secondary">
+                    <td colSpan={14} className="fw-bold py-2">장바구니</td>
+                  </tr>
+                  <tr className="table-light">
+                    <th className="text-center text-nowrap py-2">체크</th>
+                    <th className="py-2">강의명</th>
+                    <th className="py-2">과이름</th>
+                    <th className="text-center text-nowrap py-2">이수 구분</th>
+                    <th className="text-center text-nowrap py-2">학년</th>
+                    <th className="text-nowrap py-2">담당교수</th>
+                    <th className="text-center text-nowrap py-2">학기</th>
+                    <th className="text-center text-nowrap py-2">수업 요일</th>
+                    <th className="text-center text-nowrap py-2">총원</th>
+                    <th className="text-center text-nowrap py-2">학점</th>
+                    <th className="text-center text-nowrap py-2">자료</th>
+                    <th className="text-center text-nowrap py-2">상태</th>
+                    <th className="text-center text-nowrap py-2" colSpan={2}>상세 </th>
+                  </tr>
+
+                  {approvedLecList.map((lec) => (
+                    <tr key={lec.id}>
+                       <td className="text-center text-nowrap">
+                        <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                      </td>
+                      <td className="fw-semibold">
+                        <span className="d-inline-block text-truncate w-100">{lec.name}</span>
+                      </td>
+                      <td>
+                        <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
+                      <td className="text-center text-nowrap">{lec.level}</td>
+                      <td className="text-nowrap">{lec.userName}</td>
+                      <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
+                      <td className="text-center text-nowrap">
+                        {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
+                      </td>
+                      <td className="text-center text-nowrap">{lec.totalStudent}</td>
+                      <td className="text-center text-nowrap">{lec.credit}</td>
+                      <td className="text-center text-nowrap">
+                        <Button
+                          size="sm"
+                          variant="outline-dark"
+                          onClick={() => { setModalId(lec.id); setOpen(true); }}
+                        >
+                          상세
+                        </Button>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap3[lec.lecStatus]}</td>
+                      <td className="text-center text-nowrap" colSpan={2}>
+                        <Button
+                          size="sm"
+                          variant="outline-primary"
+                          className="fw-semibold px-3 me-4"
+                          onClick={() => { const status = "SUBMITTED"; stautsRequest(lec.id, status); }}
+                        >
+                          확정
+                        </Button>
+                        <Button size="sm" variant="outline-danger" className="fw-semibold px-3"
+                          onClick={()=>{deleteCoursReg(lec.id)}}
+                        >
+                          취소
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+
+              <div className="d-flex justify-content-end gap-2 mb-4">
+                <Button size="sm" variant="primary" className="fw-semibold px-3">일괄 확정</Button>
+                <Button size="sm" variant="danger" className="fw-semibold px-3">일괄 취소</Button>
+              </div>
+            </Tab>
+
+            {/* 신청 확정 */}
+            <Tab eventKey="confirmed" title="신청 확정">
+              <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
+                <colgroup>
+                  <col style={{ width: "3rem" }} />
+                  <col style={{ width: "16rem" }} />
+                  <col style={{ width: "12rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
+                  <col style={{ width: "5rem" }} />
+                  <col style={{ width: "4rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "8rem" }} />
+                  <col style={{ width: "7.5rem" }} />
+                </colgroup>
+
+                <tbody>
+                  <tr className="table-secondary">
+                    <td colSpan={13} className="fw-bold py-2">신청 확정</td>
+                  </tr>
+                  <tr className="table-light">
+                    <th className="text-center text-nowrap py-2">체크</th>
+                    <th className="py-2">강의명</th>
+                    <th className="py-2">과이름</th>
+                    <th className="text-center text-nowrap py-2">이수 구분</th>
+                    <th className="text-center text-nowrap py-2">학년</th>
+                    <th className="text-nowrap py-2">담당교수</th>
+                    <th className="text-center text-nowrap py-2">학기</th>
+                    <th className="text-center text-nowrap py-2">수업 요일</th>
+                    <th className="text-center text-nowrap py-2">총원</th>
+                    <th className="text-center text-nowrap py-2">학점</th>
+                    <th className="text-center text-nowrap py-2">자료</th>
+                    <th className="text-center text-nowrap py-2">상태</th>
+                    <th className="text-center text-nowrap py-2">상세</th>
+                  </tr>
+
+                  {submitLecList.map((lec) => (
+                    <tr key={lec.id}>
+                       <td className="text-center text-nowrap">
+                        <Form.Check type="checkbox" value={lec.id} onChange={addSelect} />
+                      </td>
+                      <td className="fw-semibold">
+                        <span className="d-inline-block text-truncate w-100">{lec.name}</span>
+                      </td>
+                      <td>
+                        <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
+                      <td className="text-center text-nowrap">{lec.level}</td>
+                      <td className="text-nowrap">{lec.userName}</td>
+                      <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
+                      <td className="text-center text-nowrap">
+                        {(lec.lectureSchedules ?? []).map(s => typeMapDay[s.day]).join(', ')}
+                      </td>
+                      <td className="text-center text-nowrap">{lec.totalStudent}</td>
+                      <td className="text-center text-nowrap">{lec.credit}</td>
+                      <td className="text-center text-nowrap">
+                        <Button
+                          size="sm"
+                          variant="outline-dark"
+                          onClick={() => { setModalId(lec.id); setOpen(true); }}
+                        >
+                          상세
+                        </Button>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap3[lec.status]}</td>
+                      <td className="text-center text-nowrap">
+                        <Button size="sm" variant="outline-danger" className="fw-semibold px-3"
+                          onClick={(e)=>{stautsRequest(lec.id,'PENDING')}}
+                        >
+                          확정 취소
+                        </Button>   
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+
+              <div className="d-flex justify-content-end mb-4">
+                <Button size="sm" variant="danger" className="fw-semibold px-3">
+                  일괄 취소
+                </Button>
+              </div>
+            </Tab>
+
+   
+            <Tab eventKey="history" title="수강신청 이력">
+              <Table bordered hover size="sm" className="align-middle shadow-sm rounded-3 mb-2">
+                <colgroup>
+                  <col style={{ width: "16rem" }} />
+                  <col style={{ width: "12rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "6rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "10rem" }} />
+                  <col style={{ width: "12rem" }} /> {/* 수업 요일 */}
+                  <col style={{ width: "5rem" }} />
+                  <col style={{ width: "4rem" }} />
+                  <col style={{ width: "9rem" }} /> {/* 자료 */}
+                  <col style={{ width: "8rem" }} />
+                  <col style={{ width: "7.5rem" }} />
+                </colgroup>
+
+                <tbody>
+                  <tr className="table-secondary">
+                    <td colSpan={12} className="fw-bold py-2">
+                      수강신청 이력
+                    </td>
+                  </tr>
+                  <tr className="table-light">
+                    <th className="py-2">강의명</th>
+                    <th className="py-2">과이름</th>
+                    <th className="text-center text-nowrap py-2">이수 구분</th>
+                    <th className="text-center text-nowrap py-2">학년</th>
+                    <th className="text-nowrap py-2">담당교수</th>
+                    <th className="text-center text-nowrap py-2">학기</th>
+                    <th className="text-center text-nowrap py-2">수업 요일</th>
+                    <th className="text-center text-nowrap py-2">총원</th>
+                    <th className="text-center text-nowrap py-2">학점</th>
+                    <th className="text-center text-nowrap py-2">자료</th>
+                    <th className="text-center text-nowrap py-2">상태</th>
+                    <th className="text-center text-nowrap py-2">상세</th>
+                  </tr>
+
+                  {historyLecList.map((lec) => (
+                    <tr key={lec.id}>
+                      <td className="fw-semibold">
+                        <span className="d-inline-block text-truncate w-100">{lec.name}</span>
+                      </td>
+                      <td>
+                        <span className="d-inline-block text-truncate w-100">{lec.majorName}</span>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap2[lec.completionDiv]}</td>
+                      <td className="text-center text-nowrap">{lec.level}</td>
+                      <td className="text-nowrap">{lec.userName}</td>
+                      <td className="text-center text-nowrap">{splitStartDate(lec.startDate)}</td>
+                      <td className="text-center text-nowrap">
+                        {(lec.lectureSchedules ?? []).map((s) => typeMapDay[s.day]).join(", ")}
+                      </td>
+                      <td className="text-center text-nowrap">{lec.totalStudent}</td>
+                      <td className="text-center text-nowrap">{lec.credit}</td>
+                      <td className="text-center text-nowrap">
+                        <Button
+                          size="sm"
+                          variant="outline-secondary"
+                          className="fw-semibold px-3"
+                          onClick={() => {
+                            setModalId(lec.id);
+                            setOpen(true);
+                          }}
+                        >
+                          자료
+                        </Button>
+                      </td>
+                      <td className="text-center text-nowrap">{typeMap3[lec.lecStatus]}</td>
+                      <td className="text-center text-nowrap">
+                        <Button size="sm" variant="outline-dark" className="fw-semibold px-3">
+                          상세
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Tab>
+          </Tabs>
+        </div>
+
+
       {/* ───────── 상세 모달 ───────── */}
-            <Modal
+      <Modal
         show={open}
         onHide={() => setOpen(false)}
         centered
@@ -757,7 +975,6 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
-                    {/* 값은 사용자가 채울 예정 */}
                     <td className="text-center">{modalLec?.weightsDto?.attendanceScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.assignmentScore ?? "-"}</td>
                     <td className="text-center">{modalLec?.weightsDto?.midtermExam ?? "-"}</td>
