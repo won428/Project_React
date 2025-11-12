@@ -10,6 +10,7 @@ import CreditAppealList from '../_student/pages/Integrated_Info/CreditAppealList
 
 import Change_Status from '../_student/pages/Integrated_Info/Change_Status';
 import ChangeStatusList from '../_student/pages/Integrated_Info/ChangeStatusList';
+import CheckAttendance from '../_student/pages/Integrated_Info/CheckAttendance';
 import ChangeStatusDetail from '../_student/pages/Integrated_Info/ChangeStatusDetail';
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
 import Academic_ScheduleMod from '../public/pages/Schedule/Academic_ScheduleMod';
@@ -294,6 +295,8 @@ function App() {
 
                         <Route path='/Change_Status' element={<Change_Status />} ></Route>
                         <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
+
+                        <Route path='/CheckAttendance' element={<CheckAttendance />} ></Route>
                         {/* 동적 파라미터 포함 경로 */}
                         <Route path="/ChangeStatusDetail/:recordId" element={<ChangeStatusDetail />} />
                     </Route>

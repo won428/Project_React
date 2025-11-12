@@ -41,7 +41,7 @@ function App() {
       finalExam: 30
 
     })
-
+    const toMin = (t) => t ? (+t.slice(0,2))*60 + (+t.slice(3,5)) : null; // 시간을 0,2만큼 자르고 * 60 분으로 바꿈 + 나머지 분자리인 3,5만큼 잘라서 시간을 분으로 치환한 값에 더해줌.
     
     const navigate = useNavigate(); 
     
@@ -155,9 +155,17 @@ function App() {
               alert('소속 단과대학을 선택해주세요.')
               return;
             }
+             if (!isAllowedStartMonth(lecture.startDate)) {
+            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            return;
+            } 
 
-            if(lecture.startDate.length){
-
+            const invalidTime = schedule.some(r =>
+            !r.day || !r.startTime || !r.endTime || toMin(r.endTime) <= toMin(r.startTime)
+            );
+            if (invalidTime) {
+            alert("각 수업의 '종료 교시'는 ‘시작 교시’보다 늦어야 합니다.");
+            return;
             }
 
             console.log(lecture);
@@ -204,6 +212,20 @@ function App() {
     const removeFile = (i) => {
     setFiles(files.filter((_, idx) => idx !== i));
     };   
+
+     const monthFromDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    const m = Number(dateStr.slice(5, 7));   // 또는 dateStr.split('-')[1]
+    return Number.isNaN(m) ? null : m;
+    };
+
+    const ALLOWED_MONTHS = [1, 3, 9, 12];
+
+    const isAllowedStartMonth = (dateStr) => {
+    const m = monthFromDateStr(dateStr);
+    return m != null && ALLOWED_MONTHS.includes(m);
+    };
+
 
 
     return (
