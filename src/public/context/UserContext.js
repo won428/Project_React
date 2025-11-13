@@ -14,10 +14,13 @@ export const UserProvider = ({ children }) => {
             try {
                 const decoded = jwtDecode(token);
                 if (decoded.exp > Date.now() / 1000) {
+                    console.log(decoded);
+
                     setUser({
-                        email: decoded.sub,
+                        username: decoded.sub,
                         id: decoded.uid ? Number(decoded.uid) : undefined,
                         roles: [decoded.role],
+                        name: decoded.uname,
                         IsAuthenticated: true,
                     });
                 } else {
@@ -38,10 +41,12 @@ export const UserProvider = ({ children }) => {
         try {
             const decoded = jwtDecode(newToken);
             localStorage.setItem("accessToken", newToken);
+            localStorage.setItem("username", decoded.sub);
             setUser({
-                email: decoded.sub,
+                username: decoded.sub,
                 id: decoded?.uid ? Number(decoded.uid) : undefined,
                 roles: [decoded.role],
+                name: decoded.uname,
                 IsAuthenticated: true,
             });
         } catch (e) {
@@ -54,6 +59,8 @@ export const UserProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("username");
         setUser(null);
     };
 

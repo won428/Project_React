@@ -2,7 +2,7 @@ import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../public/context/UserContext";
 
-function MenuSt() {
+function MenuPro() {
     const { user, logout } = useAuth();
 
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ function MenuSt() {
 
                         <Nav>
                             <Navbar.Text className="text-white">
-                                {user.email}님
+                                {user.name}님
                             </Navbar.Text>
                             <Button size="sm" onClick={logoutAction} >Logout</Button>
 
@@ -58,4 +58,4 @@ function MenuSt() {
         </Row>
     )
 }
-export default MenuSt;
+export default MenuPro;

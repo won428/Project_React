@@ -93,7 +93,7 @@ function UsersSkeleton() {
         console.log(error?.response?.data || error);
       });
 
-  // 1) 의존성(이미 적용했다고 했던 부분) — 중복 제거 및 searchLevel 포함
+
   }, [paging.searchLevel, paging.pageNumber, paging.searchCollege, paging.searchMajor, paging.searchGender, paging.searchUserType, paging.searchMode, paging.searchKeyword, activeTab]);
 
   useEffect(()=>{

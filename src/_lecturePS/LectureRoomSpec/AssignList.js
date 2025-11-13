@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, CardBody, Col, Container, Row, Button, Pagination } from "react-bootstrap";
+import { Card, CardBody, Col, Container, Row, Button, Pagination, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../public/config/config";
 import { useAuth } from "../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
@@ -30,62 +30,77 @@ function App() {
                 setPageInfo(res.data);
             })
             .catch(console.error);
-    }, [page, user.email]);
+    }, [page, user]);
 
     console.log(post);
 
     if (!pageInfo) return null;
 
-    const specificPage = (item) => navigate("/asnspec", { state: item.id });
+    const clickPost = (e, item) => {
+        e.stopPropagation();
+        navigate("/asnspec", { state: item.id });
+    };
 
     const totalPages = pageInfo.totalPages;
 
     const startPage = Math.max(1, page - Math.floor(pageRange / 2));
     const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
-
-
     return (
-        <Container style={{ maxWidth: "700px", marginTop: "2rem" }}>
+        <Container className="py-4" style={{ maxWidth: 980 }}>
+            <Card>
+                <Card.Header>
+                    <div className="d-flex align-items-center justify-content-between">
+                        <h5 className="mb-0">과제</h5>
+                        {user.roles.includes("PROFESSOR") && (
+                            <Button size="sm" onClick={() => navigate("/asn")}>
+                                과제 작성
+                            </Button>
+                        )}
+                    </div>
+                </Card.Header>
 
-            {/* 상단 타이틀 */}
-            <Row className="mb-3 align-items-center">
-                <Col><h4>과제</h4></Col>
-                {user.roles.includes("PROFESSOR") && (
-                    <Col xs="auto">
-                        <Button variant="primary" onClick={() => navigate("/asn")}>
-                            과제 작성
-                        </Button>
-                    </Col>)}
-            </Row>
+                <Card.Body className="p-0">
+                    <div style={{ maxHeight: "60vh", overflow: "auto" }}>
+                        <Table hover bordered size="sm" className="mb-0 align-middle small" style={{ lineHeight: 1.15 }}>
+                            <colgroup>
+                                <col style={{ width: 70 }} />
+                                <col />
+                                <col style={{ width: 110 }} />
+                                <col style={{ width: 140 }} />
+                            </colgroup>
 
-            {/* 게시글 목록 */}
-            <Row>
-                <Col>
-                    {post.length > 0 ? (
-                        post.map((item) => (
-                            <Card
-                                key={item.id}
-                                onClick={() => specificPage(item)}
-                                className="mb-3 shadow-sm"
-                                style={{ cursor: "pointer" }}
-                            >
-                                <CardBody>
-                                    <h5 className="fw-bold mb-2">{item.title}</h5>
-                                    <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
-                                        <span>{item.username}</span>
-                                        <span>{new Date(item.createAt).toLocaleDateString()}</span>
-                                    </div>
-                                </CardBody>
-                            </Card>
-                        ))
-                    ) : (
-                        <div className="text-center mt-5 text-muted">
-                            게시물이 존재하지 않습니다.
-                        </div>
-                    )}
-                </Col>
-            </Row>
+                            <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 1 }}>
+                                <tr>
+                                    <th className="text-center py-1">과제번호</th>
+                                    <th className="text-center py-1">제목</th>
+                                    <th className="text-center py-1">작성자</th>
+                                    <th className="text-center py-1">작성일</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {post.length > 0 ? (
+                                    post.map((item) => (
+                                        <tr key={item.id} onClick={(e) => clickPost(e, item)} style={{ cursor: "pointer" }}>
+                                            <td className="text-center py-1 px-2">{item.id}</td>
+                                            <td className="py-1 px-2">{item.title}</td>
+                                            <td className="text-center py-1 px-2">{item.username}</td>
+                                            <td className="text-center py-1 px-2 text-nowrap">{new Date(item.createAt).toLocaleDateString()}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="text-center py-5 text-muted">
+                                            게시물이 존재하지 않습니다.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </Table>
+                    </div>
+                </Card.Body>
+            </Card>
 
             {/* 페이지네이션 */}
             <div className="d-flex justify-content-center mt-4">
@@ -128,7 +143,7 @@ function App() {
             </div>
 
         </Container>
-    );
+    )
 }
 
 export default App;

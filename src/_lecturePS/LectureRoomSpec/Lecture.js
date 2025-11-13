@@ -15,6 +15,7 @@ function App() {
     const { lectureId } = useLectureStore();
     const navigate = useNavigate();
     const pageRange = 6;
+    console.log(user?.id);
     useEffect(() => {
         const url = `${API_BASE_URL}/online/List`
         const parameter = {
@@ -44,6 +45,25 @@ function App() {
     const startPage = Math.max(1, page - Math.floor(pageRange / 2));
     const endPage = Math.min(totalPages, startPage + pageRange - 1);
 
+    const deleteLec = async (id) => {
+        console.log(id);
+
+        try {
+            const url = `${API_BASE_URL}/online/delete/${id}`
+            const res = await axios.delete(url);
+
+            if (res.status === 200) {
+                alert("성공");
+                navigate("/Lec")
+            } else {
+                alert("오류");
+                navigate("/Lec")
+            }
+        } catch {
+            alert("오류 발생");
+            navigate("/Lec")
+        }
+    }
 
     return (
 
@@ -72,10 +92,21 @@ function App() {
                             >
                                 <CardBody>
                                     <h5 className="fw-bold mb-2">{item.title}</h5>
+
                                     <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
                                         <span>{item.username}</span>
                                         <span>{new Date(item.startDate).toLocaleDateString()}</span>
                                     </div>
+                                    <br />
+                                    <div className="d-flex justify-content-end mt-3 gap-2">
+                                        <Button
+                                            onClick={() => {
+                                                console.log(item.id);
+                                                deleteLec(item.id);
+
+                                            }}
+                                        >삭제</Button>
+                                    </div >
                                 </CardBody>
                             </Card>
                         ))

@@ -32,8 +32,8 @@
     const [files, setFiles] = useState([]);
     const fileRef = useRef(null);
     const [percent, setPercent] = useState({
-      attendance: 20,
-      assignment: 20,  
+      attendanceScore: 20,
+      assignmentScore: 20,  
       midtermExam : 30,
       finalExam: 30
     })
@@ -100,8 +100,8 @@
       try {
         e.preventDefault();
         const totalPercent =
-          Number(percent.assignment) +
-          Number(percent.attendance) +
+          Number(percent.assignmentScore) +
+          Number(percent.attendanceScore) +
           Number(percent.midtermExam) +
           Number(percent.finalExam);
 
@@ -128,7 +128,7 @@
         }
 
          if (!isAllowedStartMonth(lecture.startDate)) {
-            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            alert("시작 월은 3, 6, 9, 12만 가능합니다.");
             return;
         }
 
@@ -181,7 +181,7 @@
     return Number.isNaN(m) ? null : m;
     };
 
-    const ALLOWED_MONTHS = [1, 3, 9, 12];
+    const ALLOWED_MONTHS = [3, 6, 9, 12];
 
     const isAllowedStartMonth = (dateStr) => {
     const m = monthFromDateStr(dateStr);
@@ -460,7 +460,7 @@
                         name="attendance"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, attendance: value }));
+                          setPercent((previous) => ({ ...previous, attendanceScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>
@@ -479,7 +479,7 @@
                         name="assignment"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, assignment: value }));
+                          setPercent((previous) => ({ ...previous, assignmentScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>

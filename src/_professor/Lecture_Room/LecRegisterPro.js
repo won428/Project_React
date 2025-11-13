@@ -30,8 +30,8 @@ import { useAuth } from "../../public/context/UserContext";
     const [files, setFiles] = useState([]);
     const fileRef = useRef(null);
     const [percent, setPercent] = useState({
-      attendance: 20,
-      assignment: 20,  
+      attendanceScore: 20,
+      assignmentScore: 20,  
       midtermExam : 30,
       finalExam: 30
     })
@@ -54,14 +54,14 @@ import { useAuth } from "../../public/context/UserContext";
         })
     },[])
 
-  
+    const toMin = (t) => t ? (+t.slice(0,2))*60 + (+t.slice(3,5)) : null; // 시간을 0,2만큼 자르고 * 60 분으로 바꿈 + 나머지 분자리인 3,5만큼 잘라서 시간을 분으로 치환한 값에 더해줌.
     const signup = async (e) => {
       try {
         e.preventDefault();
         console.log(lecture);
         const totalPercent =
-          Number(percent.assignment) +
-          Number(percent.attendance) +
+          Number(percent.assignmentScore) +
+          Number(percent.attendanceScore) +
           Number(percent.midtermExam) +
           Number(percent.finalExam);
 
@@ -79,9 +79,18 @@ import { useAuth } from "../../public/context/UserContext";
         }
 
          if (!isAllowedStartMonth(lecture.startDate)) {
-            alert("시작 월은 1, 3, 9, 12만 가능합니다.");
+            alert("시작 월은 3, 6, 9, 12만 가능합니다.");
             return;
         }
+
+        const invalidTime = schedule.some(r =>
+        !r.day || !r.startTime || !r.endTime || toMin(r.endTime) <= toMin(r.startTime)
+        );
+        if (invalidTime) {
+          alert("각 수업의 '종료 교시'는 ‘시작 교시’보다 늦어야 합니다.");
+          return;
+        }
+
 
         const formData = new FormData();
         formData.append("lecture", new Blob([JSON.stringify(lecture)], { type: "application/json" }));
@@ -369,10 +378,10 @@ import { useAuth } from "../../public/context/UserContext";
                         min="0"
                         max="100"
                         step="1"
-                        name="attendance"
+                        name="attendanceScore"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, attendance: value }));
+                          setPercent((previous) => ({ ...previous, attendanceScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>
@@ -388,10 +397,10 @@ import { useAuth } from "../../public/context/UserContext";
                         min="0"
                         max="100"
                         step="1"
-                        name="assignment"
+                        name="assignmentScore"
                         onChange={(e) => {
                           const value = e.target.value;
-                          setPercent((previous) => ({ ...previous, assignment: value }));
+                          setPercent((previous) => ({ ...previous, assignmentScore: value }));
                         }}
                       />
                       <span className="input-group-text">%</span>

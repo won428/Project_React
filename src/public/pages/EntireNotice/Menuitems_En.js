@@ -2,7 +2,7 @@ import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../public/context/UserContext";
 
-function App() {
+function MenuEn() {
     const { user, logout } = useAuth();
 
     const navigate = useNavigate();
@@ -25,12 +25,15 @@ function App() {
                             <Nav.Link onClick={() => navigate(`/acsche`)}>
                                 학사일정
                             </Nav.Link>
+                            <Nav.Link onClick={() => navigate(`/inquiryBoard`)}>
+                                1:1 Inquiry
+                            </Nav.Link>
 
 
                         </Nav>
                         <Nav>
                             <Navbar.Text className="text-white">
-                                {user.email} 님
+                                {user.name} 님
                             </Navbar.Text>
                             <Button size="sm" onClick={logoutAction} >Logout</Button>
                         </Nav>
@@ -40,4 +43,4 @@ function App() {
         </Row>
     )
 }
-export default App;
+export default MenuEn;
