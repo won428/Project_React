@@ -91,7 +91,7 @@ function ManageAppeal() {
             const rawContent = appeal.content || "";
             const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
 
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
+                setSelectedAppeal({ ...appeal, ...attendance });
                 setUpdatedAttendance({ newStatus: attendance.attendStudent });
                 setModalMode(mode === "approve" ? "attApprove" : "attView");
             } catch (err) {

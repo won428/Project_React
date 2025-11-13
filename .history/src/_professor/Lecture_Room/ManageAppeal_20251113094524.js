@@ -48,12 +48,8 @@ function ManageAppeal() {
     const fetchAppeals = () => {
         if (!lectureId || !user?.id) return;
         axios.get(`${API_BASE_URL}/api/appeals/lectureAppeals/${lectureId}`, { params: { receiverId: user.id } })
-            .then(res => {
-                console.log("API 응답 데이터:", res.data); // 여기서 확인
-                setAppeals(res.data);
-            })
-            .catch(err =>
-                console.error(err));
+            .then(res => setAppeals(res.data))
+            .catch(err => console.error(err));
     };
     useEffect(() => { fetchAppeals(); }, [lectureId, user]);
 
@@ -75,31 +71,13 @@ function ManageAppeal() {
         return nameMatch && codeMatch && tabMatch;
     });
 
-    const openModal = async (appeal, mode) => {
-       if (appeal.appealType === "ATTENDANCE") {
-        try {
-            const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-            const data = res.data;
-
-            // 서버 키를 프론트에서 일관된 키로 매핑
-            const attendance = {
-                attendanceDate: data.attendanceDate ?? data.date ?? "",
-                attendStudent: data.attendStudent ?? data.status ?? ""
-                // content는 여기서 덮어쓰지 않는다!
-            };
-
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
-                setUpdatedAttendance({ newStatus: attendance.attendStudent });
-                setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } catch (err) {
-                console.error(err);
-            }
+    const openModal = (appeal, mode) => {
+        setSelectedAppeal({ ...appeal });
+        if (appeal.appealType === "ATTENDANCE") {
+            setUpdatedAttendance({ newStatus: appeal.attendStudent || "" });
+            setModalMode(mode === "approve" ? "attApprove" : "attView");
         } else {
             const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
-            setSelectedAppeal({ ...appeal });
             setUpdatedScores({ ...appeal, totalScore, lectureGrade });
             setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
         }
@@ -133,7 +111,6 @@ function ManageAppeal() {
             if (selectedAppeal.appealType === "ATTENDANCE") {
                 await axios.put(`${API_BASE_URL}/api/appeals/${selectedAppeal.appealId}/updateStatus`, {
                     newStatus: updatedAttendance.newStatus,
-                    attendanceDate: selectedAppeal.attendanceDate, // 반드시 포함
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
                     lectureId
@@ -153,7 +130,6 @@ function ManageAppeal() {
             console.error(err);
         }
     };
-
 
     const getAttendanceTypeLabel = (status) => ATTENDANCE_LABELS[status] || status || "";
 
@@ -205,156 +181,33 @@ function ManageAppeal() {
             </div>
 
             {/* 🟩 모달 4분기 */}
-            {/* ① 성적 이의제기 상세보기 */}
+            {/* ① 성적 상세보기 */}
             {modalMode === "gradeView" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>성적 이의제기 상세보기</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>성적 이의제기 상세</Modal.Title></Modal.Header>
                     <Modal.Body>
-                        {/* 제목 */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>이의제기 제목</Form.Label>
-                            <Form.Control type="text" value={selectedAppeal.title || ""} disabled />
-                        </Form.Group>
-
-                        {/* 성적 정보 테이블 (disabled 처리) */}
-                        <Table bordered size="sm" className="mb-3 text-center">
-                            <thead>
-                                <tr>
-                                    <th>출석 점수</th>
-                                    <th>과제 점수</th>
-                                    <th>중간 점수</th>
-                                    <th>기말 점수</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{selectedAppeal.ascore ?? ""}</td>
-                                    <td>{selectedAppeal.asScore ?? ""}</td>
-                                    <td>{selectedAppeal.tscore ?? ""}</td>
-                                    <td>{selectedAppeal.ftScore ?? ""}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                        {/* 총점 + 환산 학점 */}
-                        <Row className="mb-3">
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label>총점</Form.Label>
-                                    <Form.Control type="number" value={selectedAppeal.totalScore ?? ""} disabled />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label>환산 학점</Form.Label>
-                                    <Form.Control type="text" value={selectedAppeal.lectureGrade ?? ""} disabled />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        {/* 이의제기 내용 */}
                         <Form.Group className="mb-2">
-                            <Form.Label>이의제기 내용</Form.Label>
+                            <Form.Label>학생 신청 내용</Form.Label>
                             <Form.Control as="textarea" rows={3} value={selectedAppeal.content || ""} disabled />
                         </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button>
-                    </Modal.Footer>
+                    <Modal.Footer><Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button></Modal.Footer>
                 </Modal>
             )}
-
-
 
             {/* ② 성적 승인처리 */}
             {modalMode === "gradeApprove" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>성적 수정 및 승인</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>성적 수정 및 승인</Modal.Title></Modal.Header>
                     <Modal.Body>
-                        {/* 제목 */}
-                        <Form.Group className="mb-3">
-                            <Form.Label>이의제기 제목</Form.Label>
-                            <Form.Control type="text" value={selectedAppeal.title || ""} disabled />
-                        </Form.Group>
-
-                        {/* 성적 정보 테이블 (수정 가능) */}
-                        <Table bordered size="sm" className="mb-3 text-center">
-                            <thead>
-                                <tr>
-                                    <th>출석 점수</th>
-                                    <th>과제 점수</th>
-                                    <th>중간 점수</th>
-                                    <th>기말 점수</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <Form.Control
-                                            type="text"
-                                            name="ascore"
-                                            value={updatedScores.ascore ?? ""}
-                                            onChange={handleScoreChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <Form.Control
-                                            type="text"
-                                            name="asScore"
-                                            value={updatedScores.asScore ?? ""}
-                                            onChange={handleScoreChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <Form.Control
-                                            type="text"
-                                            name="tscore"
-                                            value={updatedScores.tscore ?? ""}
-                                            onChange={handleScoreChange}
-                                        />
-                                    </td>
-                                    <td>
-                                        <Form.Control
-                                            type="text"
-                                            name="ftScore"
-                                            value={updatedScores.ftScore ?? ""}
-                                            onChange={handleScoreChange}
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                        {/* 총점 + 환산 학점 */}
-                        <Row className="mb-3">
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label>총점</Form.Label>
-                                    <Form.Control type="number" value={updatedScores.totalScore ?? ""} disabled />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label>환산 학점</Form.Label>
-                                    <Form.Control type="number" value={updatedScores.lectureGrade ?? ""} disabled />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-
-                        {/* 이의제기 내용 */}
-                        <Form.Group className="mb-2">
-                            <Form.Label>이의제기 내용</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={selectedAppeal.content || ""}
-                                disabled
-                            />
-                        </Form.Group>
+                        {["ascore", "asScore", "tscore", "ftScore"].map(k => (
+                            <Form.Group key={k} className="mb-2">
+                                <Form.Label>{k}</Form.Label>
+                                <Form.Control type="text" name={k} value={updatedScores[k]} onChange={handleScoreChange} />
+                            </Form.Group>
+                        ))}
+                        <Form.Group className="mb-2"><Form.Label>총점</Form.Label><Form.Control type="number" value={updatedScores.totalScore} disabled /></Form.Group>
+                        <Form.Group className="mb-2"><Form.Label>환산 학점</Form.Label><Form.Control type="number" value={updatedScores.lectureGrade} disabled /></Form.Group>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="success" onClick={handleApproveSubmit}>승인 및 저장</Button>
@@ -363,68 +216,71 @@ function ManageAppeal() {
                 </Modal>
             )}
 
-
-
             {/* ③ 출결 상세보기 */}
             {modalMode === "attView" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>출결 이의제기 상세</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>출결 이의제기 상세</Modal.Title></Modal.Header>
                     <Modal.Body>
-                        {/* 강의일 */}
                         <Form.Group className="mb-2">
                             <Form.Label>강의일</Form.Label>
                             <Form.Control type="text" value={selectedAppeal.attendanceDate || ""} disabled />
                         </Form.Group>
-
-                        {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
                             <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
                         </Form.Group>
-
-                        {/* 학생 신청 내용 */}
                         <Form.Group className="mb-2">
                             <Form.Label>학생 신청 내용</Form.Label>
                             <Form.Control as="textarea" rows={3} value={selectedAppeal.content || ""} disabled />
                         </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button>
-                    </Modal.Footer>
+                    <Modal.Footer><Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button></Modal.Footer>
                 </Modal>
             )}
 
             {/* ④ 출결 승인처리 */}
             {modalMode === "attApprove" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>출결 상태 수정 및 승인</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>출결 상태 수정 및 승인</Modal.Title></Modal.Header>
                     <Modal.Body>
                         {/* 강의일 */}
                         <Form.Group className="mb-2">
                             <Form.Label>강의일</Form.Label>
-                            <Form.Control type="text" value={selectedAppeal.attendanceDate || ""} disabled />
+                            <Form.Control
+                                type="text"
+                                value={selectedAppeal.attendanceDate || ""}
+                                disabled
+                            />
                         </Form.Group>
 
                         {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
-                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
+                            <Form.Control
+                                type="text"
+                                value={getAttendanceTypeLabel(selectedAppeal.attendStudent)}
+                                disabled
+                            />
                         </Form.Group>
 
                         {/* 학생 신청 내용 */}
                         <Form.Group className="mb-2">
                             <Form.Label>학생 신청 내용</Form.Label>
-                            <Form.Control as="textarea" rows={3} value={selectedAppeal.content || ""} disabled />
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={selectedAppeal.content || ""}
+                                disabled
+                            />
                         </Form.Group>
 
                         {/* 변경할 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>변경할 출결 상태</Form.Label>
-                            <Form.Select value={updatedAttendance.newStatus} onChange={handleAttendanceChange}>
+                            <Form.Select
+                                value={updatedAttendance.newStatus}
+                                onChange={handleAttendanceChange}
+                            >
                                 <option value="">상태 선택</option>
                                 <option value="PRESENT">출석</option>
                                 <option value="LATE">지각</option>

@@ -88,10 +88,7 @@ function ManageAppeal() {
                 // content는 여기서 덮어쓰지 않는다!
             };
 
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
+                setSelectedAppeal({ ...appeal, ...attendance });
                 setUpdatedAttendance({ newStatus: attendance.attendStudent });
                 setModalMode(mode === "approve" ? "attApprove" : "attView");
             } catch (err) {

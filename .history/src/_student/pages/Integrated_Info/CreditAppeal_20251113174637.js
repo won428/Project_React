@@ -16,8 +16,8 @@ function CreditAppeal() {
     const [professorName, setProfessorName] = useState('');
     const [grade, setGrade] = useState(null);
 
-    const [showModal, setShowModal] = useState(false);
-    const [files, setFiles] = useState([]); // 🔹 여러 파일 상태
+    const [showModal, setShowModal] = useState(false); // 나의 성적 모달
+    const [file, setFile] = useState(null); // 첨부파일
 
     const numLecId = Number(lectureId);
 
@@ -56,7 +56,7 @@ function CreditAppeal() {
             .catch(err => console.error(err));
     }, [lectureId]);
 
-    // 교수 이름 조회
+    // 교수 이름 조회 (추가 확인용)
     useEffect(() => {
         if (professorId) {
             axios.get(`${API_BASE_URL}/api/appeals/users/${professorId}`)
@@ -81,7 +81,7 @@ function CreditAppeal() {
     };
 
     const handleFileChange = (e) => {
-        setFiles(Array.from(e.target.files)); // 🔹 여러 파일 선택 가능
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = (e) => {
@@ -95,10 +95,7 @@ function CreditAppeal() {
         formData.append('title', appealForm.title);
         formData.append('content', appealForm.content);
 
-        // 🔹 여러 파일 전송
-        files.forEach((file, idx) => {
-            formData.append('files', file); // 서버에서 files[]로 받도록 설계 필요
-        });
+        if (file) formData.append('file', file);
 
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
@@ -191,10 +188,9 @@ function CreditAppeal() {
                     />
                 </Form.Group>
 
-                {/* 🔹 여러 파일 선택 가능 */}
                 <Form.Group className="mb-3">
-                    <Form.Label>증빙 파일 첨부 (여러 개 가능)</Form.Label>
-                    <Form.Control type="file" multiple onChange={handleFileChange} />
+                    <Form.Label>증빙 파일 첨부 (선택)</Form.Label>
+                    <Form.Control type="file" onChange={handleFileChange} />
                 </Form.Group>
 
                 <Button type="submit" variant="primary" style={{ marginRight: 8 }}>

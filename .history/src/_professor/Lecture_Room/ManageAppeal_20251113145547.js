@@ -76,34 +76,23 @@ function ManageAppeal() {
     });
 
     const openModal = async (appeal, mode) => {
-       if (appeal.appealType === "ATTENDANCE") {
+    if (appeal.appealType === "ATTENDANCE") {
         try {
-            const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-            const data = res.data;
-
-            // 서버 키를 프론트에서 일관된 키로 매핑
-            const attendance = {
-                attendanceDate: data.attendanceDate ?? data.date ?? "",
-                attendStudent: data.attendStudent ?? data.status ?? ""
-                // content는 여기서 덮어쓰지 않는다!
-            };
-
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
-                setUpdatedAttendance({ newStatus: attendance.attendStudent });
-                setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } catch (err) {
-                console.error(err);
-            }
-        } else {
-            const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
-            setSelectedAppeal({ ...appeal });
-            setUpdatedScores({ ...appeal, totalScore, lectureGrade });
-            setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
+            const res = await axios.get(`${API_BASE_URL}/api/attendance/appeal/${appeal.appealId}`);
+            const attendance = res.data;
+            setSelectedAppeal({ ...appeal, ...attendance }); // DTO 값 합치기
+            setUpdatedAttendance({ newStatus: attendance.attendStudent });
+            setModalMode(mode === "approve" ? "attApprove" : "attView");
+        } catch (err) {
+            console.error(err);
         }
-    };
+    } else {
+        const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
+        setSelectedAppeal({ ...appeal });
+        setUpdatedScores({ ...appeal, totalScore, lectureGrade });
+        setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
+    }
+};
 
     const handleScoreChange = (e) => {
         const { name, value } = e.target;
@@ -133,7 +122,6 @@ function ManageAppeal() {
             if (selectedAppeal.appealType === "ATTENDANCE") {
                 await axios.put(`${API_BASE_URL}/api/appeals/${selectedAppeal.appealId}/updateStatus`, {
                     newStatus: updatedAttendance.newStatus,
-                    attendanceDate: selectedAppeal.attendanceDate, // 반드시 포함
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
                     lectureId
@@ -153,7 +141,6 @@ function ManageAppeal() {
             console.error(err);
         }
     };
-
 
     const getAttendanceTypeLabel = (status) => ATTENDANCE_LABELS[status] || status || "";
 
@@ -412,7 +399,7 @@ function ManageAppeal() {
                         {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
-                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
+                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStatus)} disabled />
                         </Form.Group>
 
                         {/* 학생 신청 내용 */}

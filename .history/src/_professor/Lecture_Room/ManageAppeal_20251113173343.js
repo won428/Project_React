@@ -76,22 +76,19 @@ function ManageAppeal() {
     });
 
     const openModal = async (appeal, mode) => {
-       if (appeal.appealType === "ATTENDANCE") {
-        try {
-            const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-            const data = res.data;
+        if (appeal.appealType === "ATTENDANCE") {
+            try {
+                const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
+                const data = res.data;
 
-            // 서버 키를 프론트에서 일관된 키로 매핑
-            const attendance = {
-                attendanceDate: data.attendanceDate ?? data.date ?? "",
-                attendStudent: data.attendStudent ?? data.status ?? ""
-                // content는 여기서 덮어쓰지 않는다!
-            };
+                // 서버 키를 프론트에서 일관된 키로 매핑
+                const attendance = {
+                    attendanceDate: data.attendanceDate ?? data.date ?? "", // 서버가 date로 내려주면 fallback
+                    attendStudent: data.attendStudent ?? data.status ?? "",  // 서버가 status로 내려주면 fallback
+                    content: data.content ?? "" // 학생 신청 내용
+                };
 
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
+                setSelectedAppeal({ ...appeal, ...attendance });
                 setUpdatedAttendance({ newStatus: attendance.attendStudent });
                 setModalMode(mode === "approve" ? "attApprove" : "attView");
             } catch (err) {

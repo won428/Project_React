@@ -75,29 +75,16 @@ function ManageAppeal() {
         return nameMatch && codeMatch && tabMatch;
     });
 
-    const openModal = async (appeal, mode) => {
-       if (appeal.appealType === "ATTENDANCE") {
-        try {
-            const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-            const data = res.data;
+    const openModal = (appeal, mode) => {
+        if (appeal.appealType === "ATTENDANCE") {
+            const attendanceDate = appeal.attendanceDate || "";
+            const attendStatus = appeal.attendStudent || "";
 
-            // 서버 키를 프론트에서 일관된 키로 매핑
-            const attendance = {
-                attendanceDate: data.attendanceDate ?? data.date ?? "",
-                attendStudent: data.attendStudent ?? data.status ?? ""
-                // content는 여기서 덮어쓰지 않는다!
-            };
-
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
-                setUpdatedAttendance({ newStatus: attendance.attendStudent });
-                setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } catch (err) {
-                console.error(err);
-            }
+            setSelectedAppeal({ ...appeal, attendanceDate, attendStatus });
+            setUpdatedAttendance({ newStatus: attendStatus });
+            setModalMode(mode === "approve" ? "attApprove" : "attView");
         } else {
+            // 성적 모달
             const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
             setSelectedAppeal({ ...appeal });
             setUpdatedScores({ ...appeal, totalScore, lectureGrade });
@@ -133,7 +120,6 @@ function ManageAppeal() {
             if (selectedAppeal.appealType === "ATTENDANCE") {
                 await axios.put(`${API_BASE_URL}/api/appeals/${selectedAppeal.appealId}/updateStatus`, {
                     newStatus: updatedAttendance.newStatus,
-                    attendanceDate: selectedAppeal.attendanceDate, // 반드시 포함
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
                     lectureId
@@ -153,7 +139,6 @@ function ManageAppeal() {
             console.error(err);
         }
     };
-
 
     const getAttendanceTypeLabel = (status) => ATTENDANCE_LABELS[status] || status || "";
 
@@ -381,7 +366,7 @@ function ManageAppeal() {
                         {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
-                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
+                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStatus)} disabled />
                         </Form.Group>
 
                         {/* 학생 신청 내용 */}
@@ -412,7 +397,7 @@ function ManageAppeal() {
                         {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
-                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
+                            <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStatus)} disabled />
                         </Form.Group>
 
                         {/* 학생 신청 내용 */}

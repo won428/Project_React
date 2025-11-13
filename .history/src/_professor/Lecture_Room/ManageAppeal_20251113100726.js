@@ -48,12 +48,8 @@ function ManageAppeal() {
     const fetchAppeals = () => {
         if (!lectureId || !user?.id) return;
         axios.get(`${API_BASE_URL}/api/appeals/lectureAppeals/${lectureId}`, { params: { receiverId: user.id } })
-            .then(res => {
-                console.log("API 응답 데이터:", res.data); // 여기서 확인
-                setAppeals(res.data);
-            })
-            .catch(err =>
-                console.error(err));
+            .then(res => setAppeals(res.data))
+            .catch(err => console.error(err));
     };
     useEffect(() => { fetchAppeals(); }, [lectureId, user]);
 
@@ -75,31 +71,21 @@ function ManageAppeal() {
         return nameMatch && codeMatch && tabMatch;
     });
 
-    const openModal = async (appeal, mode) => {
-       if (appeal.appealType === "ATTENDANCE") {
-        try {
-            const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-            const data = res.data;
+    const openModal = (appeal, mode) => {
+        setSelectedAppeal({ ...appeal });
 
-            // 서버 키를 프론트에서 일관된 키로 매핑
-            const attendance = {
-                attendanceDate: data.attendanceDate ?? data.date ?? "",
-                attendStudent: data.attendStudent ?? data.status ?? ""
-                // content는 여기서 덮어쓰지 않는다!
-            };
+        if (appeal.appealType === "ATTENDANCE") {
+            // 출결 모달용
+            setUpdatedAttendance({ newStatus: appeal.attendStudent || "" });
+            setModalMode(mode === "approve" ? "attApprove" : "attView");
 
-            const rawContent = appeal.content || "";
-            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
-
-                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
-                setUpdatedAttendance({ newStatus: attendance.attendStudent });
-                setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } catch (err) {
-                console.error(err);
-            }
+            // 강의일 넣기 (예: API 호출 없이 appeal 객체에 이미 있으면 바로)
+            // 만약 배열 형태의 출결 데이터를 가져와야 한다면 여기서 axios 호출 후 첫 날짜를 넣어도 됩니다.
+            // 예시:
+            // appeal.attendanceDate = appeal.attendanceRecords?.[0]?.attendanceDate;
         } else {
+            // 성적 모달
             const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
-            setSelectedAppeal({ ...appeal });
             setUpdatedScores({ ...appeal, totalScore, lectureGrade });
             setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
         }
@@ -133,7 +119,6 @@ function ManageAppeal() {
             if (selectedAppeal.appealType === "ATTENDANCE") {
                 await axios.put(`${API_BASE_URL}/api/appeals/${selectedAppeal.appealId}/updateStatus`, {
                     newStatus: updatedAttendance.newStatus,
-                    attendanceDate: selectedAppeal.attendanceDate, // 반드시 포함
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
                     lectureId
@@ -153,7 +138,6 @@ function ManageAppeal() {
             console.error(err);
         }
     };
-
 
     const getAttendanceTypeLabel = (status) => ATTENDANCE_LABELS[status] || status || "";
 
@@ -368,60 +352,42 @@ function ManageAppeal() {
             {/* ③ 출결 상세보기 */}
             {modalMode === "attView" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>출결 이의제기 상세</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>출결 이의제기 상세</Modal.Title></Modal.Header>
                     <Modal.Body>
-                        {/* 강의일 */}
                         <Form.Group className="mb-2">
                             <Form.Label>강의일</Form.Label>
                             <Form.Control type="text" value={selectedAppeal.attendanceDate || ""} disabled />
                         </Form.Group>
-
-                        {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
                             <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
                         </Form.Group>
-
-                        {/* 학생 신청 내용 */}
                         <Form.Group className="mb-2">
                             <Form.Label>학생 신청 내용</Form.Label>
                             <Form.Control as="textarea" rows={3} value={selectedAppeal.content || ""} disabled />
                         </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button>
-                    </Modal.Footer>
+                    <Modal.Footer><Button variant="secondary" onClick={() => setModalMode("")}>닫기</Button></Modal.Footer>
                 </Modal>
             )}
 
             {/* ④ 출결 승인처리 */}
             {modalMode === "attApprove" && selectedAppeal && (
                 <Modal show onHide={() => setModalMode("")} centered>
-                    <Modal.Header closeButton>
-                        <Modal.Title>출결 상태 수정 및 승인</Modal.Title>
-                    </Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>출결 상태 수정 및 승인</Modal.Title></Modal.Header>
                     <Modal.Body>
-                        {/* 강의일 */}
                         <Form.Group className="mb-2">
                             <Form.Label>강의일</Form.Label>
                             <Form.Control type="text" value={selectedAppeal.attendanceDate || ""} disabled />
                         </Form.Group>
-
-                        {/* 현재 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>현재 출결 상태</Form.Label>
                             <Form.Control type="text" value={getAttendanceTypeLabel(selectedAppeal.attendStudent)} disabled />
                         </Form.Group>
-
-                        {/* 학생 신청 내용 */}
                         <Form.Group className="mb-2">
                             <Form.Label>학생 신청 내용</Form.Label>
                             <Form.Control as="textarea" rows={3} value={selectedAppeal.content || ""} disabled />
                         </Form.Group>
-
-                        {/* 변경할 출결 상태 */}
                         <Form.Group className="mb-2">
                             <Form.Label>변경할 출결 상태</Form.Label>
                             <Form.Select value={updatedAttendance.newStatus} onChange={handleAttendanceChange}>
