@@ -1,0 +1,58 @@
+/* 대시보드 컨테이너 */
+.dashboard-container {
+    max-width: 1200px;
+    /* 대시보드 최대 너비 */
+}
+
+/* 유저 정보 카드 */
+.user-info-card {
+    background-color: #f8f9fa;
+    /* 부드러운 배경색 */
+}
+
+/* 목록 카드 (테이블용) */
+.list-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: none;
+    height: 100%;
+    /* Col 높이에 맞춤 */
+}
+
+.list-header {
+    background-color: #fff;
+    border-bottom: 2px solid #eee;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* D-Day 배지 스타일 */
+.badge-remain {
+    font-weight: bold;
+    font-size: 0.85rem;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    color: #007bff;
+    /* 기본 (파랑) */
+    background-color: #e7f3ff;
+    border: 1px solid #b3d7ff;
+}
+
+/* D-3 이하 (주황) */
+.badge-urgent {
+    color: #fd7e14;
+    background-color: #fff3e0;
+    border-color: #ffe0b2;
+}
+
+/* 마감 (빨강) */
+.badge-expired {
+    color: #dc3545;
+    background-color: #fbebee;
+    border-color: #f5c6cb;
+    text-decoration: line-through;
+}
+
+/* 페이지네이션 아이템 크기 일관성 */
+.pagination {
+    --bs-pagination-font-size: 0.875rem;
+}

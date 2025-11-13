@@ -216,7 +216,7 @@ function App() {
                 </Container>
                 :
                 <Container style={{ maxWidth: '800px', marginTop: '2rem' }}>
-                    <Card >
+                    <Card className="shadow-sm">
                         <CardBody>
                             <CardTitle>
                                 <h3 className="fw-bold mb-3">title</h3>

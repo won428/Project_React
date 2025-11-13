@@ -123,69 +123,76 @@ const ModisTrue = ({
     return (
         <Card>
             <CardBody>
-                {/* ✅ FIX 2: 수정 완료 버튼을 위해 Form에 onSubmit과 e.preventDefault() 추가 */}
-                <Form onSubmit={e => {
-                    e.preventDefault();
-                    SubmitMod();
-                }}>
-                    <Form.Group>
-                        <Form.Label>ID</Form.Label>
-                        <Form.Control value={resdata.id} readOnly />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>이름</Form.Label>
-                        <Form.Control value={resdata.username} readOnly />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>제목</Form.Label>
-                        <Form.Control
-                            value={title}
-                            type="text"
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>내용</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            type="text"
-                            rows={5}
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>작성날짜</Form.Label>
-                        <Form.Control value={resdata.updateAt} readOnly />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>파일 첨부</Form.Label>
-                        <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
-                    </Form.Group>
-                    <div className="d-flex flex-wrap gap-2 mt-2">
-                        {subfiles.map((f, i) => (
-                            <div key={i} style={{ position: "relative", width: "100px", textAlign: "center" }}>
-                                {(f.type || "").startsWith("image/") ? <img src={f.url} alt="preview" width="100%" /> : <div>{f.name}</div>}
-                                <Button variant="danger" size="sm" style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%' }} onClick={() => removeFile(f.name)}>X</Button>
+                <CardTitle>제출 내용 수정</CardTitle>
+                <Card>
+                    <CardBody>
+
+                        {/* ✅ FIX 2: 수정 완료 버튼을 위해 Form에 onSubmit과 e.preventDefault() 추가 */}
+                        <Form onSubmit={e => {
+                            e.preventDefault();
+                            SubmitMod();
+                        }}>
+                            <Form.Group>
+                                <Form.Label>ID</Form.Label>
+                                <Form.Control value={resdata.id} readOnly />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>이름</Form.Label>
+                                <Form.Control value={resdata.username} readOnly />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>제목</Form.Label>
+                                <Form.Control
+                                    value={title}
+                                    type="text"
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>내용</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    type="text"
+                                    rows={5}
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>작성날짜</Form.Label>
+                                <Form.Control value={resdata.updateAt} readOnly />
+                            </Form.Group>
+                            <Form.Group>
+                                <Form.Label>파일 첨부</Form.Label>
+                                <Form.Control type="file" multiple ref={fileRef} onChange={Fileselect} />
+                            </Form.Group>
+                            <div className="d-flex flex-wrap gap-2 mt-2">
+                                {subfiles.map((f, i) => (
+                                    <div key={i} style={{ position: "relative", width: "100px", textAlign: "center" }}>
+                                        {(f.type || "").startsWith("image/") ? <img src={f.url} alt="preview" width="100%" /> : <div>{f.name}</div>}
+                                        <Button variant="danger" size="sm" style={{ position: 'absolute', top: 0, right: 0, borderRadius: '50%' }} onClick={() => removeFile(f.name)}>X</Button>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
 
-                    {/* ✅ FIX 2: 누락되었던 "수정 완료" 및 "취소" 버튼 추가 */}
-                    {currentDate < DueDate ?
-                        <div className="d-flex justify-content-end mt-3 gap-2">
-                            <Button type="submit">수정 완료</Button>
-                            <Button variant="secondary" onClick={() => setMod(false)}>취소</Button>
-                        </div>
-                        :
-                        <>
-                            수정 불가
-                        </>
-                    }
+                            {/* ✅ FIX 2: 누락되었던 "수정 완료" 및 "취소" 버튼 추가 */}
+                            {currentDate < DueDate ?
+                                <div className="d-flex justify-content-end mt-3 gap-2">
+                                    <Button type="submit">수정 완료</Button>
+                                    <Button variant="secondary" onClick={() => setMod(false)}>취소</Button>
+                                </div>
+                                :
+                                <>
+                                    수정 불가
+                                </>
+                            }
 
-                </Form>
+                        </Form>
+                    </CardBody>
+                </Card>
             </CardBody>
-        </Card>
+
+        </Card >
     );
 }
 
@@ -197,7 +204,9 @@ const ModisFailure = ({ resdata, API_BASE_URL, handleEdit }) => {
     const DueDate = new Date(resdata.dueAt)
     return (
         <Card className="mt-4">
+
             <CardBody>
+                <CardTitle>제출 내역</CardTitle>
                 <Table bordered hover responsive>
                     <thead className="table-light">
                         <tr><th>ID</th><th>이름</th><th>제목</th><th>내용</th><th>작성날짜</th><th>파일</th></tr>

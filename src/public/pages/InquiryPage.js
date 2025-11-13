@@ -18,31 +18,31 @@ export default function PostViewUI() {
   const [page, setPage] = useState({});
   const navigate = useNavigate();
   const [comment, setComment] = useState({
-    content : '',
-    userId : user.id,
-    postId : id
+    content: '',
+    userId: user.id,
+    postId: id
   })
   const [commentList, setCommentList] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState({
-    content : ''
+    content: ''
   });
 
-   const typeMap2 = {
+  const typeMap2 = {
     'LECTURE': "[강의]",
     'CALENDAR': "[학사]",
     "OTHERS": "[기타]",
   };
 
   const startEdit = (c) => {
-  setEditingId(c.postId);                // 수정할 댓글 PK
-  setEditingText({ content: c.content ?? "" });
-};
+    setEditingId(c.postId);                // 수정할 댓글 PK
+    setEditingText({ content: c.content ?? "" });
+  };
 
-const cancelEdit = () => {
-  setEditingId(null);
-  setEditingText("");
-};
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
+  };
 
   const loadPost = useCallback(async () => {
     try {
@@ -66,10 +66,10 @@ const cancelEdit = () => {
     }
   }, [id]);
 
-  useEffect(()=>{
+  useEffect(() => {
     loadPost();
     loadComments();
-  },[loadPost, loadComments])
+  }, [loadPost, loadComments])
 
 
   const downloadClick = (id) => {
@@ -101,114 +101,114 @@ const cancelEdit = () => {
       });
   };
 
-  const writeComment = async (e) =>{
+  const writeComment = async (e) => {
     e.preventDefault();
 
     try {
-        if(comment.content === null || comment.content === ''){
-          alert('댓글 내용을 입력하셔야 합니다.')
-          return;
-        }
+      if (comment.content === null || comment.content === '') {
+        alert('댓글 내용을 입력하셔야 합니다.')
+        return;
+      }
 
-        const url = `${API_BASE_URL}/inquiry/write/comment`;
-        const response = await axios.post(url,comment,
-            {headers: { 'Content-Type': 'application/json' }}
-        )
-    if (response.status === 200) {
-              alert("댓글 등록 완료");
-              setComment((pre)=>({...pre, content: ''}));
-              await loadComments();
-            }    
+      const url = `${API_BASE_URL}/inquiry/write/comment`;
+      const response = await axios.post(url, comment,
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+      if (response.status === 200) {
+        alert("댓글 등록 완료");
+        setComment((pre) => ({ ...pre, content: '' }));
+        await loadComments();
+      }
     } catch (error) {
-             const err = error.response;
-             console.log(error)
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
 
-        }
+    }
   }
 
-  const updateComment =  async (e, id) =>{
-    
-  try {
-        e.preventDefault();
-        const url = `${API_BASE_URL}/inquiry/comment/update/${id}`;
-        const response =  await axios.patch(url, editingText,
-          {headers: { 'Content-Type': 'application/json' } }
-        )
-        if (response.status === 200) {
-          alert("수정 완료");
-          navigate(0);
-        }
-            
-        } catch (error) {
-             const err = error.response;
-             console.log(error)
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
+  const updateComment = async (e, id) => {
 
-        }
-    };
+    try {
+      e.preventDefault();
+      const url = `${API_BASE_URL}/inquiry/comment/update/${id}`;
+      const response = await axios.patch(url, editingText,
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+      if (response.status === 200) {
+        alert("수정 완료");
+        navigate(0);
+      }
 
-    const deleteComment = async (e,id) =>{
-      try {
-        e.preventDefault();
-       if (!window.confirm("댓글을 삭제할까요?")) {
-            return;
-          }
-        const url = `${API_BASE_URL}/inquiry/comment/delete/${id}`;
-        const response =  await axios.delete(url)
-        if (response.status === 200) {
-          alert("삭제 완료");
-          navigate(0);
-        }
-            
-        } catch (error) {
-             const err = error.response;
-             console.log(error)
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
+    } catch (error) {
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
 
-        }
-    };
-
-    const deletePost = async (e) =>{
-      try {
-        e.preventDefault();
-       if (!window.confirm("게시글을 삭제할까요?")) {
-            return;
-          }
-        const url = `${API_BASE_URL}/inquiry/post/delete/${id}`;
-        const response =  await axios.delete(url)
-        if (response.status === 200) {
-          alert("삭제 완료");
-          navigate(-1);
-        }
-            
-        } catch (error) {
-             const err = error.response;
-             console.log(error)
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
-
-        }
     }
+  };
+
+  const deleteComment = async (e, id) => {
+    try {
+      e.preventDefault();
+      if (!window.confirm("댓글을 삭제할까요?")) {
+        return;
+      }
+      const url = `${API_BASE_URL}/inquiry/comment/delete/${id}`;
+      const response = await axios.delete(url)
+      if (response.status === 200) {
+        alert("삭제 완료");
+        navigate(0);
+      }
+
+    } catch (error) {
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+
+    }
+  };
+
+  const deletePost = async (e) => {
+    try {
+      e.preventDefault();
+      if (!window.confirm("게시글을 삭제할까요?")) {
+        return;
+      }
+      const url = `${API_BASE_URL}/inquiry/post/delete/${id}`;
+      const response = await axios.delete(url)
+      if (response.status === 200) {
+        alert("삭제 완료");
+        navigate(-1);
+      }
+
+    } catch (error) {
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+
+    }
+  }
 
   return (
     <Container className="py-4" style={{ maxWidth: 960 }}>
@@ -265,95 +265,95 @@ const cancelEdit = () => {
       </div>
 
       <div className="d-flex justify-content-end gap-2 mb-2">
-        {page.user === user.id&&(
-           <Button variant="outline-primary" size="sm" onClick={()=> navigate(`/updatePost/${id}`)}>수정</Button>
+        {page.user === user.id && (
+          <Button variant="outline-primary" size="sm" onClick={() => navigate(`/updatePost/${id}`)}>수정</Button>
         )}
-       <Button variant="outline-secondary" size="sm" onClick={()=> navigate(-1)}>돌아가기</Button>
-        {page.user === user.id&&(
-          <Button variant="outline-danger" size="sm" onClick={(e)=> deletePost(e)}>삭제</Button>
+        <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>돌아가기</Button>
+        {page.user === user.id && (
+          <Button variant="outline-danger" size="sm" onClick={(e) => deletePost(e)}>삭제</Button>
         )}
-        
+
       </div>
       <Card className="mb-5">
         <Card.Header className="py-2">댓글</Card.Header>
 
- {commentList.map((c) => {
-  const cid = c.postId;
-  const mine = user.id === c.userId;
-  const isEditing = editingId === cid;
+        {commentList.map((c) => {
+          const cid = c.postId;
+          const mine = user.id === c.userId;
+          const isEditing = editingId === cid;
 
-  return (
-    <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={cid}>
-      <div className="d-flex gap-3">
-        <div
-          className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
-          style={{ width: 40, height: 40 }}
-        >
-          <span className="small">{(c?.userName ?? '').trim().slice(0, 1)}</span>
-        </div>
-
-        {/* 댓글칸 */}
-        <div className="border rounded w-100 p-3">
-          {/* 상단: 이름/시간 */}
-          <div className="d-flex align-items-center gap-2 mb-2">
-            <span className="fw-semibold">{c.userName}</span>
-            <span className="text-muted small">{c.createdAt}</span>
-          </div>
-
-          {/* 보기 모드 vs 수정 모드 교체 지점 */}
-          {isEditing ? (
-            <>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                className="mb-2"
-                value={editingText.content}
-                autoFocus
-                onChange={(e) => setEditingText((pre)=>({...pre, content : e.target.value}))}
-               
-              />
-              <div className="d-flex justify-content-end gap-2">
-                <Button size="sm" variant="secondary" onClick={cancelEdit}>
-                  취소
-                </Button>
-                <Button size="sm" variant="primary" onClick={(e) => updateComment(e, cid)}>
-                  저장
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="mb-2" style={{ whiteSpace: "pre-wrap" }}>
-                {c.content}
-              </div>
-
-              {mine && (
-                <div className="mt-2 d-flex justify-content-end gap-2 small">
-                  <button
-                    type="button"
-                    className="btn btn-link p-0 text-decoration-none link-secondary"
-                    onClick={() => startEdit(c)}
-                  >
-                    수정
-                  </button>
-                  <span className="text-muted">·</span>
-                  <button
-                    type="button"
-                    className="btn btn-link p-0 text-decoration-none link-danger"
-                    onClick={(e) => deleteComment(e,cid)}
-                  >
-                    삭제
-                  </button>
+          return (
+            <div className="d-flex flex-column gap-3 px-3 pt-3 pb-0" key={cid}>
+              <div className="d-flex gap-3">
+                <div
+                  className="rounded-circle bg-secondary bg-opacity-25 d-flex align-items-center justify-content-center flex-shrink-0"
+                  style={{ width: 40, height: 40 }}
+                >
+                  <span className="small">{(c?.userName ?? '').trim().slice(0, 1)}</span>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-})}
-        
+
+                {/* 댓글칸 */}
+                <div className="border rounded w-100 p-3">
+                  {/* 상단: 이름/시간 */}
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <span className="fw-semibold">{c.userName}</span>
+                    <span className="text-muted small">{c.createdAt}</span>
+                  </div>
+
+                  {/* 보기 모드 vs 수정 모드 교체 지점 */}
+                  {isEditing ? (
+                    <>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        className="mb-2"
+                        value={editingText.content}
+                        autoFocus
+                        onChange={(e) => setEditingText((pre) => ({ ...pre, content: e.target.value }))}
+
+                      />
+                      <div className="d-flex justify-content-end gap-2">
+                        <Button size="sm" variant="secondary" onClick={cancelEdit}>
+                          취소
+                        </Button>
+                        <Button size="sm" variant="primary" onClick={(e) => updateComment(e, cid)}>
+                          저장
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="mb-2" style={{ whiteSpace: "pre-wrap" }}>
+                        {c.content}
+                      </div>
+
+                      {mine && (
+                        <div className="mt-2 d-flex justify-content-end gap-2 small">
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none link-secondary"
+                            onClick={() => startEdit(c)}
+                          >
+                            수정
+                          </button>
+                          <span className="text-muted">·</span>
+                          <button
+                            type="button"
+                            className="btn btn-link p-0 text-decoration-none link-danger"
+                            onClick={(e) => deleteComment(e, cid)}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
 
         <Card.Body>
           <div className="position-relative">
@@ -364,9 +364,9 @@ const cancelEdit = () => {
               placeholder="댓글을 남겨보세요"
               className="mb-0 pe-5"
               style={{ resize: "none" }}
-              onChange={(e)=>{
+              onChange={(e) => {
                 const value = e.target.value;
-                setComment((pre)=>({...pre, content : value}))
+                setComment((pre) => ({ ...pre, content: value }))
                 console.log(value)
               }}
             />
@@ -374,7 +374,7 @@ const cancelEdit = () => {
               variant="primary"
               size="sm"
               className="position-absolute end-0 bottom-0 m-2"
-              onClick={(e)=>{writeComment(e)}}
+              onClick={(e) => { writeComment(e) }}
             >
               등록
             </Button>

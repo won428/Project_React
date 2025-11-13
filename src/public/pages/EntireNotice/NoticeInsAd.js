@@ -109,7 +109,7 @@ function App() {
 
     return (
         <>
-            <Container style={{ maxWidth: '600px', margin: '2rem auto' }} >
+            <Container style={{ maxWidth: '800px', marginTop: '2rem' }}>
                 <Row>
                     <Col>
                         <Card>
