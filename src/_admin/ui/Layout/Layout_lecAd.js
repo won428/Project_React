@@ -11,6 +11,7 @@ export const LayoutStLec = () => {
         <Row className="flex-grow-1 w-100">
             {/* 왼쪽 사이드바 */}
 
+<<<<<<< HEAD
             <Col xs={2} className="bg-dark text-white p-3 d-flex flex-column">
                 <Nav className="flex-column">
                     <Nav.Link
@@ -23,6 +24,40 @@ export const LayoutStLec = () => {
                         onClick={() => navigate(`/lectureList`)}
                         className="text-white">강의 목록</Nav.Link>
                 </Nav>
+=======
+            <Col xs={2} className="bg-dark text-white p-3">
+
+                <Container>
+                    <Nav className="flex-column">
+                        {/* <Nav.Link
+                            onClick={() => navigate(`/LHomeAD`)}
+                            className="text-white">강의 홈</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/LRoom`)}
+                            className="text-white"
+                        >강의실 </Nav.Link> */}
+                        <Nav.Link
+
+                            onClick={() => navigate(`/lectureRegister`)}
+                            className="text-white">강의 등록</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/lectureList`)}
+                            className="text-white">강의 목록</Nav.Link>
+                        {/* <Nav.Link
+                            onClick={() => navigate(`/inprolecList`)}
+                            className="text-white">개강 강의 목록</Nav.Link> */}
+                        {/* <Nav.Link
+                            onClick={() => navigate(`/majorList`)}
+                            className="text-white"
+                        >학과 조회</Nav.Link>
+                        <Nav.Link
+                            onClick={() => navigate(`/majorReg`)}
+                            className="text-white"
+                        >학과 등록</Nav.Link> */}
+
+                    </Nav>
+                </Container>
+>>>>>>> 4c74022a6ef032ec69fe54d2c81e9d512f037542
             </Col>
 
             {/* 오른쪽 컨텐츠 영역 */}
