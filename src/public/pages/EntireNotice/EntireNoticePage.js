@@ -1,19 +1,19 @@
 import { Outlet } from "react-router-dom";
-import Menu from "./Menuitems_En";
-import { appName } from "../../../public/appName";
+import MenuEn from "./Menuitems_En";
+import { appName } from "../../appName";
+import { Card, Container } from "react-bootstrap";
 
 const EnPage = () => {
-    //Student 권한 Menu + Layout + footer Form
     return (
-        <>
-            <header><Menu /></header>
-            <main>
+        <div className="app-wrapper d-flex flex-column min-vh-100 bg-light">
+            <header><MenuEn /></header>
+            <main className="flex-grow-1 d-flex">
                 <Outlet />
             </main>
-            <footer className="bg-dark rooter py-3 mt-5 text-light text-center">
-                <p>&copy;2025{appName}.All rights reserved</p>
+            <footer className="bg-dark py-3 mt-auto text-light text-center">
+                <p className="mb-0">&copy;2025 {appName}. All rights reserved</p>
             </footer>
-        </>
+        </div>
     )
 }
 export default EnPage;

@@ -90,9 +90,9 @@ import EnPage from "../public/pages/EntireNotice/EntireNoticePage";
 import ProSpecPage from "../_lecturePS/ui/ProSpecPage";
 
 
-import { LayoutStLec } from "../_admin/ui/Layout/Layout_lecAd";
-import { LayoutStInfo } from "../_admin/ui/Layout/Layout_InfoAd";
-import { LayoutStCon } from "../_admin/ui/Layout/Layout_StCon";
+import { LayoutStLec } from "../_admin/ui/Layout/Layout_lecAd.js";
+import { LayoutStInfo } from "../_admin/ui/Layout/Layout_InfoAd.js";
+import { LayoutStCon } from "../_admin/ui/Layout/Layout_StCon.js";
 
 import { LayoutStLecst } from "../_student/ui/Layout/Layout_lecSt";
 import { LayoutStInfost } from "../_student/ui/Layout/Layout_InfoSt";
@@ -314,7 +314,6 @@ function App() {
 
 
                     {/* Schedule Tab */}
-
 
 
                 </Route>

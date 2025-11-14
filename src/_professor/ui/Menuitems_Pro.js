@@ -2,7 +2,7 @@ import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../public/context/UserContext";
 
-function MenuSt() {
+function MenuPro() {
     const { user, logout } = useAuth();
 
     const navigate = useNavigate();
@@ -58,4 +58,4 @@ function MenuSt() {
         </Row>
     )
 }
-export default MenuSt;
+export default MenuPro;

@@ -36,7 +36,7 @@ function App() {
     console.log(CalData);
 
     return (
-        <Container className="mt-5">
+        <Container className="mt-4 mb-5" style={{ maxWidth: 980 }}>
             <Card className="shadow-sm">
                 <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
                     <h5 className="mb-0"> 학사 일정 캘린더</h5>

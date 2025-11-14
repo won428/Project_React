@@ -9,13 +9,13 @@ function InquiryBoardUI() {
   const navigate = useNavigate();
   const [inquiryList, setInquiryList] = useState([]);
   const { user } = useAuth();
-  
+
 
   const typeMap = {
     PENDING: "대기중",
     APPROVED: "처리중",
-    COMPLETED : "처리완료",
-    REJECTED : "거부"
+    COMPLETED: "처리완료",
+    REJECTED: "거부"
   };
 
   const typeMap2 = {
@@ -29,39 +29,39 @@ function InquiryBoardUI() {
     const id = user.id;
     axios
       .get(url, { params: { id } })
-      .then((res) =>{
+      .then((res) => {
         console.log(res.data)
         setInquiryList(res.data)
       })
-        .catch((err) => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
-  const clickPost = async (e, id) =>{
-    
+  const clickPost = async (e, id) => {
+
     try {
       e.preventDefault();
       const url = `${API_BASE_URL}/inquiry/clickTitle`
       const response = await axios.patch(url, null, {
-        params: {id : id},
+        params: { id: id },
         headers: { 'Content-Type': 'application/json' }
-         }
+      }
       );
-      
-      if(response.status === 200){
+
+      if (response.status === 200) {
         navigate(`/inquiryPage/${id}`)
       }
-      
-    } catch (error) {
-             const err = error.response;
-             console.log(error)
-        if (!err) {
-            alert('네트워크 오류가 발생하였습니다');
-            return;
-        }
-        const message = err.data?.message ?? '오류 발생';
-        alert(message);
 
-        }
+    } catch (error) {
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+
+    }
   }
 
   return (
@@ -116,7 +116,7 @@ function InquiryBoardUI() {
                       className="d-inline-block text-truncate"
                       style={{ maxWidth: 520, cursor: "pointer" }}
                       role="button"
-                      onClick={(e) => { clickPost(e, inquiry.postNumber)}}
+                      onClick={(e) => { clickPost(e, inquiry.postNumber) }}
                     >
                       {inquiry.title}
                     </span>
