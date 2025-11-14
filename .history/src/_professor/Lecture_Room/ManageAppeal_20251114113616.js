@@ -33,38 +33,6 @@ function ManageAppeal() {
     });
     const [updatedAttendance, setUpdatedAttendance] = useState({ newStatus: "" });
 
-    const downloadClick = (id) => {
-        const url = `${API_BASE_URL}/api/appeals/files/download/${id}`
-        axios
-            .get(url, { responseType: 'blob' })
-            .then((response) => {
-                console.log(response.headers)
-                const cd = response.headers['content-disposition'] || '';
-                const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
-                const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
-                const filename = (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
-
-                const blob = new Blob(
-                    [response.data],
-                    {
-                        type: response.headers['content-type'] || 'application/octet-stream',
-                    }
-                );
-
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                URL.revokeObjectURL(a.href);
-            })
-            .catch((err) => {
-                console.error(err.response?.data);
-                alert('오류');
-            })
-    }
-
     const calculateTotalAndGrade = ({ ascore, asScore, tscore, ftScore }) => {
         const att = Math.max(0, Math.min(ascore || 0, WEIGHTS.ascore));
         const as = Math.max(0, Math.min(asScore || 0, WEIGHTS.asScore));
@@ -105,45 +73,32 @@ function ManageAppeal() {
     });
 
     const openModal = async (appeal, mode) => {
-        try {
-            // attachments만 새로 가져오기
-            const attachRes = await axios.get(`${API_BASE_URL}/api/appeals/${appeal.appealId}/attachments`);
-            const attachments = attachRes.data || [];
-
-            if (appeal.appealType === "ATTENDANCE") {
-                const attRes = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-                const data = attRes.data;
+        if (appeal.appealType === "ATTENDANCE") {
+            try {
+                const res = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
+                const data = res.data;
 
                 const attendance = {
                     attendanceDate: data.attendanceDate ?? data.date ?? "",
                     attendStudent: data.attendStudent ?? data.status ?? ""
                 };
 
-                const rawContent = appeal.content ?? ""; // appeal.content 유지
+                const rawContent = appeal.content || "";
                 const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
 
-                setSelectedAppeal({
-                    ...appeal, // 기존 content, title, studentName 등 유지
-                    ...attendance,
-                    content: studentContent,
-                    attachments
-                });
+                // attachments 제거
+                setSelectedAppeal({ ...appeal, ...attendance, content: studentContent });
                 setUpdatedAttendance({ newStatus: attendance.attendStudent });
                 setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } else {
-                const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
-                setSelectedAppeal({
-                    ...appeal,
-                    totalScore,
-                    lectureGrade,
-                    attachments
-                });
-                setUpdatedScores({ ...appeal, totalScore, lectureGrade });
-                setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
+            } catch (err) {
+                console.error(err);
             }
-        } catch (err) {
-            console.error("모달 열기 오류:", err);
-            alert("이의제기 정보를 불러오지 못했습니다.");
+        } else {
+            const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
+            // attachments 제거
+            setSelectedAppeal({ ...appeal });
+            setUpdatedScores({ ...appeal, totalScore, lectureGrade });
+            setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
         }
     };
 
@@ -254,6 +209,7 @@ function ManageAppeal() {
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        {/* 강의/성적 정보 */}
                         {selectedAppeal.appealType === "ATTENDANCE" ? (
                             <>
                                 <Form.Group className="mb-2">
@@ -338,35 +294,6 @@ function ManageAppeal() {
                                 </Form.Group>
                             </>
                         )}
-                        {/* 첨부파일 다운로드: 맨 아래로 이동 */}
-                        <div className="mt-3">
-                            <div className="text-muted small mb-2">첨부파일</div>
-                            <div className="d-flex align-items-center justify-content-between">
-                                <div className="text-muted w-100">
-                                    <ul className="mb-0 w-100">
-                                        {selectedAppeal?.attachments?.length > 0 ? (
-                                            selectedAppeal.attachments.map(file => (
-                                                <li key={file.id} className="mb-1">
-                                                    <div className="d-flex align-items-center w-100">
-                                                        <span className="text-truncate me-2 flex-grow-1">{file.name}</span>
-                                                        <Button
-                                                            size="sm"
-                                                            variant="outline-secondary"
-                                                            className="ms-auto flex-shrink-0"
-                                                            onClick={() => downloadClick(file.id)}
-                                                        >
-                                                            다운로드
-                                                        </Button>
-                                                    </div>
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li className="text-muted">첨부된 파일이 없습니다.</li>
-                                        )}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
                     </Modal.Body>
                     <Modal.Footer>
                         {modalMode.includes("Approve") && <Button variant="success" onClick={handleApproveSubmit}>승인 및 저장</Button>}

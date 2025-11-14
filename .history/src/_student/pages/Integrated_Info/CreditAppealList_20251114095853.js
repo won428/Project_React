@@ -14,10 +14,7 @@ function CreditAppealList() {
     useEffect(() => {
         if (!user?.id) return;
         axios.get(`${API_BASE_URL}/api/appeals/mylist`, { params: { id: user.id } })
-            .then(res => {
-                console.log("appealList:", res.data);
-                setAppealList(res.data)
-            })
+            .then(res => setAppealList(res.data))
             .catch(err => console.error(err));
     }, [user]);
 
@@ -51,21 +48,18 @@ function CreditAppealList() {
 
                     <tbody>
                         {appealList.length > 0 ? (
-                            appealList
-                                .filter(
-                                    appeal => appeal.appealType &&
-                                        ['GRADE', 'MIDTERMEXAM', 'FINALEXAM'].includes(appeal.appealType.toUpperCase())
-                                )
-                                .map((appeal) => (
-                                    <tr key={appeal.appealId}>
-                                        <td style={{  color: "black"}}>
-                                            {appeal.lectureName}
-                                        </td>
-                                        <td>{appeal.content}</td>
-                                        <td>{appeal.appealDate}</td>
-                                        <td>{statusMap[appeal.status]}</td>
-                                    </tr>
-                                ))
+                            appealList.map((appeal) => (
+                                <tr key={appeal.appealId}>
+                                    <td
+                                        style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+                                    >
+                                        {appeal.lectureName}
+                                    </td>
+                                    <td>{appeal.content}</td>
+                                    <td>{appeal.appealDate}</td>
+                                    <td>{statusMap[appeal.status]}</td>
+                                </tr>
+                            ))
                         ) : (
                             <tr>
                                 <td colSpan="4" className="text-center text-muted">

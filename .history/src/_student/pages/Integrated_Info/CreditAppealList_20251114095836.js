@@ -14,10 +14,7 @@ function CreditAppealList() {
     useEffect(() => {
         if (!user?.id) return;
         axios.get(`${API_BASE_URL}/api/appeals/mylist`, { params: { id: user.id } })
-            .then(res => {
-                console.log("appealList:", res.data);
-                setAppealList(res.data)
-            })
+            .then(res => setAppealList(res.data))
             .catch(err => console.error(err));
     }, [user]);
 
@@ -52,13 +49,16 @@ function CreditAppealList() {
                     <tbody>
                         {appealList.length > 0 ? (
                             appealList
-                                .filter(
-                                    appeal => appeal.appealType &&
-                                        ['GRADE', 'MIDTERMEXAM', 'FINALEXAM'].includes(appeal.appealType.toUpperCase())
+                                .filter(appeal =>
+                                    appeal.appealType === "ASSIGNMENT" ||
+                                    appeal.appealType === "MIDTERMEXAM" ||
+                                    appeal.appealType === "FINALEXAM"
                                 )
                                 .map((appeal) => (
                                     <tr key={appeal.appealId}>
-                                        <td style={{  color: "black"}}>
+                                        <td
+                                            style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+                                        >
                                             {appeal.lectureName}
                                         </td>
                                         <td>{appeal.content}</td>
@@ -74,6 +74,7 @@ function CreditAppealList() {
                             </tr>
                         )}
                     </tbody>
+
                 </Table>
             </div>
         </Container>

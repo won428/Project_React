@@ -58,7 +58,7 @@ function CreditAppealList() {
                                 )
                                 .map((appeal) => (
                                     <tr key={appeal.appealId}>
-                                        <td style={{  color: "black"}}>
+                                        <td style={{  color: "blue"=}}>
                                             {appeal.lectureName}
                                         </td>
                                         <td>{appeal.content}</td>

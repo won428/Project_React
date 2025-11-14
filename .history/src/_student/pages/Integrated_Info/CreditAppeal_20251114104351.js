@@ -90,6 +90,21 @@ function CreditAppeal() {
         setNewFiles(prev => prev.filter((_, i) => i !== idx));
     };
 
+    // 파일 다운로드
+    const downloadFile = (storedKey, fileName) => {
+        axios.get(`${API_BASE_URL}/api/files/download/${storedKey}`, {
+            responseType: 'blob'
+        }).then(res => {
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }).catch(err => console.error(err));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -211,13 +226,15 @@ function CreditAppeal() {
                         <ul style={{ paddingLeft: 0, listStyle: 'none' }}>
                             {existingFiles.map((file, idx) => (
                                 <li key={`existing-${idx}`} className="mb-1 d-flex align-items-center">
-                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1 }} />
+                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1, marginRight: 8 }} />
+                                    <Button size="sm" variant="secondary" style={{ marginRight: 4 }} onClick={() => downloadFile(file.storedKey, file.name)}>다운로드</Button>
                                     <Button size="sm" variant="danger" onClick={() => handleDeleteExistingFile(idx)}>삭제</Button>
                                 </li>
                             ))}
                             {newFiles.map((file, idx) => (
                                 <li key={`new-${idx}`} className="mb-1 d-flex align-items-center">
-                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1 }} />
+                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1, marginRight: 8 }} />
+                                    <Button size="sm" variant="secondary" style={{ marginRight: 4 }} onClick={() => downloadFile(file.name, file.name)}>다운로드</Button>
                                     <Button size="sm" variant="danger" onClick={() => handleDeleteNewFile(idx)}>삭제</Button>
                                 </li>
                             ))}

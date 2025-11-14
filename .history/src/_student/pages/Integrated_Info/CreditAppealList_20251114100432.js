@@ -52,13 +52,14 @@ function CreditAppealList() {
                     <tbody>
                         {appealList.length > 0 ? (
                             appealList
-                                .filter(
-                                    appeal => appeal.appealType &&
-                                        ['GRADE', 'MIDTERMEXAM', 'FINALEXAM'].includes(appeal.appealType.toUpperCase())
+                                .filter(appeal =>
+                                    appeal.appealType === 'GRADE' ||
+                                    appeal.appealType === 'MIDTERMEXAM' ||
+                                    appeal.appealType === 'FINALEXAM'
                                 )
                                 .map((appeal) => (
                                     <tr key={appeal.appealId}>
-                                        <td style={{  color: "black"}}>
+                                        <td style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}>
                                             {appeal.lectureName}
                                         </td>
                                         <td>{appeal.content}</td>

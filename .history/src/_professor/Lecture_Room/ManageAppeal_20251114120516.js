@@ -105,47 +105,38 @@ function ManageAppeal() {
     });
 
     const openModal = async (appeal, mode) => {
-        try {
-            // attachments만 새로 가져오기
-            const attachRes = await axios.get(`${API_BASE_URL}/api/appeals/${appeal.appealId}/attachments`);
-            const attachments = attachRes.data || [];
+    try {
+        // 1. 서버에서 attachments 가져오기
+        const res = await axios.get(`${API_BASE_URL}/api/appeals/${appeal.appealId}/attachments`);
+        const attachments = res.data || [];
 
-            if (appeal.appealType === "ATTENDANCE") {
-                const attRes = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
-                const data = attRes.data;
+        // 2. 출결/성적 구분
+        if (appeal.appealType === "ATTENDANCE") {
+            const attRes = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
+            const data = attRes.data;
 
-                const attendance = {
-                    attendanceDate: data.attendanceDate ?? data.date ?? "",
-                    attendStudent: data.attendStudent ?? data.status ?? ""
-                };
+            const attendance = {
+                attendanceDate: data.attendanceDate ?? data.date ?? "",
+                attendStudent: data.attendStudent ?? data.status ?? ""
+            };
 
-                const rawContent = appeal.content ?? ""; // appeal.content 유지
-                const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
+            const rawContent = appeal.content || "";
+            const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
 
-                setSelectedAppeal({
-                    ...appeal, // 기존 content, title, studentName 등 유지
-                    ...attendance,
-                    content: studentContent,
-                    attachments
-                });
-                setUpdatedAttendance({ newStatus: attendance.attendStudent });
-                setModalMode(mode === "approve" ? "attApprove" : "attView");
-            } else {
-                const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
-                setSelectedAppeal({
-                    ...appeal,
-                    totalScore,
-                    lectureGrade,
-                    attachments
-                });
-                setUpdatedScores({ ...appeal, totalScore, lectureGrade });
-                setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
-            }
-        } catch (err) {
-            console.error("모달 열기 오류:", err);
-            alert("이의제기 정보를 불러오지 못했습니다.");
+            setSelectedAppeal({ ...appeal, ...attendance, content: studentContent, attachments });
+            setUpdatedAttendance({ newStatus: attendance.attendStudent });
+            setModalMode(mode === "approve" ? "attApprove" : "attView");
+        } else {
+            const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
+            setSelectedAppeal({ ...appeal, totalScore, lectureGrade, attachments });
+            setUpdatedScores({ ...appeal, totalScore, lectureGrade });
+            setModalMode(mode === "approve" ? "gradeApprove" : "gradeView");
         }
-    };
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 
     const handleScoreChange = (e) => {
         const { name, value } = e.target;
@@ -346,14 +337,14 @@ function ManageAppeal() {
                                     <ul className="mb-0 w-100">
                                         {selectedAppeal?.attachments?.length > 0 ? (
                                             selectedAppeal.attachments.map(file => (
-                                                <li key={file.id} className="mb-1">
+                                                <li key={file.attachment_id || file.id} className="mb-1">
                                                     <div className="d-flex align-items-center w-100">
                                                         <span className="text-truncate me-2 flex-grow-1">{file.name}</span>
                                                         <Button
                                                             size="sm"
                                                             variant="outline-secondary"
                                                             className="ms-auto flex-shrink-0"
-                                                            onClick={() => downloadClick(file.id)}
+                                                            onClick={() => downloadClick(file.attachment_id || file.id)}
                                                         >
                                                             다운로드
                                                         </Button>

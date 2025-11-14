@@ -17,9 +17,7 @@ function CreditAppeal() {
     const [grade, setGrade] = useState(null);
 
     const [showModal, setShowModal] = useState(false);
-
-    const [existingFiles, setExistingFiles] = useState([]); // 기존 파일(JSON)
-    const [newFiles, setNewFiles] = useState([]);           // 새로 업로드한 파일(File 객체)
+    const [files, setFiles] = useState([]); // 🔹 여러 파일 상태
 
     const numLecId = Number(lectureId);
 
@@ -42,7 +40,7 @@ function CreditAppeal() {
         { key: 'lectureGrade', label: '학점' }
     ];
 
-    // 강의 정보 + 기존 첨부파일 가져오기
+    // 강의 정보 가져오기
     useEffect(() => {
         axios.get(`${API_BASE_URL}/api/appeals/lectures/${lectureId}`)
             .then(res => {
@@ -54,11 +52,18 @@ function CreditAppeal() {
                     lectureId: Number(lectureId),
                     receiverId: res.data.userId
                 }));
-                // 기존 첨부파일(JSON) 불러오기
-                setExistingFiles(res.data.attachments || []);
             })
             .catch(err => console.error(err));
     }, [lectureId]);
+
+    // 교수 이름 조회
+    useEffect(() => {
+        if (professorId) {
+            axios.get(`${API_BASE_URL}/api/appeals/users/${professorId}`)
+                .then(res => setProfessorName(res.data.name))
+                .catch(err => console.error(err));
+        }
+    }, [professorId]);
 
     // 성적 조회
     useEffect(() => {
@@ -75,19 +80,8 @@ function CreditAppeal() {
         setAppealForm(prev => ({ ...prev, [name]: value }));
     };
 
-    // 새 파일 선택
-    const handleNewFileChange = (e) => {
-        setNewFiles(Array.from(e.target.files));
-    };
-
-    // 첨부파일 삭제 (기존 파일)
-    const handleDeleteExistingFile = (idx) => {
-        setExistingFiles(prev => prev.filter((_, i) => i !== idx));
-    };
-
-    // 첨부파일 삭제 (새 파일)
-    const handleDeleteNewFile = (idx) => {
-        setNewFiles(prev => prev.filter((_, i) => i !== idx));
+    const handleFileChange = (e) => {
+        setFiles(Array.from(e.target.files)); // 🔹 여러 파일 선택 가능
     };
 
     const handleSubmit = (e) => {
@@ -101,11 +95,10 @@ function CreditAppeal() {
         formData.append('title', appealForm.title);
         formData.append('content', appealForm.content);
 
-        // 기존 파일(JSON) 전송
-        formData.append('existingFiles', JSON.stringify(existingFiles));
-
-        // 새 파일(File) 전송
-        newFiles.forEach(file => formData.append('files', file));
+        // 🔹 여러 파일 전송
+        files.forEach((file, idx) => {
+            formData.append('files', file); // 서버에서 files[]로 받도록 설계 필요
+        });
 
         axios.post(`${API_BASE_URL}/api/appeals/myappeal`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
@@ -198,32 +191,11 @@ function CreditAppeal() {
                     />
                 </Form.Group>
 
-                {/* 첨부파일 업로드 */}
+                {/* 🔹 여러 파일 선택 가능 */}
                 <Form.Group className="mb-3">
                     <Form.Label>증빙 파일 첨부 (여러 개 가능)</Form.Label>
-                    <Form.Control type="file" multiple onChange={handleNewFileChange} />
+                    <Form.Control type="file" multiple onChange={handleFileChange} />
                 </Form.Group>
-
-                {/* 첨부파일 목록 (기존 + 새 파일) */}
-                {(existingFiles.length > 0 || newFiles.length > 0) && (
-                    <Form.Group className="mb-3">
-                        <Form.Label>첨부파일 목록</Form.Label>
-                        <ul style={{ paddingLeft: 0, listStyle: 'none' }}>
-                            {existingFiles.map((file, idx) => (
-                                <li key={`existing-${idx}`} className="mb-1 d-flex align-items-center">
-                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1 }} />
-                                    <Button size="sm" variant="danger" onClick={() => handleDeleteExistingFile(idx)}>삭제</Button>
-                                </li>
-                            ))}
-                            {newFiles.map((file, idx) => (
-                                <li key={`new-${idx}`} className="mb-1 d-flex align-items-center">
-                                    <Form.Control type="text" value={file.name} disabled style={{ flex: 1 }} />
-                                    <Button size="sm" variant="danger" onClick={() => handleDeleteNewFile(idx)}>삭제</Button>
-                                </li>
-                            ))}
-                        </ul>
-                    </Form.Group>
-                )}
 
                 <Button type="submit" variant="primary" style={{ marginRight: 8 }}>
                     신청 제출

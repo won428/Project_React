@@ -346,7 +346,7 @@ function ManageAppeal() {
                                     <ul className="mb-0 w-100">
                                         {selectedAppeal?.attachments?.length > 0 ? (
                                             selectedAppeal.attachments.map(file => (
-                                                <li key={file.id} className="mb-1">
+                                                <li key={file.attachment_=id || file.id} className="mb-1">
                                                     <div className="d-flex align-items-center w-100">
                                                         <span className="text-truncate me-2 flex-grow-1">{file.name}</span>
                                                         <Button

@@ -106,11 +106,12 @@ function ManageAppeal() {
 
     const openModal = async (appeal, mode) => {
         try {
-            // attachments만 새로 가져오기
+            // 1. 해당 이의제기 첨부파일 서버에서 가져오기
             const attachRes = await axios.get(`${API_BASE_URL}/api/appeals/${appeal.appealId}/attachments`);
             const attachments = attachRes.data || [];
 
             if (appeal.appealType === "ATTENDANCE") {
+                // 2-1. 출결 이의제기 상세 가져오기
                 const attRes = await axios.get(`${API_BASE_URL}/api/appeals/attendance/${appeal.appealId}`);
                 const data = attRes.data;
 
@@ -119,11 +120,11 @@ function ManageAppeal() {
                     attendStudent: data.attendStudent ?? data.status ?? ""
                 };
 
-                const rawContent = appeal.content ?? ""; // appeal.content 유지
+                const rawContent = appeal.content || "";
                 const studentContent = rawContent.replace(/\[[^\]]*\]/g, "").trim();
 
                 setSelectedAppeal({
-                    ...appeal, // 기존 content, title, studentName 등 유지
+                    ...appeal,
                     ...attendance,
                     content: studentContent,
                     attachments
@@ -131,6 +132,7 @@ function ManageAppeal() {
                 setUpdatedAttendance({ newStatus: attendance.attendStudent });
                 setModalMode(mode === "approve" ? "attApprove" : "attView");
             } else {
+                // 2-2. 성적 이의제기 상세 처리
                 const { totalScore, lectureGrade } = calculateTotalAndGrade(appeal);
                 setSelectedAppeal({
                     ...appeal,
@@ -146,6 +148,7 @@ function ManageAppeal() {
             alert("이의제기 정보를 불러오지 못했습니다.");
         }
     };
+
 
     const handleScoreChange = (e) => {
         const { name, value } = e.target;
@@ -346,14 +349,14 @@ function ManageAppeal() {
                                     <ul className="mb-0 w-100">
                                         {selectedAppeal?.attachments?.length > 0 ? (
                                             selectedAppeal.attachments.map(file => (
-                                                <li key={file.id} className="mb-1">
+                                                <li key={file.attachment_id || file.id} className="mb-1">
                                                     <div className="d-flex align-items-center w-100">
                                                         <span className="text-truncate me-2 flex-grow-1">{file.name}</span>
                                                         <Button
                                                             size="sm"
                                                             variant="outline-secondary"
                                                             className="ms-auto flex-shrink-0"
-                                                            onClick={() => downloadClick(file.id)}
+                                                            onClick={() => downloadClick(file.attachment_id || file.id)}
                                                         >
                                                             다운로드
                                                         </Button>

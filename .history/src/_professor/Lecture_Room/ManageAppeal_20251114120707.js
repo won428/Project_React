@@ -346,14 +346,14 @@ function ManageAppeal() {
                                     <ul className="mb-0 w-100">
                                         {selectedAppeal?.attachments?.length > 0 ? (
                                             selectedAppeal.attachments.map(file => (
-                                                <li key={file.id} className="mb-1">
+                                                <li key={file.attachment_id || file.id} className="mb-1">
                                                     <div className="d-flex align-items-center w-100">
                                                         <span className="text-truncate me-2 flex-grow-1">{file.name}</span>
                                                         <Button
                                                             size="sm"
                                                             variant="outline-secondary"
                                                             className="ms-auto flex-shrink-0"
-                                                            onClick={() => downloadClick(file.id)}
+                                                            onClick={() => downloadClick(file.attachment_id || file.id)}
                                                         >
                                                             다운로드
                                                         </Button>
