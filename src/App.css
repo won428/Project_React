@@ -56,3 +56,11 @@
     transform: rotate(360deg);
   }
 }
+
+/* .pagination-container {
+  position: fixed;
+  bottom: 50px;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+} */
