@@ -41,7 +41,7 @@ function App() {
 
   const [paging, setPaging] = useState({
     totalElements : 0,
-    pageSize : 10,
+    pageSize : 5,
     totalPages : 0,
     pageNumber : 0,
     pageCount : 10,
