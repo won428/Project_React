@@ -32,7 +32,6 @@ export default function StudentDetailPage() {
     majorCredit: 0,
     generalCredit: 0,
     lectureGrade: 0,
-    image: "",
     studentRecordList: [],
     gradeInfoList: {
       content: [],
@@ -207,8 +206,6 @@ export default function StudentDetailPage() {
         alert("오류");
       });
   }, [modalId]);
-
-  const displayedImage = previewURL || student.image || null;
 
   return (
     <>

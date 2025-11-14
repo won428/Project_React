@@ -71,18 +71,18 @@ function AttendanceAppeal({ readOnly = false, appealData = null }) { // ✅ 추�
     }, [lectureId, readOnly]);
 
     // 학생 본인 출결 이의제기 최신화
-    useEffect(() => {
-        if (readOnly) return; // 교수/상세보기 모드에서는 실행 X
-        if (!lectureId || !userId) return;
+useEffect(() => {
+    if (readOnly) return; // 교수/상세보기 모드에서는 실행 X
+    if (!lectureId || !userId) return;
 
-        axios.get(`${API_BASE_URL}/lecture/attendanceAppeal/myAppeal`, {
-            params: { lectureId, studentId: userId }
-        })
-            .then(res => {
-                if (res.data) setAppealForm(res.data);
-            })
-            .catch(err => console.error(err));
-    }, [lectureId, userId, readOnly]);
+    axios.get(`${API_BASE_URL}/lecture/attendanceAppeal/myAppeal`, { 
+        params: { lectureId, studentId: userId } 
+    })
+    .then(res => {
+        if (res.data) setAppealForm(res.data);
+    })
+    .catch(err => console.error(err));
+}, [lectureId, userId, readOnly]);
 
     // ✅ readOnly 모드일 경우 lectureName, professorName을 appealData에서 세팅
     useEffect(() => {

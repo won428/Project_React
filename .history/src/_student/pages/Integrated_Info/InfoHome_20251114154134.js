@@ -32,7 +32,7 @@ export default function StudentDetailPage() {
     majorCredit: 0,
     generalCredit: 0,
     lectureGrade: 0,
-    image: "",
+    
     studentRecordList: [],
     gradeInfoList: {
       content: [],
@@ -208,7 +208,7 @@ export default function StudentDetailPage() {
       });
   }, [modalId]);
 
-  const displayedImage = previewURL || student.image || null;
+  const displayedImage = previewURL || statusRecords.studentImage || null;
 
   return (
     <>

@@ -208,7 +208,7 @@ export default function StudentDetailPage() {
       });
   }, [modalId]);
 
-  const displayedImage = previewURL || student.image || null;
+  const displayedImage = previewURL || statusRecords.studentImage || null;
 
   return (
     <>

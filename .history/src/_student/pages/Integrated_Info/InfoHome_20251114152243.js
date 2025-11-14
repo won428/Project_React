@@ -32,7 +32,6 @@ export default function StudentDetailPage() {
     majorCredit: 0,
     generalCredit: 0,
     lectureGrade: 0,
-    image: "",
     studentRecordList: [],
     gradeInfoList: {
       content: [],
@@ -207,8 +206,6 @@ export default function StudentDetailPage() {
         alert("오류");
       });
   }, [modalId]);
-
-  const displayedImage = previewURL || student.image || null;
 
   return (
     <>
@@ -486,17 +483,4 @@ export default function StudentDetailPage() {
                     <td>{modalLec.ascore ?? "-"}</td>
                     <td>{modalLec.asScore ?? "-"}</td>
                     <td>{modalLec.tscore ?? "-"}</td>
-                    <td>{modalLec.ftScore ?? "-"}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>닫기</Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
-}
+                    <td>{
