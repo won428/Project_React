@@ -19,14 +19,14 @@ export const LayoutStInfoPublic = () => {
                         onClick={() => navigate(`/InfoHome`)}
                         className="text-white"
                     >학적 홈</Nav.Link>
-                    <Nav.Link
+                    {/* <Nav.Link
                         onClick={() => navigate(`/This_Credit`)}
                         className="text-white"
                     >당학기 성적</Nav.Link>
                     <Nav.Link
                         onClick={() => navigate(`/etrcdt`)}
                         className="text-white"
-                    >전체 성적 </Nav.Link>
+                    >전체 성적 </Nav.Link> */}
                     <Nav.Link
                         onClick={() => navigate(`/inquiryBoard`)}
                         className="text-white"

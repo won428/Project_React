@@ -20,9 +20,6 @@ export const Layout_lecRoomP = () => {
                 <Nav className="flex-column">
                     <Nav.Link
                         onClick={() => navigate(`/notionlist`)}
-                        className="text-white">강의 홈(TodoList)</Nav.Link>
-                    <Nav.Link
-                        onClick={() => navigate(`/notionlist`)}
                         className="text-white">공지 </Nav.Link>
                     <Nav.Link
                         onClick={() => navigate(`/asnlst`)}
@@ -50,7 +47,7 @@ export const Layout_lecRoomP = () => {
                 <Outlet />
             </Col>
 
-        </Row>
+        </Row >
 
     );
 }

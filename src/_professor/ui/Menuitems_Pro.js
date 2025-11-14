@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../public/context/UserContext";
 import { useSessionTimer } from "../../public/context/useSessionTimer";
 import { requestTokenRefresh } from "../../public/config/api";
+
 function MenuPro() {
     const { user, logout } = useAuth();
     const { formattedTime, refreshTimer } = useSessionTimer();
@@ -20,20 +21,16 @@ function MenuPro() {
         } catch (e) {
             console.log('토큰 갱신 실패');
         }
-
-
     }
-
-
 
     return (
         <Row>
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand onClick={() => navigate(`/hs`)} > Home </Navbar.Brand>
+                        <Navbar.Brand onClick={() => navigate(`/hp`)} > Home </Navbar.Brand>
                         <Nav className="me-auto">
-                            <Nav.Link onClick={() => navigate(`/Lecture_HomePro`)}>
+                            <Nav.Link onClick={() => navigate(`/LRoomPro`)}>
                                 사이버 캠퍼스
                             </Nav.Link>
                             <Nav.Link onClick={() => {
@@ -60,7 +57,6 @@ function MenuPro() {
                                 학사일정
                             </Nav.Link>
                         </Nav>
-
                         <Nav>
                             <Navbar.Text className="text-white">
                                 {user.name} 님 &nbsp;
@@ -71,7 +67,6 @@ function MenuPro() {
                             <Button size="sm" variant="link" className="mx-2" onClick={handelRefresh} >⟳</Button>
                         </Nav>
                         <Button size="sm" onClick={logoutAction} >Logout</Button>
-
                     </Container>
                 </Navbar>
             </Col>

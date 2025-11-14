@@ -15,8 +15,8 @@ import axios from "axios";
 import { type } from "@testing-library/user-event/dist/type";
 
 export default function StudentDetailPage() {
-    const {user} = useAuth();
-    const [student, setStudent] = useState({
+  const { user } = useAuth();
+  const [student, setStudent] = useState({
     userCode: "",
     name: "",
     birthDate: "",
@@ -43,23 +43,23 @@ export default function StudentDetailPage() {
     gradeInfoList: [],
   });
 
-    useEffect(()=>{
-       if (!user?.id) return;
-        const id = user.id;
-        const url = `${API_BASE_URL}/user/detailAll/${id}`;
-        axios
-            .get(url)
-            .then((res)=>{
-                console.log(res.data);
-                setStudent(res.data)
-            })
-            .catch((error)=>{
-              console.error('status:', error.response?.status);
-              console.error('data:', error.response?.data); // 여기 메시지/스택트레이스 들어올 수 있음
-            })
-    },[])
+  useEffect(() => {
+    if (!user?.id) return;
+    const id = user.id;
+    const url = `${API_BASE_URL}/user/detailAll/${id}`;
+    axios
+      .get(url)
+      .then((res) => {
+        console.log(res.data);
+        setStudent(res.data)
+      })
+      .catch((error) => {
+        console.error('status:', error.response?.status);
+        console.error('data:', error.response?.data); // 여기 메시지/스택트레이스 들어올 수 있음
+      })
+  }, [])
 
-   const typeMap = {
+  const typeMap = {
     PENDING: "처리중",
     APPROVED: "완료",
     REJECTED: "거부",
@@ -67,14 +67,14 @@ export default function StudentDetailPage() {
     COMPLETED: "종강",
   };
 
-   const typeMap2 = {
-     ENROLLED: '재학',
-    ON_LEAVE:'휴학',
-    REINSTATED:'복학',
-    EXPELLED:'퇴학',
-    GRADUATED:'졸업',
-    MILITARY_LEAVE:'군 휴학',
-    MEDICAL_LEAVE:'질병'
+  const typeMap2 = {
+    ENROLLED: '재학',
+    ON_LEAVE: '휴학',
+    REINSTATED: '복학',
+    EXPELLED: '퇴학',
+    GRADUATED: '졸업',
+    MILITARY_LEAVE: '군 휴학',
+    MEDICAL_LEAVE: '질병'
   };
   const typeMap3 = {
     PENDING: "대기",
@@ -85,7 +85,7 @@ export default function StudentDetailPage() {
   };
 
 
- return (
+  return (
     <Container className="py-4">
       {/* ====== 학생 기본 정보 ====== */}
       <Card className="mb-4">
@@ -179,7 +179,7 @@ export default function StudentDetailPage() {
                       </th>
                       <td>{student.admissionDate}</td>
                     </tr>
-                   <tr>
+                    <tr>
                       <th className="bg-light">전공학점</th>
                       <td>{student.majorCredit}</td>
                     </tr>
@@ -187,7 +187,7 @@ export default function StudentDetailPage() {
                       <th className="bg-light">교양학점</th>
                       <td>{student.generalCredit}</td>
                     </tr>
-                     <tr>
+                    <tr>
                       <th className="bg-light">총 이수학점</th>
                       <td>{student.totalCredit}</td>
                     </tr>
@@ -220,7 +220,7 @@ export default function StudentDetailPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    
+
                     {student.studentRecordList.map(record => (
                       <tr key={record.id}>
                         <td>{record.id}</td>
@@ -230,7 +230,7 @@ export default function StudentDetailPage() {
                         <td>{typeMap[record.status]}</td>
                       </tr>
                     ))}
-                   
+
                   </tbody>
                 </Table>
               </div>
@@ -286,7 +286,7 @@ export default function StudentDetailPage() {
                         <td>-</td>
                       </tr>
                     ))}
-                    
+
                   </tbody>
                 </Table>
               </div>

@@ -29,7 +29,15 @@ function MenuSt() {
             <Col>
                 <Navbar bg="dark" data-bs-theme="dark">
                     <Container>
-                        <Navbar.Brand onClick={() => navigate(`/hs`)} > Home </Navbar.Brand>
+                        <Navbar.Brand onClick={() => navigate('/hs')} className="d-flex align-items-center">
+                            <img
+                                src="/logo (2).png" // 생성된 이미지 경로로 변경 예정
+                                height="30" // 로고 이미지 높이 조절
+                                className="me-2"
+                            />
+                        </Navbar.Brand>
+
+
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => navigate(`/InfoHome`)}>
                                 통합 정보
