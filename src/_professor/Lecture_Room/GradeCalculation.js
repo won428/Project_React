@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { API_BASE_URL } from "../../config/config";
 import { Button, Col, Row, Container, Form, Modal, Table } from "react-bootstrap";
 import axios from "axios";
+import { usePaging } from "../hooks/usePaging";
 
 /* ====== 여기: EightLineForm ====== */
 function EightLineForm({ value, onChange, weights, errors = {} }) {
@@ -169,7 +170,6 @@ function GradeCalculation() {
 
     const { user } = useAuth();
 
-    const [studentList, setStudentList] = useState([]);
     const [studentBasic, setStudentBasic] = useState(null);
     const [lecture, setLecture] = useState({});
     const [saveGradeStudent, setSaveGradeStudent] = useState({});
@@ -256,26 +256,58 @@ function GradeCalculation() {
     const hasErrors = useMemo(() => Object.keys(errors).length > 0, [errors]);
     const canSave = useMemo(() => !hasErrors, [hasErrors]);
 
+    {/* 커스텀 훅 usePaging으로 페이징 처리 */ }
+    const fetchGradePage = useCallback( // useCallback : 함수 버전의 useMemo -> 의존성이 안바뀌면 같은 함수객체를 계속 재사용
+        async ({ pageNumber, pageSize, search }) => {
+            const url = `${API_BASE_URL}/lecture/detail/enrolledStudentList/${lectureId}`;
+            const params = {
+                page: pageNumber,
+                size: pageSize,
+                searchMode: search.mode,
+                searchKeyword: search.keyword,
+            };
+
+            const res = await axios.get(url, { params });
+            const data = res.data;
+            return {
+                content: data.content, // 출결 리스트
+                paging: { // 페이징 정보
+                    pageNumber: data.number,
+                    pageSize: data.size,
+                    totalPages: data.totalPages,
+                    totalElements: data.totalElements,
+                }
+            };
+        }, [lectureId]
+    );
+
+
+    const {
+        list: gradeList,
+        paging,
+        search,
+        setSearch,
+        loading: pageLoading,
+        changePage,
+    } = usePaging(fetchGradePage, { mode: "ALL", keyword: "" }, 10);
+
     // 데이터 로딩
     useEffect(() => {
         if (!lectureId) return;
         const ac = new AbortController();
         setLoading(true);
-        setStudentsErr(null);
         setLectureErr(null);
 
         (async () => {
-            const [s, l] = await Promise.allSettled([
-                axios.get(`${API_BASE_URL}/lecture/detail/enrolledStudentList/${lectureId}`, { signal: ac.signal }),
-                axios.get(`${API_BASE_URL}/lecture/detailLecture/${lectureId}`, { signal: ac.signal }),
-            ]);
-            if (s.status === "fulfilled") setStudentList(s.value.data);
-            else setStudentsErr(s.reason);
-
-            if (l.status === "fulfilled") setLecture(l.value.data);
-            else setLectureErr(l.reason);
-
-            setLoading(false);
+            try {
+                const res = await axios.get(`${API_BASE_URL}/lecture/detailLecture/${lectureId}`, { signal: ac.signal });
+                setLecture(res.data);
+            } catch (err) {
+                setLectureErr(err);
+                console.error(lectureErr);
+            } finally {
+                setLoading(false);
+            }
         })();
 
         return () => ac.abort();
@@ -289,7 +321,7 @@ function GradeCalculation() {
 
         (async () => {
             try {
-                const basic = studentList.find((s) => s.id === selectedId) || null;
+                const basic = gradeList.find((s) => s.id === selectedId) || null;
                 setStudentBasic(basic);
 
                 const { data: attend } = await axios.get(
@@ -331,7 +363,7 @@ function GradeCalculation() {
         })();
 
         return () => ac.abort();
-    }, [selectedId, lectureId, studentList]);
+    }, [selectedId, lectureId, gradeList]);
 
     // 저장된 점수 목록 로딩
     useEffect(() => {
@@ -366,7 +398,7 @@ function GradeCalculation() {
     useEffect(() => {
         setFormsById((prev) => {
             const next = { ...prev };
-            for (const it of studentList) {
+            for (const it of gradeList) {
                 if (!next[it.id]) {
                     next[it.id] = {
                         ...DEFAULT_FORM,
@@ -379,7 +411,7 @@ function GradeCalculation() {
             }
             return next;
         });
-    }, [studentList]);
+    }, [gradeList]);
 
     const openModal = (id, preset) => {
         setFormsById((prev) => ({ ...prev, [id]: prev[id] ?? DEFAULT_FORM }));
@@ -455,6 +487,32 @@ function GradeCalculation() {
             <p>총원  {lecture.totalStudent} 명</p>
             <p>수강인원  {lecture.nowStudent} 명</p>
 
+            <Row className="mb-3">
+                <Col md={6}>
+                    <div className="d-flex gap-2">
+                        <Form.Select
+                            style={{ maxWidth: "120px" }}
+                            value={search.mode}
+                            onChange={e =>
+                                setSearch(prev => ({ ...prev, mode: e.target.value }))
+                            }
+                        >
+                            <option value="ALL">전체</option>
+                            <option value="STUDENT_CODE">학번</option>
+                            <option value="NAME">학생명</option>
+                        </Form.Select>
+
+                        <Form.Control
+                            placeholder="검색어를 입력하세요"
+                            value={search.keyword}
+                            onChange={e =>
+                                setSearch(prev => ({ ...prev, keyword: e.target.value }))
+                            }
+                        />
+                    </div>
+                </Col>
+            </Row>
+
             <Table hover responsive className="align-middle">
                 <thead className="table-light sticky-top">
                     <tr>
@@ -467,7 +525,7 @@ function GradeCalculation() {
                     </tr>
                 </thead>
                 <tbody>
-                    {studentList.map((it) => {
+                    {gradeList.map((it) => {
                         const info = saveGradeStudent?.[it.id]; // { totalScore, lectureGrade } | undefined
                         const locked = !!info; // 이미 점수 저장된 학생
                         return (
