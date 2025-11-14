@@ -57,7 +57,7 @@ export default function StudentDetailPage() {
     semester: "",
   });
 
-  // setSelectedFile(file);
+    setSelectedFile(file);
 
   const [open, setOpen] = useState(false);
   const [modalId, setModalId] = useState(null);
@@ -122,13 +122,78 @@ export default function StudentDetailPage() {
       });
   };
 
-  // try {
-  //   const response = await axios.post(
-  //     `${API_BASE_URL}/student/status/upload-image`,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/student/status/upload-image`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
+<<<<<<< HEAD
+      const uploadedImagePath = response.data.startsWith("http")
+        ? response.data
+        : `${API_BASE_URL}${response.data}`;
+
+      setPreviewURL(uploadedImagePath);
+    } catch (err) {
+      console.error(err);
+      alert("이미지 업로드 중 오류 발생");
+    }
+  };
+
+  const downloadClick = (id) => {
+    const url = `${API_BASE_URL}/attachment/download/${id}`;
+    axios
+      .get(url, { responseType: "blob" })
+      .then((response) => {
+        const cd = response.headers["content-disposition"] || "";
+        const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(cd)?.[1];
+        const quoted = /filename="([^"]+)"/i.exec(cd)?.[1];
+        const filename =
+          (utf8 && decodeURIComponent(utf8)) || quoted || `file-${id}`;
+
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"] || "application/octet-stream",
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+      })
+      .catch((err) => {
+        console.error(err.response?.data);
+        alert("오류");
+      });
+  };
+
+  const years = useMemo(() => {
+    const end = new Date().getFullYear() + 1;
+    return Array.from({ length: end - yearStart + 1 }, (_, i) => yearStart + i);
+  }, [yearStart]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const id = user.id;
+
+    axios
+      .get(`${API_BASE_URL}/user/detailAll/${id}`, {
+        params: { year: page.year, semester: page.semester },
+      })
+      .then((res) => {
+        setStudent(res.data);
+
+        const admission = res.data.admissionDate;
+        const sliceYear = String(admission).slice(0, 4);
+        setYearStart(Number(sliceYear));
+
+        if (res.data.imagePath) {
+          setPreviewURL(`${API_BASE_URL}${res.data.imagePath}`);
+        }
+=======
   const years = useMemo(() => {
     const end = new Date().getFullYear() + 1;
     return Array.from({ length: end - yearStart + 1 }, (_, i) => yearStart + i);
@@ -151,6 +216,7 @@ export default function StudentDetailPage() {
         const admission = res.data.admissionDate; // "2025-11-03"
         const sliceYear = String(admission).slice(0, 4); // "2025"
         setYearStart(Number(sliceYear)); // 2025
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
       })
       .catch((error) => {
         console.error("status:", error.response?.status);
@@ -160,9 +226,17 @@ export default function StudentDetailPage() {
 
   useEffect(() => {
     if (!modalId) return;
+<<<<<<< HEAD
+
+    axios
+      .get(`${API_BASE_URL}/lecture/info`, {
+        params: { modalId: Number(modalId) },
+      })
+=======
     const url = `${API_BASE_URL}/lecture/info`;
     axios
       .get(url, { params: { modalId: Number(modalId) } })
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
       .then((res) => setModalLec(res.data))
       .catch((err) => {
         console.error(err.response?.data);
@@ -170,6 +244,9 @@ export default function StudentDetailPage() {
       });
   }, [modalId]);
 
+<<<<<<< HEAD
+  const displayedImage = previewURL || student.image || null;
+=======
 
   const typeMap = {
     PENDING: "처리중",
@@ -195,11 +272,15 @@ export default function StudentDetailPage() {
     INPROGRESS: "개강",
     COMPLETED: "종강",
   };
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
 
   return (
     <>
       <Container className="py-4">
+<<<<<<< HEAD
+=======
         {/* ====== 학생 기본 정보 ====== */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
         <Card className="mb-4">
           <Card.Header>
             <h5 className="mb-0">학생 기본 정보</h5>
@@ -208,6 +289,33 @@ export default function StudentDetailPage() {
             <Table bordered className="mb-0 align-middle">
               <tbody>
                 <tr>
+<<<<<<< HEAD
+                  <td rowSpan={8} className="text-center align-top" style={{ width: "180px" }}>
+                    <div
+                      className="border bg-light d-inline-flex align-items-center justify-content-center position-relative"
+                      style={{ width: 140, height: 180, cursor: "pointer", overflow: "hidden" }}
+                      onClick={() => document.getElementById("studentFile").click()}
+                    >
+                      {previewURL ? (
+                        <img
+                          src={previewURL}
+                          alt="student"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      ) : (
+                        <span className="text-muted small">사진 등록</span>
+                      )}
+                      <input
+                        id="studentFile"
+                        type="file"
+                        accept="image/*"
+                        className="d-none"
+                        onChange={handleFileInputChange}
+                      />
+                    </div>
+                  </td>
+                  <th className="bg-light">학번</th>
+=======
                   <td
                     rowSpan={8}
                     className="text-center align-top"
@@ -224,6 +332,7 @@ export default function StudentDetailPage() {
                   <th className="bg-light" style={{ width: "15%" }}>
                     학번
                   </th>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                   <td>{student.userCode}</td>
                 </tr>
                 <tr>
@@ -259,12 +368,18 @@ export default function StudentDetailPage() {
           </Card.Body>
         </Card>
 
+<<<<<<< HEAD
+=======
         {/* ====== 하단 탭 영역 ====== */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
         <Card>
           <Card.Header>
             <h5 className="mb-0">학생 정보</h5>
           </Card.Header>
           <Card.Body>
+<<<<<<< HEAD
+            <Tabs defaultActiveKey="status" id="student-detail-tabs">
+=======
             <Tabs
               defaultActiveKey="status"
               id="student-detail-tabs"
@@ -278,14 +393,19 @@ export default function StudentDetailPage() {
               }}
             >
               {/* === 학적 탭 === */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
               <Tab eventKey="status" title="학적">
                 <div className="pt-3">
                   <Table bordered className="mb-0">
                     <tbody>
                       <tr>
+<<<<<<< HEAD
+                        <th className="bg-light" style={{ width: "20%" }}>입학일</th>
+=======
                         <th className="bg-light" style={{ width: "20%" }}>
                           입학일
                         </th>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                         <td>{student.admissionDate}</td>
                       </tr>
                       <tr>
@@ -309,6 +429,11 @@ export default function StudentDetailPage() {
                 </div>
               </Tab>
 
+<<<<<<< HEAD
+              <Tab eventKey="history" title="학적변경이력">
+                <div className="pt-3">
+                  <Table bordered hover size="sm" className="mb-0 align-middle" responsive>
+=======
               {/* === 학적변경이력 탭 === */}
               <Tab eventKey="history" title="학적변경이력">
                 <div className="pt-3">
@@ -319,6 +444,7 @@ export default function StudentDetailPage() {
                     className="mb-0 align-middle"
                     responsive
                   >
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                     <thead className="table-light">
                       <tr>
                         <th style={{ width: "10%" }}>신청번호</th>
@@ -329,7 +455,11 @@ export default function StudentDetailPage() {
                       </tr>
                     </thead>
                     <tbody>
+<<<<<<< HEAD
+                      {student.studentRecordList?.map((record) => (
+=======
                       {student.studentRecordList.map((record) => (
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                         <tr key={record.id}>
                           <td>{record.id}</td>
                           <td>{typeMap2[record.applyStatus]}</td>
@@ -343,18 +473,30 @@ export default function StudentDetailPage() {
                 </div>
               </Tab>
 
+<<<<<<< HEAD
+              <Tab eventKey="grades" title="성적">
+                <div className="pt-3">
+                  <Row className="mb-3 g-2 align-items-center">
+=======
               {/* === 성적 탭 === */}
               <Tab eventKey="grades" title="성적">
                 <div className="pt-3">
                   {/* 학기 콤보박스 */}
                   <Row className="mb-3 g-2 align-items-center">
                     {/* 년도 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                     <Col xs={12} md={3}>
                       <Form.Select
                         aria-label="년도"
                         size="sm"
                         className="w-100"
                         style={{ minWidth: 120 }}
+<<<<<<< HEAD
+                        onChange={(e) => setPage((pre) => ({ ...pre, year: e.target.value }))}
+                      >
+                        {years.map((y) => (
+                          <option key={y} value={y}>{y}</option>
+=======
                         onChange={(e) => {
                           setPage((pre) => ({ ...pre, year: e.target.value }));
                         }}
@@ -363,11 +505,15 @@ export default function StudentDetailPage() {
                           <option key={y} value={y}>
                             {y}
                           </option>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                         ))}
                       </Form.Select>
                     </Col>
 
+<<<<<<< HEAD
+=======
                     {/* 학기 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                     <Col xs={12} md={3}>
                       <Form.Select
                         id="filterSemester"
@@ -376,9 +522,13 @@ export default function StudentDetailPage() {
                         className="w-100"
                         style={{ minWidth: 120 }}
                         value={page.semester}
+<<<<<<< HEAD
+                        onChange={(e) => setPage((pre) => ({ ...pre, semester: e.target.value }))}
+=======
                         onChange={(e) => {
                           setPage((pre) => ({ ...pre, semester: e.target.value }));
                         }}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                       >
                         <option value="">학기</option>
                         <option value="3">1학기</option>
@@ -389,6 +539,9 @@ export default function StudentDetailPage() {
                     </Col>
                   </Row>
 
+<<<<<<< HEAD
+                  <Table bordered hover size="sm" className="mb-0 align-middle" responsive>
+=======
                   <Table
                     bordered
                     hover
@@ -396,6 +549,7 @@ export default function StudentDetailPage() {
                     className="mb-0 align-middle"
                     responsive
                   >
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                     <thead className="table-light">
                       <tr>
                         <th style={{ width: "10%" }}>개설일</th>
@@ -406,13 +560,28 @@ export default function StudentDetailPage() {
                         <th style={{ width: "8%" }}>기말</th>
                         <th style={{ width: "10%" }}>총학점</th>
                         <th style={{ width: "8%" }}>상태</th>
+<<<<<<< HEAD
+=======
                         {/* ▼ 추가: 상세 / 기능 컬럼 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                         <th style={{ width: "8%" }}>상세</th>
                         <th style={{ width: "8%" }}>기능</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {student.gradeInfoList.content?.map((grade) => (
+<<<<<<< HEAD
+                      {student.gradeInfoList?.content?.map((grade) => (
+                        <tr key={grade.lecId}>
+                          <td>{grade.startDate}</td>
+                          <td>{grade.name}</td>
+                          <td>{grade.ascore}</td>
+                          <td>{grade.asScore}</td>
+                          <td>{grade.tscore}</td>
+                          <td>{grade.ftScore}</td>
+                          <td>{grade.totalScore}</td>
+                          <td>{typeMap3[grade.status]}</td>
+=======
+                      {student.gradeInfoList.content.map((grade) => (
                         <tr key={grade.lecId}>
                           <td>{grade.startDate}</td>
                           <td>{grade.name}</td>
@@ -423,14 +592,19 @@ export default function StudentDetailPage() {
                           <td>{grade.lectureGrade || '-'}</td>
                           <td>{typeMap3[grade.status]}</td>
                           {/* ★ 상세 버튼 UI 추가 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                           <td className="text-center">
                             <Button
                               size="sm"
                               variant="outline-dark"
+<<<<<<< HEAD
+                              onClick={() => { setModalId(grade.lecId); setOpen(true); }}
+=======
                               onClick={() => {
                                 setModalId(grade.lecId);
                                 setOpen(true);
                               }}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                             >
                               상세
                             </Button>
@@ -446,8 +620,74 @@ export default function StudentDetailPage() {
           </Card.Body>
         </Card>
       </Container>
+<<<<<<< HEAD
 
+      <Modal show={open} onHide={() => setOpen(false)} centered backdrop="static" aria-labelledby="lecture-detail-title">
+        <Modal.Header closeButton>
+          <Modal.Title id="lecture-detail-title" className="fs-5">{modalLec.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <div className="text-muted small mb-2">상세 시간표</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: "6rem" }} className="text-center">요일</th>
+                    <th style={{ width: "7rem" }} className="text-center">시작</th>
+                    <th style={{ width: "7rem" }} className="text-center">종료</th>
+                    <th>시간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modalLec?.lectureSchedules?.map((s, idx) => (
+                    <tr key={idx}>
+                      <td className="text-center">{typeMapDay[s.day] ?? s.day}</td>
+                      <td className="text-center">{typeMapStart[s.startTime] ?? s.startTime}</td>
+                      <td className="text-center">{typeMapEnd[s.endTime] ?? s.endTime}</td>
+                      <td className="text-nowrap">{s.startTime}~{s.endTime}</td>
+                    </tr>
+                  ))}
+                  {(!modalLec?.lectureSchedules || modalLec.lectureSchedules.length === 0) && (
+                    <tr>
+                      <td colSpan={4} className="text-center text-muted">시간표 없음</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </div>
+=======
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
 
+          <div className="mb-3">
+            <div className="text-muted small mb-2">강의설명</div>
+            <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+              {modalLec.description}
+            </div>
+          </div>
+
+<<<<<<< HEAD
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th>출결</th>
+                    <th>과제</th>
+                    <th>중간</th>
+                    <th>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{modalLec.ascore ?? "-"}</td>
+                    <td>{modalLec.asScore ?? "-"}</td>
+                    <td>{modalLec.tscore ?? "-"}</td>
+                    <td>{modalLec.ftScore ?? "-"}</td>
+                  </tr>
+=======
       <Modal
         show={open}
         onHide={() => setOpen(false)}
@@ -519,10 +759,16 @@ export default function StudentDetailPage() {
                       </td>
                     </tr>
                   )}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                 </tbody>
               </Table>
             </div>
           </div>
+<<<<<<< HEAD
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>닫기</Button>
+=======
 
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
@@ -630,9 +876,9 @@ export default function StudentDetailPage() {
           <Button variant="secondary" onClick={() => setOpen(false)}>
             닫기
           </Button>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
         </Modal.Footer>
       </Modal>
     </>
   );
 }
-

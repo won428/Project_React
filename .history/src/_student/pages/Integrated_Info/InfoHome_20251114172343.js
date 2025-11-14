@@ -447,6 +447,12 @@ export default function StudentDetailPage() {
         </Card>
       </Container>
 
+      <div className="mb-3">
+        <div className="text-muted small mb-2">강의설명</div>
+        <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+          {modalLec.description}
+        </div>
+      </div>
 
       <Modal
         show={open}

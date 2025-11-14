@@ -57,7 +57,7 @@ export default function StudentDetailPage() {
     semester: "",
   });
 
-  // setSelectedFile(file);
+    setSelectedFile(file);
 
   const [open, setOpen] = useState(false);
   const [modalId, setModalId] = useState(null);
@@ -122,12 +122,12 @@ export default function StudentDetailPage() {
       });
   };
 
-  // try {
-  //   const response = await axios.post(
-  //     `${API_BASE_URL}/student/status/upload-image`,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/student/status/upload-image`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
   const years = useMemo(() => {
     const end = new Date().getFullYear() + 1;
@@ -412,7 +412,7 @@ export default function StudentDetailPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {student.gradeInfoList.content?.map((grade) => (
+                      {student.gradeInfoList.content.map((grade) => (
                         <tr key={grade.lecId}>
                           <td>{grade.startDate}</td>
                           <td>{grade.name}</td>
@@ -447,7 +447,34 @@ export default function StudentDetailPage() {
         </Card>
       </Container>
 
+          <div className="mb-3">
+            <div className="text-muted small mb-2">강의설명</div>
+            <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+              {modalLec.description}
+            </div>
+          </div>
 
+<<<<<<< HEAD
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th>출결</th>
+                    <th>과제</th>
+                    <th>중간</th>
+                    <th>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{modalLec.ascore ?? "-"}</td>
+                    <td>{modalLec.asScore ?? "-"}</td>
+                    <td>{modalLec.tscore ?? "-"}</td>
+                    <td>{modalLec.ftScore ?? "-"}</td>
+                  </tr>
+=======
       <Modal
         show={open}
         onHide={() => setOpen(false)}
@@ -519,10 +546,16 @@ export default function StudentDetailPage() {
                       </td>
                     </tr>
                   )}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                 </tbody>
               </Table>
             </div>
           </div>
+<<<<<<< HEAD
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>닫기</Button>
+=======
 
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
@@ -630,9 +663,9 @@ export default function StudentDetailPage() {
           <Button variant="secondary" onClick={() => setOpen(false)}>
             닫기
           </Button>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
         </Modal.Footer>
       </Modal>
     </>
   );
 }
-

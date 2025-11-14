@@ -180,7 +180,7 @@ function ManageAppeal() {
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
                     lectureId : lectureId,
-                    status : 'COMPLETED'
+                    status : 
                 }
                     
                 });

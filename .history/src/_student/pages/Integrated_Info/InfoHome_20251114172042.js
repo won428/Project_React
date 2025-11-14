@@ -57,7 +57,7 @@ export default function StudentDetailPage() {
     semester: "",
   });
 
-  // setSelectedFile(file);
+    setSelectedFile(file);
 
   const [open, setOpen] = useState(false);
   const [modalId, setModalId] = useState(null);
@@ -122,12 +122,12 @@ export default function StudentDetailPage() {
       });
   };
 
-  // try {
-  //   const response = await axios.post(
-  //     `${API_BASE_URL}/student/status/upload-image`,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/student/status/upload-image`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
   const years = useMemo(() => {
     const end = new Date().getFullYear() + 1;
@@ -389,6 +389,9 @@ export default function StudentDetailPage() {
                     </Col>
                   </Row>
 
+<<<<<<< HEAD
+                  <Table bordered hover size="sm" className="mb-0 align-middle" responsive>
+=======
                   <Table
                     bordered
                     hover
@@ -396,6 +399,7 @@ export default function StudentDetailPage() {
                     className="mb-0 align-middle"
                     responsive
                   >
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                     <thead className="table-light">
                       <tr>
                         <th style={{ width: "10%" }}>개설일</th>
@@ -406,13 +410,28 @@ export default function StudentDetailPage() {
                         <th style={{ width: "8%" }}>기말</th>
                         <th style={{ width: "10%" }}>총학점</th>
                         <th style={{ width: "8%" }}>상태</th>
+<<<<<<< HEAD
+=======
                         {/* ▼ 추가: 상세 / 기능 컬럼 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                         <th style={{ width: "8%" }}>상세</th>
                         <th style={{ width: "8%" }}>기능</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {student.gradeInfoList.content?.map((grade) => (
+<<<<<<< HEAD
+                      {student.gradeInfoList?.content?.map((grade) => (
+                        <tr key={grade.lecId}>
+                          <td>{grade.startDate}</td>
+                          <td>{grade.name}</td>
+                          <td>{grade.ascore}</td>
+                          <td>{grade.asScore}</td>
+                          <td>{grade.tscore}</td>
+                          <td>{grade.ftScore}</td>
+                          <td>{grade.totalScore}</td>
+                          <td>{typeMap3[grade.status]}</td>
+=======
+                      {student.gradeInfoList.content.map((grade) => (
                         <tr key={grade.lecId}>
                           <td>{grade.startDate}</td>
                           <td>{grade.name}</td>
@@ -423,14 +442,19 @@ export default function StudentDetailPage() {
                           <td>{grade.lectureGrade || '-'}</td>
                           <td>{typeMap3[grade.status]}</td>
                           {/* ★ 상세 버튼 UI 추가 */}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                           <td className="text-center">
                             <Button
                               size="sm"
                               variant="outline-dark"
+<<<<<<< HEAD
+                              onClick={() => { setModalId(grade.lecId); setOpen(true); }}
+=======
                               onClick={() => {
                                 setModalId(grade.lecId);
                                 setOpen(true);
                               }}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                             >
                               상세
                             </Button>
@@ -446,8 +470,74 @@ export default function StudentDetailPage() {
           </Card.Body>
         </Card>
       </Container>
+<<<<<<< HEAD
 
+      <Modal show={open} onHide={() => setOpen(false)} centered backdrop="static" aria-labelledby="lecture-detail-title">
+        <Modal.Header closeButton>
+          <Modal.Title id="lecture-detail-title" className="fs-5">{modalLec.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <div className="text-muted small mb-2">상세 시간표</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: "6rem" }} className="text-center">요일</th>
+                    <th style={{ width: "7rem" }} className="text-center">시작</th>
+                    <th style={{ width: "7rem" }} className="text-center">종료</th>
+                    <th>시간</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modalLec?.lectureSchedules?.map((s, idx) => (
+                    <tr key={idx}>
+                      <td className="text-center">{typeMapDay[s.day] ?? s.day}</td>
+                      <td className="text-center">{typeMapStart[s.startTime] ?? s.startTime}</td>
+                      <td className="text-center">{typeMapEnd[s.endTime] ?? s.endTime}</td>
+                      <td className="text-nowrap">{s.startTime}~{s.endTime}</td>
+                    </tr>
+                  ))}
+                  {(!modalLec?.lectureSchedules || modalLec.lectureSchedules.length === 0) && (
+                    <tr>
+                      <td colSpan={4} className="text-center text-muted">시간표 없음</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </div>
+=======
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
 
+          <div className="mb-3">
+            <div className="text-muted small mb-2">강의설명</div>
+            <div className="border rounded p-3 bg-body-tertiary" style={{ whiteSpace: "pre-wrap" }}>
+              {modalLec.description}
+            </div>
+          </div>
+
+<<<<<<< HEAD
+          <div className="mb-3">
+            <div className="text-muted small mb-2">점수 산출 비율</div>
+            <div className="table-responsive">
+              <Table size="sm" bordered hover className="align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th>출결</th>
+                    <th>과제</th>
+                    <th>중간</th>
+                    <th>기말</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{modalLec.ascore ?? "-"}</td>
+                    <td>{modalLec.asScore ?? "-"}</td>
+                    <td>{modalLec.tscore ?? "-"}</td>
+                    <td>{modalLec.ftScore ?? "-"}</td>
+                  </tr>
+=======
       <Modal
         show={open}
         onHide={() => setOpen(false)}
@@ -519,10 +609,16 @@ export default function StudentDetailPage() {
                       </td>
                     </tr>
                   )}
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
                 </tbody>
               </Table>
             </div>
           </div>
+<<<<<<< HEAD
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>닫기</Button>
+=======
 
           <div className="mb-3">
             <div className="text-muted small mb-2">강의설명</div>
@@ -630,9 +726,9 @@ export default function StudentDetailPage() {
           <Button variant="secondary" onClick={() => setOpen(false)}>
             닫기
           </Button>
+>>>>>>> 1db33f9777d8e2c2a818f4723caef35a89cd625d
         </Modal.Footer>
       </Modal>
     </>
   );
 }
-

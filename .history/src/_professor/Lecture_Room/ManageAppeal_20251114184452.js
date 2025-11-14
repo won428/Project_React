@@ -179,8 +179,8 @@ function ManageAppeal() {
                     attendanceDate: selectedAppeal.attendanceDate,
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
-                    lectureId : lectureId,
-                    status : 'COMPLETED'
+                    lectureId : lectureId
+                    
                 }
                     
                 });

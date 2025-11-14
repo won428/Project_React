@@ -41,7 +41,7 @@ function App() {
 
   const [paging, setPaging] = useState({
     totalElements : 0,
-    pageSize : 10,
+    pageSize : 5,
     totalPages : 0,
     pageNumber : 0,
     pageCount : 10,
@@ -256,29 +256,6 @@ function App() {
     FRIDAY: "금",
   };
 
-  const typeMap4 = { // 시작교시
-    '9:00': "1교시",
-    '10:00': "2교시",
-    '11:00': "3교시",
-    '12:00': "4교시",
-    '13:00': "5교시",
-    '14:00': "6교시",
-    '15:00': "7교시",
-    '16:00': "8교시",
-    '17:00': "9교시"
-  };
-
-  const typeMap5 = { // 종료교시
-    '10:00': "1교시",
-    '11:00': "2교시",
-    '12:00': "3교시",
-    '13:00': "4교시",
-    '14:00': "5교시",
-    '15:00': "6교시",
-    '16:00': "7교시",
-    '17:00': "8교시",
-    '18:00': "9교시"
-  };
 
   const splitStartDate = (date) => {
     const [yyyy, mm] = date.split("-");

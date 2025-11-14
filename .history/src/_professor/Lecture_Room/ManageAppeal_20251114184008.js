@@ -175,12 +175,11 @@ function ManageAppeal() {
         try {
             if (selectedAppeal.appealType === "ATTENDANCE") {
                 await axios.put(`${API_BASE_URL}/api/appeals/${selectedAppeal.appealId}/updateStatus`, null,{params:{
-                    newStatus: updatedAttendance.newStatus,
+newStatus: updatedAttendance.newStatus,
                     attendanceDate: selectedAppeal.attendanceDate,
                     sendingId: selectedAppeal.sendingId,
                     receiverId: user.id,
-                    lectureId : lectureId,
-                    status : 'COMPLETED'
+                    lectureId
                 }
                     
                 });
