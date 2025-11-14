@@ -1,14 +1,16 @@
 import { Badge, Button, Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 import { useAuth } from "../../public/context/UserContext";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { date } from "yup";
+import { usePaging } from "../hooks/usePaging";
+import CommonPagination from "./CommonPagination";
+
 function App() {
 
   const [lecture, setLecture] = useState({});
-  const [studentList, setStudentList] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -43,6 +45,7 @@ function App() {
       .get(url)
       .then((response) => {
         setLecture(response.data)
+        console.log(lecture);
       })
       .catch((error) => {
         const err = error.response;
@@ -53,29 +56,52 @@ function App() {
       })
   }, [lectureId])
 
-  // 학생정보
-  useEffect(() => {
-    const url = `${API_BASE_URL}/lecture/detail/enrolledStudentList/${lectureId}`;
-    axios
-      .get(url)
-      .then((response) => {
-        console.log(response.data)
-        setStudentList(response.data)
-      })
-      .catch((error) => {
-        const err = error.response;
-        if (!err) {
-          alert('네트워크 오류가 발생하였습니다')
-          return;
-        }
-      })
 
-  }, [lectureId]);
+  {/* 커스텀 훅 usePaging으로 페이징 처리 */ }
+  const fetchGradePage = useCallback( // useCallback : 함수 버전의 useMemo -> 의존성이 안바뀌면 같은 함수객체를 계속 재사용
+    async ({ pageNumber, pageSize, search }) => {
+      const url = `${API_BASE_URL}/lecture/detail/enrolledStudentList/${lectureId}`;
+      const params = {
+        page: pageNumber,
+        size: pageSize,
+        searchMode: search.mode,
+        searchKeyword: search.keyword,
+      };
+
+      const res = await axios.get(url, { params });
+      const data = res.data;
+      return {
+        content: data.content, // 출결 리스트
+        paging: { // 페이징 정보
+          pageNumber: data.number,
+          pageSize: data.size,
+          totalPages: data.totalPages,
+          totalElements: data.totalElements,
+        }
+      };
+    }, [lectureId] // 강의가 바뀔때만 새로 만듦
+    // 의존성을 추가하지않으면 컴포넌트가 렌더링됨 
+    // -> fetchStudentPage 새로 생성 
+    // -> usePaging 내부의 fetcher가 의존성 배열이라 변경됐다고 인식됨
+    // -> loadPage도 새로 만들어짐 -> useEffect 의존성 바뀜 -> 다시 useEffect 실행 -> loadPage(0) 호출 무한반복
+    // 의존성을 추가해야 lectureId가 안 바뀌는 동안엔 fetchStudentPage가 항상 같은 함수 객체로 유지
+  );
+
+
+  const {
+    list: gradeList,
+    paging,
+    search,
+    setSearch,
+    loading: pageLoading,
+    changePage,
+  } = usePaging(fetchGradePage, { mode: "ALL", keyword: "" }, 10);
+
 
   // 전체 일괄 선택
   const fillAll = (status) => {
     const next = {};
-    studentList.forEach(s => { next[s.id] = status; });
+    gradeList.forEach(s => { next[s.id] = status; });
     setAttendance(next);
   };
 
@@ -101,14 +127,14 @@ function App() {
     }
 
     // 미선택 검사
-    const unselected = studentList.filter(s => !attendance[s.id]);
+    const unselected = gradeList.filter(s => !attendance[s.id]);
     if (unselected.length > 0) {
       alert(`미선택 ${unselected.lentg}명: ${unselected.slice(0, 3).map(s => s.name).join(",")}${unselected.length > 3 ? " 외" : ""}`);
       return;
     }
 
     // payload 생성
-    const payload = studentList.map(s => ({
+    const payload = gradeList.map(s => ({
       userId: s.id,
       attendanceDate: sessionDate,
       attendStudent: attendance[s.id],
@@ -169,7 +195,7 @@ function App() {
           <div className="fw-semibold">출결 등록</div>
           <div className="d-flex align-items-center gap-2">
             <small className="text-muted">선택: {selectCount}명</small>
-            <Button size="sm" variant="primary" onClick={handleBulkSave} disabled={savingAll || studentList.length === 0}>
+            <Button size="sm" variant="primary" onClick={handleBulkSave} disabled={savingAll || gradeList.length === 0}>
               {savingAll ? "저장 중..." : "일괄 저장"}
             </Button>
           </div>
@@ -189,7 +215,7 @@ function App() {
               <Button size="sm" variant="outline-success" onClick={() => fillAll("PRESENT")} disabled={isFinalized}>
                 전체 출석
               </Button>
-              <Button size="sm" variant="primary" onClick={handleBulkSave} disabled={isFinalized || savingAll || studentList.length === 0}>
+              <Button size="sm" variant="primary" onClick={handleBulkSave} disabled={isFinalized || savingAll || gradeList.length === 0}>
                 {savingAll ? "저장 중..." : "일괄 저장"}
               </Button>
               <Button variant="outline-secondary" size="sm" onClick={() => navigate('/LRoomPro')}>돌아가기</Button>
@@ -197,6 +223,32 @@ function App() {
           </Row>
         </Card.Body>
       </Card>
+
+      <Row className="mb-3">
+        <Col md={6}>
+          <div className="d-flex gap-2">
+            <Form.Select
+              style={{ maxWidth: "120px" }}
+              value={search.mode}
+              onChange={e =>
+                setSearch(prev => ({ ...prev, mode: e.target.value }))
+              }
+            >
+              <option value="ALL">전체</option>
+              <option value="STUDENT_CODE">학번</option>
+              <option value="NAME">학생명</option>
+            </Form.Select>
+
+            <Form.Control
+              placeholder="검색어를 입력하세요"
+              value={search.keyword}
+              onChange={e =>
+                setSearch(prev => ({ ...prev, keyword: e.target.value }))
+              }
+            />
+          </div>
+        </Col>
+      </Row>
 
       {/* 목록: 간단 표기 */}
       <Card>
@@ -216,14 +268,13 @@ function App() {
                 <th>학번</th>
                 <th>이름</th>
                 <th>학과</th>
-                <th>학년</th>
                 <th>이메일</th>
                 <th>전화번호</th>
-                <th className="text-end">출결</th>
+                <th className="text-center">출결 수정</th>
               </tr>
             </thead>
             <tbody>
-              {studentList.map((student) => {
+              {gradeList.map((student) => {
                 const studentId = student.id;
                 const selected = attendance[studentId];
 
@@ -232,7 +283,6 @@ function App() {
                     <td>{student.userCode}</td>
                     <td>{student.name}</td>
                     <td>{student.majorName}</td>
-                    <td>추가예정</td>
                     <td>{student.email}</td>
                     <td>{student.phone}</td>
                     <td>
@@ -258,7 +308,7 @@ function App() {
                   </tr>
                 );
               })}
-              {studentList.length === 0 && (
+              {gradeList.length === 0 && (
                 <tr>
                   <td colSpan={7} className="text-center text-muted py-4">
                     수강 중인 학생이 없습니다.
@@ -268,6 +318,7 @@ function App() {
             </tbody>
           </Table>
         </Card.Body>
+        <CommonPagination paging={paging} onPageChange={changePage} />
       </Card>
     </Container>
   );

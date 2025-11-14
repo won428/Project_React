@@ -122,6 +122,7 @@ function App() {
         EXCUSED: '공결',
     }
 
+
     // 학기 계산기
     const groupLecturesByYear = (l) => {
         return l.reduce((acc, lecture) => {
@@ -340,6 +341,8 @@ function App() {
                     </Form>
                 </Col>
             </Row>
+
+
 
             <Row style={{ marginTop: 24 }}>
                 <Col md={12} style={{ overflowX: 'auto' }}>
