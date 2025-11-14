@@ -409,11 +409,11 @@ export default function StudentDetailPage() {
                         <tr key={grade.lecId}>
                           <td>{grade.startDate}</td>
                           <td>{grade.name}</td>
-                          <td>{grade.ascore}</td>
-                          <td>{grade.asScore}</td>
-                          <td>{grade.tscore}</td>
-                          <td>{grade.ftScore}</td>
-                          <td>{grade.totalScore}</td>
+                          <td>{grade.ascore === 0 ? '-' : grade.ascore}</td>
+                          <td>{grade.asScore === 0 ? '-' : grade.asScore}</td>
+                          <td>{grade.tscore === 0 ? '-' : grade.tscore}</td>
+                          <td>{grade.ftScore === 0 ? '-' : grade.ftScore}</td>
+                          <td>{grade.lectureGrade || '-'}</td>
                           <td>{typeMap3[grade.status]}</td>
                           {/* ★ 상세 버튼 UI 추가 */}
                           <td className="text-center">
