@@ -57,6 +57,13 @@ function App() {
                                     >
                                         submit
                                     </Button>
+                                    <Button
+                                        className="w-30 ms-2"
+                                        variant="secondary"
+                                        onClick={() => navigate("/")}
+                                    >
+                                        cancel
+                                    </Button>
                                 </div>
                             </Form>
 

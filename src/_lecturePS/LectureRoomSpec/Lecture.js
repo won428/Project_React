@@ -89,24 +89,28 @@ function App() {
                                 onClick={() => specificPage(item)}
                                 className="mb-3 shadow-sm"
                                 style={{ cursor: "pointer" }}
+
                             >
-                                <CardBody>
+                                <CardBody
+                                    disabled={true}
+                                >
                                     <h5 className="fw-bold mb-2">{item.title}</h5>
 
                                     <div className="d-flex justify-content-between text-muted" style={{ fontSize: "14px" }}>
                                         <span>{item.username}</span>
-                                        <span>{new Date(item.startDate).toLocaleDateString()}</span>
+                                        <span>~{new Date(item.endDate).toLocaleDateString()}</span>
                                     </div>
                                     <br />
-                                    <div className="d-flex justify-content-end mt-3 gap-2">
-                                        <Button
-                                            onClick={() => {
-                                                console.log(item.id);
-                                                deleteLec(item.id);
+                                    {user?.roles.includes("PROFESSOR") &&
+                                        <div className="d-flex justify-content-end mt-3 gap-2">
+                                            <Button
+                                                onClick={() => {
+                                                    console.log(item.id);
+                                                    deleteLec(item.id);
 
-                                            }}
-                                        >삭제</Button>
-                                    </div >
+                                                }}
+                                            >삭제</Button>
+                                        </div >}
                                 </CardBody>
                             </Card>
                         ))
