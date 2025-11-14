@@ -59,7 +59,7 @@ function App() {
 
     return (
         <Container className="py-4" style={{ maxWidth: 980 }}>
-            <Card>
+            <Card >
                 <Card.Header>
                     <div className="d-flex align-items-center justify-content-between">
                         <h5 className="mb-0">공지사항</h5>

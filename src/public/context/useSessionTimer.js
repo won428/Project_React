@@ -34,7 +34,7 @@ export const useSessionTimer = () => {
   const navigate = useNavigate();
 
   const handleLogout = useCallback(() => {
-    console.log("세션이 만료되어 자동 로그아웃됩니다.");
+    alert("세션이 만료되어 자동 로그아웃됩니다.");
     logout();
     navigate('/');
   }, []);
@@ -62,13 +62,11 @@ export const useSessionTimer = () => {
     return () => clearInterval(intervalId);
   }, [expTime, handleLogout]);
 
-  console.log("현재 타이머의 expTime:", expTime);
   const refreshTimer = (newAccessToken) => {
     try {
       const decoded = jwtDecode(newAccessToken);
       setExpTime(decoded.exp);
       if (expTime === decoded.exp) {
-        alert("!!!! 서버에서 받은 새 토큰의 만료 시간이 기존과 동일합니다. (백엔드 확인 필요)");
       }
     } catch (e) {
       console.error("디코딩 실패 다시 시도하세요", e);
