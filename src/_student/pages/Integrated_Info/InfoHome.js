@@ -12,12 +12,39 @@ import { useAuth } from "../../../public/context/UserContext";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../../../public/config/config";
 import axios from "axios";
+import { type } from "@testing-library/user-event/dist/type";
 
 export default function StudentDetailPage() {
     const {user} = useAuth();
-    const [student, setStudent] = useState({});
+    const [student, setStudent] = useState({
+    userCode: "",
+    name: "",
+    birthDate: "",
+    gender: "",
+    email: "",
+    phone: "",
+    college: {
+      id: null,
+      office: "",
+      type: "",
+    },
+    major: {
+      id: null,
+      name: "",
+      office: "",
+      collegeId: null,
+    },
+    admissionDate: "",
+    totalCredit: 0,
+    majorCredit: 0,
+    generalCredit: 0,
+    lectureGrade: 0,
+    studentRecordList: [],
+    gradeInfoList: [],
+  });
 
     useEffect(()=>{
+       if (!user?.id) return;
         const id = user.id;
         const url = `${API_BASE_URL}/user/detailAll/${id}`;
         axios
@@ -26,10 +53,36 @@ export default function StudentDetailPage() {
                 console.log(res.data);
                 setStudent(res.data)
             })
-            .catch((err)=>{
-                console.log(err)
+            .catch((error)=>{
+              console.error('status:', error.response?.status);
+              console.error('data:', error.response?.data); // 여기 메시지/스택트레이스 들어올 수 있음
             })
     },[])
+
+   const typeMap = {
+    PENDING: "처리중",
+    APPROVED: "완료",
+    REJECTED: "거부",
+    INPROGRESS: "개강",
+    COMPLETED: "종강",
+  };
+
+   const typeMap2 = {
+     ENROLLED: '재학',
+    ON_LEAVE:'휴학',
+    REINSTATED:'복학',
+    EXPELLED:'퇴학',
+    GRADUATED:'졸업',
+    MILITARY_LEAVE:'군 휴학',
+    MEDICAL_LEAVE:'질병'
+  };
+  const typeMap3 = {
+    PENDING: "대기",
+    APPROVED: "신청중",
+    REJECTED: "거부",
+    INPROGRESS: "개강",
+    COMPLETED: "종강",
+  };
 
 
  return (
@@ -61,36 +114,36 @@ export default function StudentDetailPage() {
                   학번
                 </th>
                 <td>
-                  {/* 학번 */}
+                  {student.userCode}
                 </td>
               </tr>
               <tr>
                 <th className="bg-light">이름</th>
-                <td>{/* 이름 */}</td>
+                <td>{student.name}</td>
               </tr>
               <tr>
                 <th className="bg-light">생년월일</th>
-                <td>{/* 생년월일 */}</td>
+                <td>{student.birthDate}</td>
               </tr>
               <tr>
                 <th className="bg-light">성별</th>
-                <td>{/* 성별 */}</td>
+                <td>{student.gender}</td>
               </tr>
               <tr>
                 <th className="bg-light">이메일</th>
-                <td>{/* 이메일 */}</td>
+                <td>{student.email}</td>
               </tr>
               <tr>
                 <th className="bg-light">전화번호</th>
-                <td>{/* 전화번호 */}</td>
+                <td>{student.phone}</td>
               </tr>
               <tr>
                 <th className="bg-light">소속 대학</th>
-                <td>{/* 소속 대학 */}</td>
+                <td>{student.college.type}</td>
               </tr>
               <tr>
                 <th className="bg-light">소속 학과</th>
-                <td>{/* 학과 */}</td>
+                <td>{student.major.name}</td>
               </tr>
             </tbody>
           </Table>
@@ -124,23 +177,23 @@ export default function StudentDetailPage() {
                       <th className="bg-light" style={{ width: "20%" }}>
                         입학일
                       </th>
-                      <td>{/* 입학일 */}</td>
+                      <td>{student.admissionDate}</td>
                     </tr>
-                    <tr>
-                      <th className="bg-light">총 이수학점</th>
-                      <td>{/* 총 이수학점 */}</td>
-                    </tr>
-                    <tr>
+                   <tr>
                       <th className="bg-light">전공학점</th>
-                      <td>{/* 전공학점 */}</td>
+                      <td>{student.majorCredit}</td>
                     </tr>
                     <tr>
                       <th className="bg-light">교양학점</th>
-                      <td>{/* 교양학점 */}</td>
+                      <td>{student.generalCredit}</td>
+                    </tr>
+                     <tr>
+                      <th className="bg-light">총 이수학점</th>
+                      <td>{student.totalCredit}</td>
                     </tr>
                     <tr>
                       <th className="bg-light">총 학점</th>
-                      <td>{/* 총 학점 */}</td>
+                      <td>{student.lectureGrade}</td>
                     </tr>
                   </tbody>
                 </Table>
@@ -167,15 +220,17 @@ export default function StudentDetailPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {/*
-                    TODO: 학적변경이력 리스트 map으로 렌더링
-                    {historyList.map(item => (
-                      <tr key={item.id}>
-                        <td>{item.requestNo}</td>
-                        ...
+                    
+                    {student.studentRecordList.map(record => (
+                      <tr key={record.id}>
+                        <td>{record.id}</td>
+                        <td>{typeMap2[record.applyStatus]}</td>
+                        <td>{record.appliedDate}</td>
+                        <td>{record.processedDate || '-'}</td>
+                        <td>{typeMap[record.status]}</td>
                       </tr>
                     ))}
-                    */}
+                   
                   </tbody>
                 </Table>
               </div>
@@ -204,34 +259,34 @@ export default function StudentDetailPage() {
                   <thead className="table-light">
                     <tr>
                       <th style={{ width: "10%" }}>개설일</th>
-                      <th style={{ width: "30%" }}>강의명</th>
+                      <th style={{ width: "20%" }}>강의명</th>
                       <th style={{ width: "8%" }}>출결</th>
                       <th style={{ width: "8%" }}>과제</th>
                       <th style={{ width: "8%" }}>중간</th>
                       <th style={{ width: "8%" }}>기말</th>
                       <th style={{ width: "10%" }}>총학점</th>
+                      <th style={{ width: "8%" }}>상태</th>
                       {/* ▼ 추가: 상세 / 기능 컬럼 */}
                       <th style={{ width: "8%" }}>상세</th>
                       <th style={{ width: "8%" }}>기능</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {/*
-                    TODO: 성적 리스트 map으로 렌더링
-                    {gradeList.map(grade => (
-                      <tr key={grade.id}>
-                        <td>{grade.openDate}</td>
-                        <td>{grade.lectureName}</td>
-                        <td>{grade.attendance}</td>
-                        <td>{grade.assignment}</td>
-                        <td>{grade.midterm}</td>
-                        <td>{grade.final}</td>
+                    {student.gradeInfoList.map(grade => (
+                      <tr key={grade.lecId}>
+                        <td>{grade.startDate}</td>
+                        <td>{grade.name}</td>
+                        <td>{grade.ascore}</td>
+                        <td>{grade.asScore}</td>
+                        <td>{grade.tscore}</td>
+                        <td>{grade.ftScore}</td>
                         <td>{grade.totalScore}</td>
-                        <td>{/* 상세 버튼 자리 *-/}</td>
-                        <td>{/* 기능(수정/삭제 등) 버튼 자리 *-/}</td>
+                        <td>{typeMap3[grade.status]}</td>
+                        <td>-</td>
+                        <td>-</td>
                       </tr>
                     ))}
-                    */}
+                    
                   </tbody>
                 </Table>
               </div>
