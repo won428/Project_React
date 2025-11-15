@@ -40,6 +40,7 @@ function App() {
   };
 
   const [paging, setPaging] = useState({
+<<<<<<< HEAD
     totalElements : 0,
     pageSize : 5,
     totalPages : 0,
@@ -47,16 +48,25 @@ function App() {
     pageCount : 10,
     beginPage : 0,
     endPage : 0,
+=======
+    totalElements: 0,
+    pageSize: 10,
+    totalPages: 0,
+    pageNumber: 0,
+    pageCount: 10,
+    beginPage: 0,
+    endPage: 0,
+>>>>>>> 28bd0fe23e28d298e6aac290664ff918da116e72
     searchCompletionDiv: '',
     searchMajor: '',
     searchCredit: '',
     searchStartDate: '',
     searchMode: 'all',
-    searchKeyword:'',
-    searchSchedule:'',
-    searchYear:'',
-    searchLevel:'',
-    searchUser:'',
+    searchKeyword: '',
+    searchSchedule: '',
+    searchYear: '',
+    searchLevel: '',
+    searchUser: '',
 
     // ★ 탭별 독립 페이징 필드(추가)
     totalElements_pending: 0,
@@ -125,17 +135,17 @@ function App() {
       searchStartDate: paging.searchStartDate || undefined,
       searchMode: paging.searchMode || undefined,
       searchKeyword: (paging.searchKeyword || '').trim() || undefined,
-      searchSchedule:paging.searchSchedule || undefined,
-      searchYear:paging.searchYear || undefined,
-      searchLevel:paging.searchLevel || undefined,
-      searchUser:paging.searchUser || undefined,
+      searchSchedule: paging.searchSchedule || undefined,
+      searchYear: paging.searchYear || undefined,
+      searchLevel: paging.searchLevel || undefined,
+      searchUser: paging.searchUser || undefined,
     };
 
     axios
       .get(url, { params })
       .then((response) => {
         setLectureList(response.data.content || []);
-        setPaging((previous)=>{
+        setPaging((previous) => {
           const totalElements = response.data.totalElements;
           const totalPages = response.data.totalPages;
           const pageNumber = response.data.pageable.pageNumber;
@@ -189,18 +199,18 @@ function App() {
     paging.pageNumber_completed,
   ]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const url = `${API_BASE_URL}/major/listForLecturePage`;
     axios
       .get(url)
-      .then((response)=>{
+      .then((response) => {
         setMajorList(response.data)
         console.log(response.data)
       })
-      .catch((err)=>{
+      .catch((err) => {
         console.log(err)
       })
-  },[])
+  }, [])
 
   useEffect(() => {
     fetchLectures();
@@ -347,7 +357,7 @@ function App() {
       const response = await axios.patch(url, selected, {
         params: { status: "APPROVED" },
       });
-    if (response.status === 200) {
+      if (response.status === 200) {
         alert("선택하신 강의를 승인하였습니다.");
         setApproveSelected([]);
         await fetchLectures();
@@ -548,9 +558,9 @@ function App() {
         {/* 년도 */}
         <Form.Select id="filterYear" size="sm" className="w-auto"
           value={paging.searchYear}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchYear : value}))
+            setPaging((pre) => ({ ...pre, searchYear: value }))
           }}
         >
           <option value="">년도</option>
@@ -565,9 +575,9 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 120 }}
           value={paging.searchStartDate}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchStartDate : value}))
+            setPaging((pre) => ({ ...pre, searchStartDate: value }))
           }}
         >
           <option value="">학기</option>
@@ -586,9 +596,9 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 160 }}
           value={paging.searchCompletionDiv}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchCompletionDiv : value}))
+            setPaging((pre) => ({ ...pre, searchCompletionDiv: value }))
           }}
         >
           <option value="">이수구분</option>
@@ -607,9 +617,9 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 120 }}
           value={paging.searchLevel}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchLevel : value}))
+            setPaging((pre) => ({ ...pre, searchLevel: value }))
           }}
         >
           <option value="0">학년</option>
@@ -627,13 +637,13 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 180 }}
           value={paging.searchMajor}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchMajor : value}))
+            setPaging((pre) => ({ ...pre, searchMajor: value }))
           }}
         >
           <option value="">소속학과</option>
-          {majorList.map((major)=>(
+          {majorList.map((major) => (
             <option key={major.id} value={major.id}>{major.name}</option>
           ))}
         </Form.Select>
@@ -646,13 +656,13 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 150 }}
           value={paging.searchUser}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchUser : value}))
+            setPaging((pre) => ({ ...pre, searchUser: value }))
           }}
         >
           <option value="">담당교수</option>
-          {userList.map((user)=>(
+          {userList.map((user) => (
             <option key={user.id} value={user.id}>{user.name}</option>
           ))}
           {/* TODO: 옵션 추가 */}
@@ -666,9 +676,9 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 140 }}
           value={paging.searchSchedule}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchSchedule : value}))
+            setPaging((pre) => ({ ...pre, searchSchedule: value }))
           }}
         >
           <option value="">수업 요일</option>
@@ -687,9 +697,9 @@ function App() {
           className="w-auto flex-shrink-0"
           style={{ minWidth: 120 }}
           value={paging.searchCredit}
-          onChange={(e)=>{
+          onChange={(e) => {
             const value = e.target.value;
-            setPaging((pre)=>({...pre, searchCredit : value}))
+            setPaging((pre) => ({ ...pre, searchCredit: value }))
           }}
         >
           <option value="0">학점</option>
@@ -826,7 +836,7 @@ function App() {
                         <td className="text-center">{lec.userName}</td>
                         <td className="text-center">{splitStartDate(lec.startDate)}</td>
                         <td className="text-center">
-                          {(lec.lectureSchedules ?? []) 
+                          {(lec.lectureSchedules ?? [])
                             .map((s) => typeMap3[s.day] ?? s.day)
                             .join(", ")}
                         </td>

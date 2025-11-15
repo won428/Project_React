@@ -105,7 +105,7 @@ function Dashboard() {
                                 assign.map(item => {
                                     const daysLeft = remainDate(item.dueAt);
                                     return (
-                                        <tr key={item.id} onClick={() => navigate(`/assignment/${item.id}`)} style={{ cursor: 'pointer' }}>
+                                        <tr key={item.id} onClick={() => navigate(`/asnspec`, { state: item.id })} style={{ cursor: 'pointer' }}>
                                             <td className="py-1 px-2">{item.title}</td>
                                             <td className="text-center py-1 px-2">{item.username}</td>
                                             <td className="text-center py-1 px-2 text-nowrap">{new Date(item.dueAt).toLocaleDateString()}</td>
@@ -173,7 +173,7 @@ function Dashboard() {
                         <tbody>
                             {notice.length > 0 ? (
                                 notice.map(item => (
-                                    <tr key={item.id} onClick={() => navigate(`/notice/${item.id}`)} style={{ cursor: 'pointer' }}>
+                                    <tr key={item.id} onClick={() => navigate(`/notionlistspec`, { state: item.id })} style={{ cursor: 'pointer' }}>
                                         <td className="text-center py-1 px-2">{item.id}</td>
                                         <td className="py-1 px-2">{item.title}</td>
                                         <td className="text-center py-1 px-2">{item.username}</td>

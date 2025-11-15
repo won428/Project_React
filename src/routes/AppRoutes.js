@@ -15,7 +15,6 @@ import ChangeStatusDetail from '../_student/pages/Integrated_Info/ChangeStatusDe
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
 import Academic_ScheduleMod from '../public/pages/Schedule/Academic_ScheduleMod';
 import Lecture_RoomAd from '../_admin/pages/Lecture_Room/Lecture_RoomAd';
-import Lecture_Room from '../_student/pages/LectureRoom/Lecture_Room';
 
 
 
@@ -71,7 +70,6 @@ import HomeAdmin from '../_admin/ui/Home/HomeAdmin';
 import HomePRO from '../_professor/ui/HomePRO';
 
 import LecRegisterPro from '../_professor/Lecture_Room/LecRegisterPro';
-import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
 import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 import LectureSession from '../_professor/Lecture_Room/LectureSession';
 import GradeCalculation from '../_professor/Lecture_Room/GradeCalculation';
@@ -146,12 +144,12 @@ function App() {
                     <Route path='/acsche' element={<Academic_Schedule />} />
 
 
-                    <Route element={<LayoutStInfoPublic />}>
-                        <Route path='/inquiryBoard' element={<InquiryBoard />} />
-                        <Route path='/createPost' element={<CreatePost />} />
-                        <Route path='/inquiryPage/:id' element={<InquiryPage />} />
-                        <Route path='/updatePost/:id' element={<UpdatePost />} />
-                    </Route>
+                    {/* <Route element={<LayoutStInfoPublic />}>  </Route> */}
+                    <Route path='/inquiryBoard' element={<InquiryBoard />} />
+                    <Route path='/createPost' element={<CreatePost />} />
+                    <Route path='/inquiryPage/:id' element={<InquiryPage />} />
+                    <Route path='/updatePost/:id' element={<UpdatePost />} />
+
 
                 </Route>
             </Route>
@@ -187,6 +185,7 @@ function App() {
                         {/* 교수 전용 */}
                         <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
                         <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
 
                     </Route>
                 </Route>
@@ -307,9 +306,8 @@ function App() {
 
                         <Route path='/ToDoList' element={<ToDoList />} ></Route>
 
-                        {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
                         <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
-                  
+
                     </Route>
 
 
@@ -327,12 +325,10 @@ function App() {
 
 
                         <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
-                        <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
                         <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
 
 
                         <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
-                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
 
                     </Route>
 
