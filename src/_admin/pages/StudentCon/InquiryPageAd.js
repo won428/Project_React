@@ -18,14 +18,14 @@ export default function PostViewUI() {
   const [page, setPage] = useState({});
   const navigate = useNavigate();
   const [comment, setComment] = useState({
-    content : '',
-    userId : user.id,
-    postId : id
+    content: '',
+    userId: user.id,
+    postId: id
   })
   const [commentList, setCommentList] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState({
-    content : ''
+    content: ''
   });
 
   const typeMap2 = {
@@ -66,10 +66,10 @@ export default function PostViewUI() {
     }
   }, [id]);
 
-  useEffect(()=>{
+  useEffect(() => {
     loadPost();
     loadComments();
-  },[loadPost, loadComments])
+  }, [loadPost, loadComments])
 
   const downloadClick = (id) => {
     const url = `${API_BASE_URL}/attachment/download/${id}`;
@@ -100,10 +100,10 @@ export default function PostViewUI() {
       });
   };
 
-  const writeComment = async (e) =>{
+  const writeComment = async (e) => {
     e.preventDefault();
     try {
-      if(comment.content === null || comment.content === ''){
+      if (comment.content === null || comment.content === '') {
         alert('댓글 내용을 입력하셔야 합니다.');
         return;
       }
@@ -113,7 +113,7 @@ export default function PostViewUI() {
       );
       if (response.status === 200) {
         alert("댓글 등록 완료");
-        setComment((pre)=>({...pre, content: ''}));
+        setComment((pre) => ({ ...pre, content: '' }));
         await loadComments();
       }
     } catch (error) {
@@ -128,7 +128,7 @@ export default function PostViewUI() {
     }
   }
 
-  const updateComment =  async (e, id) =>{
+  const updateComment = async (e, id) => {
     try {
       e.preventDefault();
       const url = `${API_BASE_URL}/inquiry/comment/update/${id}`;
@@ -151,7 +151,7 @@ export default function PostViewUI() {
     }
   };
 
-  const deleteComment = async (e,id) =>{
+  const deleteComment = async (e, id) => {
     try {
       e.preventDefault();
       if (!window.confirm("댓글을 삭제할까요?")) {
@@ -175,7 +175,7 @@ export default function PostViewUI() {
     }
   };
 
-  const deletePost = async (e) =>{
+  const deletePost = async (e) => {
     try {
       e.preventDefault();
       if (!window.confirm("게시글을 삭제할까요?")) {
@@ -198,13 +198,13 @@ export default function PostViewUI() {
       alert(message);
     }
   }
-  const updateStatus = async (e, postStatus) =>{
+  const updateStatus = async (e, postStatus) => {
     try {
       e.preventDefault();
-      
+
       const url = `${API_BASE_URL}/inquiry/post/status/${id}`;
-      const response = await axios.patch(url,postStatus,
-       { headers: { 'Content-Type': 'application/json' }} 
+      const response = await axios.patch(url, postStatus,
+        { headers: { 'Content-Type': 'application/json' } }
       )
       if (response.status === 200) {
         alert("처리 완료");
@@ -222,7 +222,7 @@ export default function PostViewUI() {
     }
   }
   return (
-    <Container className="py-4" style={{ maxWidth: 960 }}>
+    <Container className="p-0" style={{ maxWidth: 960 }}>
       <Stack gap={2} className="mb-3">
         <div className="small">{typeMap2[page.tag]}</div>
         <h3 className="mb-0">{page.title}</h3>
@@ -246,21 +246,21 @@ export default function PostViewUI() {
         >
           <Button size="sm" variant="outline-primary"
             value={"APPROVED"}
-            onClick={(e)=>{
+            onClick={(e) => {
               const value = e.target.value;
               updateStatus(e, value)
             }}
           >처리중</Button>
           <Button size="sm" variant="outline-success"
             value={"COMPLETED"}
-            onClick={(e)=>{
+            onClick={(e) => {
               const value = e.target.value;
               updateStatus(e, value)
             }}
           >처리완료</Button>
           <Button size="sm" variant="outline-danger"
             value={"REJECTED"}
-            onClick={(e)=>{
+            onClick={(e) => {
               const value = e.target.value;
               updateStatus(e, value)
             }}
@@ -307,11 +307,11 @@ export default function PostViewUI() {
 
       <div className="d-flex justify-content-end gap-2 mb-2">
         {page.user === user.id && (
-          <Button variant="outline-primary" size="sm" onClick={()=> navigate(`/updatePost/${id}`)}>수정</Button>
+          <Button variant="outline-primary" size="sm" onClick={() => navigate(`/updatePost/${id}`)}>수정</Button>
         )}
-        <Button variant="outline-secondary" size="sm" onClick={()=> navigate(-1)}>돌아가기</Button>
+        <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>돌아가기</Button>
         {page.user === user.id && (
-          <Button variant="outline-danger" size="sm" onClick={(e)=> deletePost(e)}>삭제</Button>
+          <Button variant="outline-danger" size="sm" onClick={(e) => deletePost(e)}>삭제</Button>
         )}
       </div>
 
@@ -351,7 +351,7 @@ export default function PostViewUI() {
                         value={editingText.content}
                         autoFocus
                         onChange={(e) =>
-                          setEditingText((pre)=>({...pre, content : e.target.value}))
+                          setEditingText((pre) => ({ ...pre, content: e.target.value }))
                         }
                       />
                       <div className="d-flex justify-content-end gap-2">
@@ -405,9 +405,9 @@ export default function PostViewUI() {
               placeholder="댓글을 남겨보세요"
               className="mb-0 pe-5"
               style={{ resize: "none" }}
-              onChange={(e)=>{
+              onChange={(e) => {
                 const value = e.target.value;
-                setComment((pre)=>({...pre, content : value}))
+                setComment((pre) => ({ ...pre, content: value }))
                 console.log(value)
               }}
             />
@@ -415,7 +415,7 @@ export default function PostViewUI() {
               variant="primary"
               size="sm"
               className="position-absolute end-0 bottom-0 m-2"
-              onClick={(e)=>{writeComment(e)}}
+              onClick={(e) => { writeComment(e) }}
             >
               등록
             </Button>
