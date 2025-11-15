@@ -8,17 +8,12 @@ function App() {
     const navigate = useNavigate();
 
 
-    const logoutAction = () => {
-        logout();
-        navigate('/login');
-    }
 
     return (
         <Container className="mt-4">
             <Row>
                 <Col>
-                    Admin? : {user.roles}
-                    <Button onClick={logoutAction} >Logout</Button>
+
                 </Col>
             </Row>
         </Container>
