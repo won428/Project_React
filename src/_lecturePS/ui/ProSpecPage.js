@@ -28,7 +28,7 @@ const ProSpecPage = () => {
             </main>
 
             {/* 푸터 */}
-            <footer className="py-3 mt-auto text-dark text-center" style={{ backgroundColor: "#d0e7fa" }}>
+            <footer className="py-3 mt-auto text-light text-center bg-dark" >
                 <p className="mb-0">&copy;2025 {appName}. All rights reserved</p>
             </footer>
         </div>

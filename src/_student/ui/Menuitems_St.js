@@ -1,4 +1,4 @@
-import { Button, Col, Container, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../public/context/UserContext";
 import { requestTokenRefresh } from "../../public/config/api";
@@ -7,10 +7,12 @@ function MenuSt() {
     const { user, logout } = useAuth();
     const { formattedTime, refreshTimer } = useSessionTimer();
     const navigate = useNavigate();
+
     const logoutAction = () => {
         logout();
-        navigate("login")
-    }
+        navigate("/");
+    };
+
     const handleRefresh = async () => {
         try {
             console.log("refresh");
@@ -20,91 +22,125 @@ function MenuSt() {
         } catch (e) {
             console.error('토큰 갱신 실패', e);
         }
+    };
+    const navItems = [
+        { label: "학생 정보", path: "/InfoHome" },
+        { label: "성적 조회", path: "/Student_Credit" },
+        { label: "출결 조회", path: "/CheckAttendance" },
+        { label: "학적 변경", path: "/Change_Status" },
+    ];
 
-
-    }
+    const navLecItems = [
+        { label: "강의 홈", path: "/LHome" },
+        { label: "강의실", path: "/leclist" },
+        { label: "수강신청", path: "/courseRegistration" },
+    ];
 
     return (
-        <Row>
-            <Col>
-                <Navbar
-                    expand="lg"
-                    style={{ backgroundColor: "#d0e7fa" }}
-                    className="shadow-sm"
-                >
-                    <Container>
-                        <Navbar.Brand
+        <header className="bg-dark border-bottom border-light-subtle sticky-top">
+            <Navbar expand="lg" className="bg-dark py-3" sticky="top">
+                <Container>
+                    {/* 로고 */}
+                    <Navbar.Brand onClick={() => navigate("/home")} className="d-flex align-items-center text-white fw-bold" style={{ cursor: "pointer" }}>
+                        <div
+                            className="d-flex align-items-center gap-2"
                             onClick={() => navigate("/hs")}
-                            className="d-flex align-items-center"
-                            style={{ cursor: "pointer", color: "#0d47a1", fontWeight: 600 }}
+                            style={{ cursor: "pointer" }}
                         >
-                            <div
-                                className="me-2 d-flex align-items-center"
-                                style={{
-                                    padding: "0.25rem",
-                                    backgroundColor: "transparent",
-                                    borderRadius: "4px",
-                                }}
-                            >
-                                <img src="/logo22.png" height="30" alt="LMS Logo" />
-                            </div>
-                        </Navbar.Brand>
+                            <span className="fw-semibold text-light">
+                                <img src="/logo.png" height="30" alt="LMS Logo" />
+                            </span>
+                        </div>
+                    </Navbar.Brand>
 
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        <Navbar.Collapse id="basic-navbar-nav">
-                            <Nav className="me-auto">
-                                <Nav.Link onClick={() => navigate(`/InfoHome`)} className="text-dark">
-                                    통합 정보
-                                </Nav.Link>
-                                <Nav.Link onClick={() => navigate(`/LHome`)} className="text-dark">
-                                    사이버 캠퍼스
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => {
-                                        if (user?.IsAuthenticated) {
-                                            window.open("http://localhost:3000/EnNotList", "_blank", "noopener,noreferrer");
-                                        } else {
-                                            alert("로그인 정보가 없습니다. 다시 로그인하세요.");
-                                            navigate("/");
-                                        }
-                                    }}
-                                    className="text-dark"
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" className="bg-white" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        {/* 메뉴 항목 */}
+                        <NavDropdown
+                            title="학생 정보" id="student-nav-dropdown"
+                            menuVariant="dark"
+                            className="text-white custom-dropdown"
+                        >
+                            {navItems.map((item, index) => (
+                                <NavDropdown.Item
+                                    key={index}
+                                    onClick={() => navigate(item.path)}
                                 >
-                                    공지 목록
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => {
-                                        if (user?.IsAuthenticated) {
-                                            window.open("http://localhost:3000/acsche", "_blank", "noopener,noreferrer");
-                                        } else {
-                                            alert("로그인 정보가 없습니다. 다시 로그인하세요.");
-                                            navigate("/");
-                                        }
-                                    }}
-                                    className="text-dark"
+                                    {item.label}
+                                </NavDropdown.Item>
+                            ))}
+                        </NavDropdown>
+                        &nbsp;  &nbsp;
+                        <NavDropdown title="강의 정보" id="lecture-nav-dropdown"
+                            menuVariant="dark"
+                            className="text-white custom-nav-dropdown"
+                        >
+                            {navLecItems.map((item, index) => (
+                                <NavDropdown.Item
+                                    key={index}
+                                    onClick={() => navigate(item.path)}
                                 >
-                                    학사일정
-                                </Nav.Link>
-                            </Nav>
-                            <Nav className="ms-auto align-items-center">
-                                <Navbar.Text className="text-dark me-2">
+                                    {item.label}
+                                </NavDropdown.Item>
+                            ))}
+                        </NavDropdown>
+                        &nbsp;
+                        <Nav className="me-auto">
+                            <Nav.Link onClick={() => {
+                                if (user?.IsAuthenticated) {
+                                    window.open("http://localhost:3000/EnNotList", "_blank", "noopener,noreferrer");
+                                } else {
+                                    alert("로그인 정보가 없습니다. 다시 로그인하세요.");
+                                    navigate("/");
+                                }
+                            }} className="text-white">전체 공지</Nav.Link>
+                            <Nav.Link onClick={() => {
+                                if (user?.IsAuthenticated) {
+                                    window.open("http://localhost:3000/acsche", "_blank", "noopener,noreferrer");
+                                } else {
+                                    alert("로그인 정보가 없습니다. 다시 로그인하세요.");
+                                    navigate("/");
+                                }
+                            }} className="text-white">성적 조회</Nav.Link>
+
+                        </Nav>
+
+                        {/* 유저 정보 */}
+                        <div className="d-flex align-items-center gap-3">
+                            {user?.name && (
+                                <span className="small text-white d-none d-md-inline">
                                     {user.name} 님
-                                </Navbar.Text>
-                                <Navbar.Text className="text-dark me-2">
-                                    ({formattedTime})
-                                </Navbar.Text>
-                                <Button size="sm" variant="outline-primary" className="me-2" onClick={handleRefresh} style={{ fontSize: "1.2rem", padding: "0 0.4rem" }}>
-                                    ⟳
-                                </Button>
-                                <Button size="sm" variant="outline-dark" onClick={logoutAction}>
-                                    Logout
-                                </Button>
-                            </Nav>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-            </Col>
-        </Row>
-    )
+                                </span>
+                            )}
+
+                            <span className="small text-white">({formattedTime})</span>
+
+                            {/* 🔄 Refresh Button */}
+                            <Button
+                                size="sm"
+                                variant="outline-light"
+                                onClick={handleRefresh}
+                                className="d-flex align-items-center justify-content-center"
+                                style={{ width: 32, height: 32, padding: 0, borderRadius: "50%" }}
+                            >
+                                <span style={{ fontSize: "1rem" }}>⟳</span>
+                            </Button>
+
+                            {/* 🚪 Logout Button */}
+                            <Button
+                                size="sm"
+                                variant="light"
+                                className="fw-semibold"
+                                onClick={logoutAction}
+                            >
+                                로그아웃
+                            </Button>
+                        </div>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+
+        </header>
+    );
 }
 export default MenuSt;

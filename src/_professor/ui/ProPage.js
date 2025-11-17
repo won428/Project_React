@@ -4,7 +4,7 @@ import { appName } from "../../public/appName";
 
 const ProPage = () => {
     return (
-        <div style={{ backgroundColor: '#ffffff' }} className="app-wrapper d-flex flex-column min-vh-100">
+        <div style={{ backgroundColor: '#ffffffb0' }} className="app-wrapper d-flex flex-column min-vh-100">
             {/* 헤더 */}
             <header>
                 <MenuPro />
@@ -27,7 +27,7 @@ const ProPage = () => {
             </main>
 
             {/* 푸터 */}
-            <footer className="py-3 mt-auto text-dark text-center" style={{ backgroundColor: "#d0e7fa" }}>
+            <footer className="py-3 mt-auto text-light text-center bg-dark" >
                 <p className="mb-0">&copy;2025 {appName}. All rights reserved</p>
             </footer>
         </div>

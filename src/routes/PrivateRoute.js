@@ -20,6 +20,7 @@ const PrivateRoute = ({ allowedRoles }) => {
     console.log(user?.roles);
 
     const hasAccess = user?.roles?.some(role => allowedRoles.includes(role));
+    console.log(hasAccess);
 
 
     if (!hasAccess) { return <Navigate to="/Unauthorizedpage" replace />; }

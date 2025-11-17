@@ -4,7 +4,7 @@ import { Alert, Button, Card, CardBody, Col, Container, Form, Row } from "react-
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../public/config/config";
 
-function App() {
+function SetPW() {
     const navigate = useNavigate();
     const location = useLocation();
     const username = location?.state?.username;
@@ -106,4 +106,4 @@ function App() {
     );
 }
 
-export default App;
+export default SetPW;

@@ -1,0 +1,35 @@
+/* 드롭다운 전체 텍스트 흰색 */
+.custom-dropdown .dropdown-menu {
+    background-color: #212529 !important;
+    /* 배경 어둡게 */
+    color: #ffffff !important;
+}
+
+.custom-dropdown .dropdown-item {
+    color: #ffffff !important;
+}
+
+.custom-dropdown .dropdown-item:hover {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+}
+
+.custom-navy-dropdown .dropdown-menu {
+    background-color: #001f3f !important;
+    /* 진한 네이비 */
+    color: #ffffff !important;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 드롭다운 아이템 기본 스타일 */
+.custom-navy-dropdown .dropdown-item {
+    color: #ffffff !important;
+}
+
+/* 호버 시 더 밝은 네이비 */
+.custom-navy-dropdown .dropdown-item:hover {
+    background-color: #003366 !important;
+    color: #ffffff !important;
+}

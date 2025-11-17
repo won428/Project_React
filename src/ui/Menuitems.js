@@ -13,7 +13,7 @@ function App() {
                 >
                     <Container>
                         <Navbar.Brand
-                            onClick={() => navigate("/")}
+                            onClick={() => navigate("/home")}
                             className="d-flex align-items-center"
                             style={{ cursor: "pointer", color: "#0d47a1", fontWeight: 600 }}
                         >

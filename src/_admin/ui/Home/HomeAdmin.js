@@ -6,7 +6,7 @@ import { API_BASE_URL } from "../../../config/config";
 import axios from "axios";
 import { set } from "date-fns";
 
-function App() {
+function HomeAdmin() {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const appName = "LMS";
@@ -200,4 +200,4 @@ function App() {
     );
 }
 
-export default App;
+export default HomeAdmin;

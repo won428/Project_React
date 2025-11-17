@@ -13,7 +13,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function App() {
+function FindPW() {
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -78,4 +78,4 @@ function App() {
     );
 }
 
-export default App;
+export default FindPW;

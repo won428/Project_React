@@ -16,10 +16,17 @@ function App() {
     const navigate = useNavigate();
     const { login, user } = useAuth();
     useEffect(() => {
-
-        if (user?.roles.includes("ADMIN")) { navigate("/ha") }
-        if (user?.roles.includes("STUDENT")) { navigate("/hs") }
-        if (user?.roles.includes("PROFESSOR")) { navigate("/hp") }
+        if (!user) {
+            return
+        }
+        if (user?.IsAuthenticated) {
+            navigate('/home');
+        } else {
+            navigate('/Unauthorizedpage');
+        }
+        // if (user?.roles.includes("ADMIN")) { navigate("/ha") }
+        // if (user?.roles.includes("STUDENT")) { navigate("/hs") }
+        // if (user?.roles.includes("PROFESSOR")) { navigate("/hp") }
 
     }, [user]);
 
@@ -47,20 +54,26 @@ function App() {
             const userRole = decoded.role;
             console.log(userRole);
 
-
-            switch (userRole) {
-                case 'ADMIN':
-                    navigate('/ha')
-                    break;
-                case 'STUDENT':
-                    navigate('/hs')
-                    break;
-                case 'PROFESSOR':
-                    navigate('/hp')
-                    break;
-                default:
-                    navigate('/Unauthorizedpage')
+            if (userRole?.length > 0) {
+                navigate('/home');
             }
+            else {
+                navigate('/Unauthorizedpage');
+            }
+
+            // switch (userRole) {
+            //     case 'ADMIN':
+            //         navigate('/ha')
+            //         break;
+            //     case 'STUDENT':
+            //         navigate('/hs')
+            //         break;
+            //     case 'PROFESSOR':
+            //         navigate('/hp')
+            //         break;
+            //     default:
+            //         navigate('/Unauthorizedpage')
+            // }
 
         } catch (error) {
             console.log(error.message);
