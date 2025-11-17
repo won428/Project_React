@@ -1,23 +1,456 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { useAuth } from "../../public/context/UserContext";
+// src/_student/pages/HomeStudent.js
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../public/context/UserContext";
 
-function App() {
-    const { logout, user } = useAuth();
-    const navigate = useNavigate();
-    const appName = "LMS";
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80";
 
-    const logoutAction = () => {
-        logout();
-        navigate('/login');
-    }
+function HomeStudent() {
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
 
-    return (
-        <div>
+  const logoutAction = () => {
+    logout();
+    navigate("/"); // 로그아웃 후 로그인 페이지로
+  };
 
-            Home
+  return (
+    // 🔹 text-light 제거
+    <div className="min-vh-100 bg-dark">
+      {/* Header */}
+      <header className="bg-white border-bottom border-light-subtle sticky-top">
+        <div className="container px-3">
+          <div
+            className="d-flex align-items-center justify-content-between"
+            style={{ height: 64 }}
+          >
+            {/* Logo */}
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className="d-flex align-items-center justify-content-center rounded-3"
+                style={{ width: 40, height: 40, backgroundColor: "#111827" }}
+              >
+                <span className="fs-5 text-white">🎓</span>
+              </div>
+              <span className="fw-semibold text-dark">한국대학교</span>
+            </div>
 
-        </div >
-    )
+            {/* Desktop nav */}
+            <nav className="d-none d-md-flex align-items-center gap-3 small">
+              <a href="#about" className="text-muted text-decoration-none">
+                대학소개
+              </a>
+              <a href="#admission" className="text-muted text-decoration-none">
+                입학안내
+              </a>
+              <a href="#academic" className="text-muted text-decoration-none">
+                학사정보
+              </a>
+              <a href="#notice" className="text-muted text-decoration-none">
+                공지사항
+              </a>
+              <a href="#contact" className="text-muted text-decoration-none">
+                문의
+              </a>
+            </nav>
+
+            {/* Right side actions */}
+            <div className="d-flex align-items-center gap-2">
+              {user && (
+                <span className="small text-muted d-none d-md-inline">
+                  {user.name} 님
+                </span>
+              )}
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary rounded-pill px-3"
+                onClick={logoutAction}
+              >
+                로그아웃
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero section */}
+      <section
+        className="position-relative"
+        style={{ height: 480, overflow: "hidden" }}
+      >
+        <div className="position-absolute top-0 start-0 w-100 h-100">
+          <img
+            src={HERO_IMAGE}
+            alt="University campus"
+            className="w-100 h-100"
+            style={{ objectFit: "cover" }}
+          />
+          <div
+            className="position-absolute top-0 start-0 w-100 h-100"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(15,23,42,0.9), rgba(15,23,42,0.6))",
+            }}
+          />
+        </div>
+
+        <div className="position-relative h-100">
+          <div className="container h-100 d-flex flex-column justify-content-center">
+            <div className="row">
+              <div className="col-lg-7 text-white">
+                <p className="text-uppercase small mb-2">
+                  Korea National University
+                </p>
+                <h1
+                  className="fw-bold mb-3"
+                  style={{ fontSize: "2.6rem", lineHeight: 1.2 }}
+                >
+                  미래를 여는
+                  <br />
+                  한국대학교
+                </h1>
+                <p className="text-white-50 mb-2">
+                  4차 산업혁명 시대를 선도하는 글로벌 인재 양성의 요람.
+                  <br />
+                  한국대학교에서 여러분의 가능성을 펼쳐 보세요.
+                </p>
+                {user && (
+                  <p className="text-white-50 mb-4">
+                    오늘도 좋은 하루 보내세요, <strong>{user.name}</strong> 님
+                  </p>
+                )}
+                <div className="d-flex flex-wrap gap-2">
+                  <a
+                    href="#admission"
+                    className="btn btn-primary rounded-pill px-4"
+                  >
+                    입학 안내 보기
+                  </a>
+                  <button
+                    type="button"
+                    className="btn btn-outline-light rounded-pill px-4"
+                    onClick={() => navigate("/InfoHome")}
+                  >
+                    포털 바로가기
+                  </button>
+                </div>
+              </div>
+              {/* 오른쪽 빈 영역 유지 */}
+            </div>
+          </div>
+        </div>
+      </section>
+
+{/* ===== 빠른 바로가기 섹션 (배너와 메인 컨텐츠 사이) ===== */}
+<section className="bg-light">
+  <div className="container py-4">
+    {/* 제목 */}
+    <div className="d-flex align-items-center mb-3">
+      <p className="fw-semibold mb-0 text-dark">빠른 바로가기</p>
+    </div>
+
+    {/* 버튼 카드 4개를 가로로 쭉 */}
+    <div className="row g-3 align-items-stretch">
+      {/* 수강신청 */}
+      <div className="col-lg-3 col-md-6">
+        <div
+          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+          style={{
+            backgroundColor: "#f1f2f4",      // ✅ 회색 계열
+            border: "1px solid #e1e4ea",    // 살짝 테두리
+          }}
+        >
+          <div
+            className="d-flex align-items-center justify-content-center rounded-3 me-3"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "#111827",
+            }}
+          >
+            <span className="text-white fs-5">📚</span>
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">수강신청</div>
+            <div className="small text-muted">
+              학기별 수강신청을 진행합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 성적조회 */}
+      <div className="col-lg-3 col-md-6">
+        <div
+          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+          style={{
+            backgroundColor: "#f1f2f4",
+            border: "1px solid #e1e4ea",
+          }}
+        >
+          <div
+            className="d-flex align-items-center justify-content-center rounded-3 me-3"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "#111827",
+            }}
+          >
+            <span className="text-white fs-5">📊</span>
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">성적조회</div>
+            <div className="small text-muted">
+              나의 누적 성적을 확인해 보세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 장학제도 */}
+      <div className="col-lg-3 col-md-6">
+        <div
+          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+          style={{
+            backgroundColor: "#f1f2f4",
+            border: "1px solid #e1e4ea",
+          }}
+        >
+          <div
+            className="d-flex align-items-center justify-content-center rounded-3 me-3"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "#111827",
+            }}
+          >
+            <span className="text-white fs-5">🎓</span>
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">장학제도</div>
+            <div className="small text-muted">
+              다양한 장학금 혜택을 확인하세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 학사일정 */}
+      <div className="col-lg-3 col-md-6">
+        <div
+          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+          style={{
+            backgroundColor: "#f1f2f4",
+            border: "1px solid #e1e4ea",
+          }}
+        >
+          <div
+            className="d-flex align-items-center justify-content-center rounded-3 me-3"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "#111827",
+            }}
+          >
+            <span className="text-white fs-5">📅</span>
+          </div>
+          <div>
+            <div className="fw-semibold text-dark mb-1">학사일정</div>
+            <div className="small text-muted">
+              중요한 학사 일정을 한눈에 확인하세요.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      {/* Main content */}
+      <main className="bg-light py-5">
+        <div className="container">
+          <div className="row g-4">
+            {/* Left column: 공지 + 뉴스 */}
+            <div className="col-lg-8">
+              {/* Notice board */}
+              <section id="notice" className="mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h2 className="h5 mb-0 text-dark">공지사항</h2>
+                  <a
+                    href="#"
+                    className="small text-muted text-decoration-none"
+                  >
+                    더보기
+                  </a>
+                </div>
+                {/* 🔹 카드 안 기본 글씨를 어둡게 */}
+                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+                  <ul className="list-unstyled mb-0">
+                    <li className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div>
+                        <span className="badge bg-primary-subtle text-primary me-2">
+                          학사
+                        </span>
+                        <span>2024학년도 2학기 기말고사 일정 안내</span>
+                      </div>
+                      <span className="text-muted">2024.11.15</span>
+                    </li>
+                    <li className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <div>
+                        <span className="badge bg-success-subtle text-success me-2">
+                          장학
+                        </span>
+                        <span>2025학년도 1학기 국가장학금 신청 안내</span>
+                      </div>
+                      <span className="text-muted">2024.11.10</span>
+                    </li>
+                    <li className="d-flex align-items-center justify-content-between py-2">
+                      <div>
+                        <span className="badge bg-info-subtle text-info me-2">
+                          채용
+                        </span>
+                        <span>동계 인턴십 &amp; 채용 설명회 안내</span>
+                      </div>
+                      <span className="text-muted">2024.11.08</span>
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* News section */}
+              <section id="academic" className="mt-4">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h2 className="h5 mb-0 text-dark">뉴스 &amp; 대학소식</h2>
+                  <a
+                    href="#"
+                    className="small text-muted text-decoration-none"
+                  >
+                    더보기
+                  </a>
+                </div>
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <div className="bg-white rounded-4 shadow-sm h-100 p-3 small text-dark">
+                      <h3 className="h6 mb-2 text-dark">
+                        한국대학교, 2024 THE 세계대학평가 상위 1% 선정
+                      </h3>
+                      <p className="text-muted mb-0">
+                        우수한 연구력과 교육역량을 인정받아 세계대학평가 상위
+                        1% 대학에 선정되었습니다.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="bg-white rounded-4 shadow-sm h-100 p-3 small text-dark">
+                      <h3 className="h6 mb-2 text-dark">
+                        AI 융합대학, 글로벌 산학 협력 프로그램 운영
+                      </h3>
+                      <p className="text-muted mb-0">
+                        해외 유수 기업과의 공동 연구 및 인턴십 프로그램을 통해
+                        실무 중심의 AI 교육을 제공합니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Right column: 학사일정 + 날씨 */}
+            <div className="col-lg-4">
+              {/* 학사일정 카드 */}
+              <section id="admission" className="mb-4">
+                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+                  <h2 className="h6 mb-2 text-dark">주요 학사일정</h2>
+                  <ul className="list-unstyled mb-0">
+                    <li className="d-flex justify-content-between py-1">
+                      <span>2학기 수강신청</span>
+                      <span className="text-muted">8.5 ~ 8.9</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>수업일수 1/4선</span>
+                      <span className="text-muted">9.23</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>중간고사 기간</span>
+                      <span className="text-muted">10.14 ~ 10.18</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>기말고사 기간</span>
+                      <span className="text-muted">12.16 ~ 12.20</span>
+                    </li>
+                  </ul>
+                </div>
+              </section>
+
+              {/* 날씨 위젯 */}
+              <section className="mb-4">
+                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+                  <h2 className="h6 mb-2 text-dark">오늘의 캠퍼스 날씨</h2>
+                  <div className="d-flex align-items-center mb-2">
+                    <div className="display-6 me-3">☀️</div>
+                    <div>
+                      <div className="fw-semibold text-dark">맑음</div>
+                      <div className="text-muted small">서울 캠퍼스 기준</div>
+                    </div>
+                    <div className="ms-auto text-end">
+                      <div className="fw-semibold text-dark">23°C</div>
+                      <div className="text-muted small">
+                        최고 25° / 최저 15°
+                      </div>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-between text-muted small">
+                    <span>미세먼지 보통</span>
+                    <span>습도 40%</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer id="contact" className="bg-white border-top">
+        <div className="container py-4 small">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-6">
+              <div className="fw-semibold mb-1 text-dark">한국대학교</div>
+              <p className="text-muted mb-0">
+                (04567) 서울특별시 중구 대학로 123 한국대학교
+                <br />
+                Tel. 02-123-4567 | Fax. 02-123-4568
+              </p>
+            </div>
+            <div className="col-md-6 text-md-end">
+              <ul className="list-inline mb-1">
+                <li className="list-inline-item">
+                  <a href="#" className="text-muted text-decoration-none">
+                    개인정보 처리방침
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="#" className="text-muted text-decoration-none">
+                    이용약관
+                  </a>
+                </li>
+                <li className="list-inline-item">
+                  <a href="#" className="text-muted text-decoration-none">
+                    캠퍼스 안내
+                  </a>
+                </li>
+              </ul>
+              <p className="text-muted mb-0">
+                &copy; 2024 한국대학교. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
-export default App;
+
+export default HomeStudent;

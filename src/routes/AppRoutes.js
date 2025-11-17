@@ -276,48 +276,42 @@ function App() {
 
             </Route>
 
-            {/* STUDENT */}
-            <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
-                {/* Route 묶은 부분을 StPage적용 */}
-                <Route element={<StPage />}>
+                    {/* STUDENT */}
+                    <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
+                    {/* 1) 학생 메인 홈: StPage 레이아웃 없이 단독으로 전체 화면 사용 */}
+                    <Route path="/hs" element={<HomeStudent />} />
 
-                    <Route path='/hs' element={<HomeStudent />}></Route>
-                    {/*Route 묶은 부분 LayoutStInfo 적용*/}
-                    {/* Integrated_Info Tab */}
-                    <Route element={<LayoutStInfost />}>
+                    {/* 2) 나머지 학생 페이지들은 기존처럼 StPage + 탭 레이아웃 사용 */}
+                    <Route element={<StPage />}>
+                        {/* Integrated_Info Tab */}
+                        <Route element={<LayoutStInfost />}>
+                        <Route path="/InfoHome" element={<InfoHome />} />
+                        <Route path="/Student_Credit" element={<This_Credit />} />
+                        <Route
+                            path="/CreditAppeal/:lectureId"
+                            element={<CreditAppeal />}
+                        />
+                        <Route path="/CreditAppealList" element={<CreditAppealList />} />
+                        <Route path="/Change_Status" element={<Change_Status />} />
+                        <Route path="/ChangeStatusList" element={<ChangeStatusList />} />
+                        <Route path="/CheckAttendance" element={<CheckAttendance />} />
+                        <Route
+                            path="/ChangeStatusDetail/:recordId"
+                            element={<ChangeStatusDetail />}
+                        />
+                        </Route>
 
-
-                        <Route path='/InfoHome' element={<InfoHome />} ></Route>
-                        <Route path='/Student_Credit' element={<This_Credit />} ></Route>
-                        <Route path='/CreditAppeal/:lectureId' element={<CreditAppeal />} ></Route>
-                        <Route path='/CreditAppealList' element={<CreditAppealList />} ></Route>
-
-                        <Route path='/Change_Status' element={<Change_Status />} ></Route>
-                        <Route path='/ChangeStatusList' element={<ChangeStatusList />} ></Route>
-
-                        <Route path='/CheckAttendance' element={<CheckAttendance />} ></Route>
-                        {/* 동적 파라미터 포함 경로 */}
-                        <Route path="/ChangeStatusDetail/:recordId" element={<ChangeStatusDetail />} />
+                        {/* Lecture Tab */}
+                        <Route element={<LayoutStLecst />}>
+                        <Route path="/LHome" element={<Lecture_Home />} />
+                        <Route path="/ToDoList" element={<ToDoList />} />
+                        <Route
+                            path="/courseRegistration"
+                            element={<CourseRegistration />}
+                        />
+                        </Route>
                     </Route>
-
-                    {/* Lecture Tab */}
-                    {/*Route 묶은 부분 LayoutStLec 적용*/}
-                    <Route element={< LayoutStLecst />}>
-                        <Route path='/LHome' element={<Lecture_Home />} ></Route>
-
-                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
-
-                        {/* <Route path='/LRoom' element={<Lecture_Room />} ></Route> */}
-                        <Route path='/courseRegistration' element={<CourseRegistration />} ></Route>
-                  
                     </Route>
-
-
-                    {/* Schedule Tab */}
-
-
-                </Route>
-            </Route>
 
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
