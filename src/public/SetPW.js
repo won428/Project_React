@@ -7,10 +7,12 @@ import { API_BASE_URL } from "../public/config/config";
 function App() {
     const navigate = useNavigate();
     const location = useLocation();
-    const username = location?.state.username;
+    const username = location?.state?.username;
+
     if (!username) {
         navigate('/findPW');
     }
+
     const [error, setError] = useState("");
     const [pw, setPw] = useState("");
     const [vpw, setVpw] = useState("");
@@ -23,102 +25,85 @@ function App() {
         }
         setError('');
 
+        const url = `${API_BASE_URL}/auth/SetPw`;
+        const parameter = { username, newPassword: pw, newPasswordConfirm: vpw };
 
-        const url = `${API_BASE_URL}/auth/SetPw`
-        const parameter = {
-            username,
-            newPassword: pw
-        };
         try {
-            const respone = await axios.post(url, parameter);
-            console.log(respone.data);
+            const response = await axios.post(url, parameter);
             alert("변경이 완료되었습니다.");
-            navigate("/")
-
-
-        }
-        catch (error) {
-            if (error.response.status === 406) {
-                alert("이미 사용하는 Pw입니다.");
-                return;
+            navigate("/");
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                if (Array.isArray(error.response.data?.errors)) {
+                    const errorMessages = error.response.data.errors.map(err => err.defaultMessage);
+                    alert(errorMessages.join("\n"));
+                } else {
+                    alert("입력값이 올바르지 않습니다.");
+                }
+            } else if (error.response?.status === 406) {
+                alert("이미 사용 중인 Pw입니다.");
             } else {
                 alert("오류가 발생했습니다.");
-                return;
             }
         }
-
-
-    }
+    };
 
     return (
-        <>
-            <Container fluid className="d-flex justify-content-center align-items-center vh-100">
-                <Row className="w-100 justify-content-center">
-                    <Col xs={12} md={6} lg={4} >
-                        <Card className="w-100" >
-                            <CardBody >
-                                <h3>Set password</h3>
-                                {error && <Alert variant="danger">{error}</Alert>}
-                                <br />
-                                <Form onSubmit={validatePw} >
-                                    <Form.Group>
-                                        <Form.Label>
-                                            Password
-                                        </Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="password"
-                                            value={pw}
-                                            onChange={(evt) => {
-                                                setPw(evt.target.value)
-                                            }
+        <Container fluid className="d-flex justify-content-center align-items-center vh-100 bg-light">
+            <Row className="w-100 justify-content-center">
+                <Col xs={12} md={6} lg={4}>
+                    <Card className="shadow rounded">
+                        <CardBody>
+                            <h3 className="mb-4 text-center">비밀번호 재설정</h3>
 
+                            {error && <Alert variant="danger">{error}</Alert>}
 
-                                            }
-                                            required
-                                        />
-                                        <Form.Label>
-                                            Password Again
-                                        </Form.Label>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="password"
-                                            value={vpw}
-                                            onChange={(evt) => {
-                                                setVpw(evt.target.value)
+                            <p className="text-muted mb-4" style={{ fontSize: "0.9rem" }}>
+                                특수문자 [<code>@$!%*#?&</code>] 를 포함한 8~20자 이내로 설정해주세요.
+                            </p>
 
-                                            }
-                                            }
-                                            required
-                                        />
-                                    </Form.Group>
-                                    <div className="d-flex justify-content-end mt-3">
-                                        <Button
-                                            className="w-30 "
-                                            type="submit"
-                                        >
-                                            submit
-                                        </Button>
-                                        <Button
-                                            className="w-30 ms-2"
-                                            variant="secondary"
-                                            onClick={() => navigate("/")}
-                                        >
-                                            cancel
-                                        </Button>
-                                    </div>
+                            <Form onSubmit={validatePw}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>새 비밀번호</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Password"
+                                        value={pw}
+                                        onChange={(e) => setPw(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
 
-                                </Form>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>비밀번호 확인</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Password Again"
+                                        value={vpw}
+                                        onChange={(e) => setVpw(e.target.value)}
+                                        required
+                                    />
+                                </Form.Group>
 
-
-        </>
-    )
+                                <div className="d-flex justify-content-between mt-4">
+                                    <Button type="submit" className="w-50">
+                                        Submit
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        className="w-50 ms-2"
+                                        onClick={() => navigate("/")}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </Form>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+    );
 }
+
 export default App;

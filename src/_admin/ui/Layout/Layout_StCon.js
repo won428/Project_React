@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import "../../../ui/Layout.css";
 
 const navItems = [
-    { label: "구성원 관리 홈", path: "/sthm/ad" },
+    // { label: "구성원 관리 홈", path: "/sthm/ad" },
     { label: "구성원 등록", path: "/user/insert_user" },
     { label: "구성원 일괄등록", path: "/user/UserBatchReg" },
     { label: "구성원 리스트", path: "/user/UserList" },

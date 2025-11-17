@@ -134,12 +134,12 @@ function App() {
                                                     type="submit"
 
 
-                                                >Login</Button>
+                                                >로그인</Button>
                                                 <Button
                                                     variant="primary"
                                                     type="button"
                                                     onClick={() => navigate("/findPw")}
-                                                >Find PW</Button>
+                                                >Pw 재설정</Button>
                                             </ButtonGroup>
                                         </Col>
 

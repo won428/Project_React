@@ -26,7 +26,7 @@ export const LayoutStLec = () => {
                                     {label}
                                 </Nav.Link>
                             ))}
-                        </Nav>layout
+                        </Nav>
                     </Col>
 
                     {/* 콘텐츠 */}

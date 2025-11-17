@@ -35,7 +35,7 @@ function MenuAd() {
                 >
                     <Container>
                         <Navbar.Brand
-                            onClick={() => navigate("/user/insert_use")}
+                            onClick={() => navigate("/ha")}
                             className="d-flex align-items-center"
                             style={{ cursor: "pointer", color: "#0d47a1", fontWeight: 600 }}
                         >

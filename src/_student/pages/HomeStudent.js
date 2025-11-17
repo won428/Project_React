@@ -1,7 +1,7 @@
 import { Card, Col, Container, Pagination, Row, ListGroup, Badge } from "react-bootstrap"; // ListGroup, Badge 임포트
 import { useAuth } from "../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
 
@@ -17,13 +17,20 @@ function App() {
     const [pageInfo, setPageInfo] = useState(null);
     const [page, setPage] = useState(1); // 현재 페이지 (1-based)
     const pageRange = 5;
+    const Semester = new Date().getMonth() === 1 || new Date().getMonth() === 2 ?
+        4 : Math.ceil(new Date().getMonth() / 3);
+    const semester = {
+        year: year.toString().padStart(4, '0'),
+        semester: Semester.toString().padStart(2, '0'),
+    }
 
     // --- (데이터 로직은 동일) ---
     useEffect(() => {
         // user.id가 유효할 때만 API 호출
         if (user?.id) {
             const url = `${API_BASE_URL}/user/detailAll/${user.id}`;
-            axios.get(url)
+
+            axios.get(url, { params: semester })
                 .then((res) => {
                     setUserdata(res.data);
                     console.log("User data fetched:", res.data);
