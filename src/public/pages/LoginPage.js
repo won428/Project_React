@@ -90,59 +90,70 @@ function App() {
 
     return (
         <>
-            <Container fluid className="d-flex justify-content-center align-items-center vh-100">
+            <Container
+                fluid
+                className="d-flex justify-content-center align-items-center vh-100"
+                style={{
+                    backgroundImage: `url('/loginbackground.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                }}
+            >
                 <Row className="w-100 justify-content-center">
-                    <Col xs={12} md={6} lg={4} >
-                        <Card className="w-100" >
-                            <CardBody >
-                                <h3>Login</h3>
-                                {error && <Alert variant="danger">{error}</Alert>}
-                                <br />
-                                <Form onSubmit={LoginAction}>
-                                    <Form.Group>
-                                        <Form.Label>
-                                            학번
-                                        </Form.Label>
+                    <Col xs={12} md={6} lg={4}>
+                        <Card
+                            className="shadow rounded"
+                            style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                border: 'none'
+                            }}
+                        >
+                            <CardBody className="p-4">
+                                <h3 className="text-center mb-4 fw-bold">로그인</h3>
 
+                                {error && (
+                                    <Alert variant="danger" className="text-center py-2">
+                                        {error}
+                                    </Alert>
+                                )}
+
+                                <Form onSubmit={LoginAction}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="fw-semibold">학번</Form.Label>
                                         <Form.Control
                                             type="text"
                                             placeholder="학번을 입력하세요"
                                             value={username}
-                                            onChange={(evt) => setUsername(evt.target.value)}
+                                            onChange={(e) => setUsername(e.target.value)}
                                             required
+                                            style={{ fontSize: '0.95rem' }}
                                         />
                                     </Form.Group>
-                                    <Form.Group>
-                                        <Form.Label>
-                                            Password
-                                        </Form.Label>
+
+                                    <Form.Group className="mb-4">
+                                        <Form.Label className="fw-semibold">비밀번호</Form.Label>
                                         <Form.Control
                                             type="password"
-                                            placeholder="password를 입력하세요"
+                                            placeholder="비밀번호를 입력하세요"
                                             value={password}
-                                            onChange={(evt) => setPassword(evt.target.value)}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             required
+                                            style={{ fontSize: '0.95rem' }}
                                         />
                                     </Form.Group>
-                                    <Row >
-                                        <Col className="align-item-end">
 
-                                            <br />
-                                            <ButtonGroup className="w-100 ">
-                                                <Button
-                                                    variant="primary"
-                                                    type="submit"
-
-
-                                                >로그인</Button>
-                                                <Button
-                                                    variant="primary"
-                                                    type="button"
-                                                    onClick={() => navigate("/findPw")}
-                                                >Pw 재설정</Button>
-                                            </ButtonGroup>
+                                    <Row className="g-2">
+                                        <Col xs={6}>
+                                            <Button type="submit" variant="primary" className="w-100">
+                                                로그인
+                                            </Button>
                                         </Col>
-
+                                        <Col xs={6}>
+                                            <Button variant="outline-secondary" className="w-100" onClick={() => navigate("/findPw")}>
+                                                비밀번호 재설정
+                                            </Button>
+                                        </Col>
                                     </Row>
                                 </Form>
                             </CardBody>
@@ -150,6 +161,8 @@ function App() {
                     </Col>
                 </Row>
             </Container>
+
+
         </>
     )
 }
