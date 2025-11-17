@@ -275,7 +275,6 @@ export default function StudentDetailPage() {
   }
 }, []); // 컴포넌트 최초 렌더링 시 한번만 실행
 
-
   return (
     <>
       <Container className="py-4">

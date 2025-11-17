@@ -266,16 +266,12 @@ export default function StudentDetailPage() {
 
 
   useEffect(() => {
-  // 페이지 로드 시 `localStorage`에서 이미지를 가져와서 상태 설정
-  const savedProfileImage = localStorage.getItem("profileImageUrl");
-  if (savedProfileImage) {
-    setProfileImageUrl(savedProfileImage);
-  } else {
-    setProfileImageUrl(null); // 저장된 이미지가 없다면 상태 초기화
-  }
-}, []); // 컴포넌트 최초 렌더링 시 한번만 실행
-
-
+    // 페이지 로드 시 `localStorage`에서 이미지를 가져와서 상태 설정
+    const savedProfileImage = localStorage.getItem("profileImageUrl");
+    if (savedProfileImage) {
+      setProfileImageUrl(savedProfileImage);
+    }
+  }, []);
   return (
     <>
       <Container className="py-4">

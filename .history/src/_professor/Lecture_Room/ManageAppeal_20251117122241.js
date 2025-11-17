@@ -305,6 +305,10 @@ function ManageAppeal() {
                                     <tbody>
                                         <tr>
                                             <td>{modalMode === "gradeApprove" ?
+                                                <Form.Control type="text" name="ascore" value={updatedScores.ascore ?? ""} onChange={handleScoreChange} />
+                                                : selectedAppeal.ascore ?? ""}
+                                            </td>
+                                            <td>{modalMode === "gradeApprove" ?
                                                 <Form.Control type="text" name="asScore" value={updatedScores.asScore ?? ""} onChange={handleScoreChange} />
                                                 : selectedAppeal.asScore ?? ""}
                                             </td>

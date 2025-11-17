@@ -296,7 +296,7 @@ function ManageAppeal() {
                                 <Table bordered size="sm" className="mb-3 text-center">
                                     <thead>
                                         <tr>
-                                            
+                                            <th>출석 점수</th>
                                             <th>과제 점수</th>
                                             <th>중간 점수</th>
                                             <th>기말 점수</th>
@@ -304,6 +304,10 @@ function ManageAppeal() {
                                     </thead>
                                     <tbody>
                                         <tr>
+                                            <td>{modalMode === "gradeApprove" ?
+                                                <Form.Control type="text" name="ascore" value={updatedScores.ascore ?? ""} onChange={handleScoreChange} />
+                                                : selectedAppeal.ascore ?? ""}
+                                            </td>
                                             <td>{modalMode === "gradeApprove" ?
                                                 <Form.Control type="text" name="asScore" value={updatedScores.asScore ?? ""} onChange={handleScoreChange} />
                                                 : selectedAppeal.asScore ?? ""}

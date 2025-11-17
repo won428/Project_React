@@ -138,18 +138,8 @@ export default function StudentDetailPage() {
 
   useEffect(() => {
     if (!user?.id) return;
-
-    // 먼저 localStorage에서 저장된 이미지 URL을 확인
-    const savedProfileImage = localStorage.getItem("profileImageUrl");
-    if (savedProfileImage) {
-      setProfileImageUrl(savedProfileImage); // 저장된 이미지 URL을 상태에 설정
-    } else {
-      setProfileImageUrl(null); // 저장된 이미지 URL이 없으면 상태 초기화
-    }
-
     const id = user.id;
     const url = `${API_BASE_URL}/user/detailAll/${id}`;
-
     axios
       .get(url, {
         params: {
@@ -160,27 +150,23 @@ export default function StudentDetailPage() {
       .then((res) => {
         console.log(res.data);
         setStudent(res.data);
-
         const admission = res.data.admissionDate; // "2025-11-03"
         const sliceYear = String(admission).slice(0, 4); // "2025"
         setYearStart(Number(sliceYear)); // 2025
 
-        // 사용자의 프로필 이미지 URL을 가져옵니다.
         axios
           .get(`${API_BASE_URL}/user/${id}/profile-image`)
           .then((imgRes) => {
-            if (imgRes.data?.url) {
-              // 서버에서 받은 URL을 상태에 설정하고 localStorage에 저장
-              setProfileImageUrl(imgRes.data.url);
-              localStorage.setItem("profileImageUrl", imgRes.data.url); // 이미지 URL을 localStorage에 저장
-            }
+            if (imgRes.data?.url) setProfileImageUrl(imgRes.data.url);
           })
-          .catch(() => setProfileImageUrl(null)); // 이미지 가져오기에 실패하면 상태 초기화
+          .catch(() => setProfileImageUrl(null));
       })
       .catch((error) => {
         console.error("status:", error.response?.status);
         console.error("data:", error.response?.data);
       });
+
+
   }, [page.semester, page.year, user?.id]);
 
   useEffect(() => {
@@ -222,59 +208,46 @@ export default function StudentDetailPage() {
   };
 
   const handleImageClick = () => {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*"; // 이미지 파일만 선택 가능
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*"; // 이미지 파일만 선택 가능
 
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
 
-    // 1️⃣ 로컬 미리보기 (업로드 전 화면에 바로 표시)
-    const previewUrl = URL.createObjectURL(file);
-    setProfileImageUrl(previewUrl);
+      // 1️⃣ 로컬 미리보기 (업로드 전 화면에 바로 표시)
+      const previewUrl = URL.createObjectURL(file);
+      setProfileImageUrl(previewUrl);
 
-    // 2️⃣ 서버 업로드
-    const formData = new FormData();
-    formData.append("file", file);
+      // 2️⃣ 서버 업로드
+      const formData = new FormData();
+      formData.append("file", file);
 
-    try {
-      const res = await axios.post(
-        `${API_BASE_URL}/student/${user.id}/upload-image`, // 서버 업로드 API 엔드포인트
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      try {
+        const res = await axios.post(
+          `${API_BASE_URL}/student/${user.id}/upload-image`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
 
-      // 3️⃣ 서버에서 반환한 URL로 상태 갱신
-      if (res.data?.url) {
-        const uploadedImageUrl = res.data.url;
-        setProfileImageUrl(uploadedImageUrl); // 업로드 후 화면 갱신
-        localStorage.setItem("profileImageUrl", uploadedImageUrl); // 업로드된 이미지 URL을 localStorage에 저장
-      } else {
-        console.warn("서버에서 URL을 반환하지 않음");
+        // 3️⃣ 서버에서 반환한 URL로 상태 갱신
+        // 서버가 { url: "이미지 접근 URL" } 형태로 반환한다고 가정
+        if (res.data && res.data.url) {
+          setProfileImageUrl(res.data.url); // 업로드 후 화면 갱신
+        } else {
+          console.warn("서버에서 URL을 반환하지 않음");
+        }
+
+        alert("업로드 성공");
+      } catch (err) {
+        console.error(err);
+        alert("업로드 실패");
       }
+    };
 
-      alert("업로드 성공");
-    } catch (err) {
-      console.error(err);
-      alert("업로드 실패");
-    }
+    input.click();
   };
-
-  input.click();
-};
-
-
-  useEffect(() => {
-  // 페이지 로드 시 `localStorage`에서 이미지를 가져와서 상태 설정
-  const savedProfileImage = localStorage.getItem("profileImageUrl");
-  if (savedProfileImage) {
-    setProfileImageUrl(savedProfileImage);
-  } else {
-    setProfileImageUrl(null); // 저장된 이미지가 없다면 상태 초기화
-  }
-}, []); // 컴포넌트 최초 렌더링 시 한번만 실행
-
 
   return (
     <>
