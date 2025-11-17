@@ -1,12 +1,11 @@
 import { Card, Col, Container, Pagination, Row, ListGroup, Badge } from "react-bootstrap"; // ListGroup, Badge 임포트
-import { useAuth } from "../../../public/context/UserContext";
+import { useAuth } from "../../public/context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { API_BASE_URL } from "../../../config/config";
+import { API_BASE_URL } from "../../config/config";
 import axios from "axios";
-import { set } from "date-fns";
 
-function HomeAdmin() {
+function App() {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
     const appName = "LMS";
@@ -15,9 +14,7 @@ function HomeAdmin() {
     const [month, setMonth] = useState((new Date().getMonth()) + 1);
 
     const [post, setPost] = useState([]);
-    const [postlec, setPostLec] = useState([]);
     const [pageInfo, setPageInfo] = useState(null);
-    const [pageInfoLec, setPageInfoLec] = useState(null);
     const [page, setPage] = useState(1); // 현재 페이지 (1-based)
     const pageRange = 5;
     const Semester = new Date().getMonth() === 1 || new Date().getMonth() === 2 ?
@@ -61,21 +58,6 @@ function HomeAdmin() {
                 console.error("Error fetching academicCalendar:", error);
             });
     }, [year, month, page]);
-
-    useEffect(() => {
-        const url = `${API_BASE_URL}/lecture/lecProgress/ad`;
-        axios.get(url, { params: semester })
-            .then((res) => {
-                setPageInfoLec(res.data);
-                setPostLec(res.data.content);
-                console.log("User data fetched:", res.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching academicCalendar:", error);
-            });
-    }, [user?.id]);
-
-
 
     const handlePageChange = (pageNumber) => {
         setPage(pageNumber);
@@ -151,16 +133,17 @@ function HomeAdmin() {
 
             {/* --- 2. 수강 현황 및 학사 일정 (하단, 2열) --- */}
             <Row>
+                {/* 2-1. 수강 현황 (학적 정보) */}
                 <Col lg={6} md={12} className="mb-4">
                     <Card className="h-100">
-                        <Card.Header as="h5">강의 신청 내역</Card.Header>
+                        <Card.Header as="h5">수강 현황 (학적 정보)</Card.Header>
                         <ListGroup variant="flush">
-                            {postlec?.length > 0 ? (
-                                postlec.map((post, index) => (
+                            {userdata?.gradeInfoList?.length > 0 ? (
+                                userdata.gradeInfoList.map((gradeInfo, index) => (
                                     <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                                        {post.name} ({post.userName}/{post.majorName})
+                                        {gradeInfo.name}
                                         <Badge bg="primary" pill>
-                                            {post.status}
+                                            {gradeInfo.status}
                                         </Badge>
                                     </ListGroup.Item>
                                 ))
@@ -200,4 +183,4 @@ function HomeAdmin() {
     );
 }
 
-export default HomeAdmin;
+export default App;

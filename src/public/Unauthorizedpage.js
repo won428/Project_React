@@ -1,7 +1,7 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-function App() {
+function Unauthorizedpage() {
     const navigate = useNavigate();
     return (
         <>
@@ -28,4 +28,4 @@ function App() {
         </>
     )
 }
-export default App;
+export default Unauthorizedpage;

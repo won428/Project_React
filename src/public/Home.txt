@@ -1,7 +1,7 @@
 // src/_student/pages/HomeStudent.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../public/context/UserContext";
+import { useAuth } from "./../public/context/UserContext";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80";
@@ -142,130 +142,130 @@ function HomeStudent() {
         </div>
       </section>
 
-{/* ===== 빠른 바로가기 섹션 (배너와 메인 컨텐츠 사이) ===== */}
-<section className="bg-light">
-  <div className="container py-4">
-    {/* 제목 */}
-    <div className="d-flex align-items-center mb-3">
-      <p className="fw-semibold mb-0 text-dark">빠른 바로가기</p>
-    </div>
-
-    {/* 버튼 카드 4개를 가로로 쭉 */}
-    <div className="row g-3 align-items-stretch">
-      {/* 수강신청 */}
-      <div className="col-lg-3 col-md-6">
-        <div
-          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
-          style={{
-            backgroundColor: "#f1f2f4",      // ✅ 회색 계열
-            border: "1px solid #e1e4ea",    // 살짝 테두리
-          }}
-        >
-          <div
-            className="d-flex align-items-center justify-content-center rounded-3 me-3"
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#111827",
-            }}
-          >
-            <span className="text-white fs-5">📚</span>
+      {/* ===== 빠른 바로가기 섹션 (배너와 메인 컨텐츠 사이) ===== */}
+      <section className="bg-light">
+        <div className="container py-4">
+          {/* 제목 */}
+          <div className="d-flex align-items-center mb-3">
+            <p className="fw-semibold mb-0 text-dark">빠른 바로가기</p>
           </div>
-          <div>
-            <div className="fw-semibold text-dark mb-1">수강신청</div>
-            <div className="small text-muted">
-              학기별 수강신청을 진행합니다.
+
+          {/* 버튼 카드 4개를 가로로 쭉 */}
+          <div className="row g-3 align-items-stretch">
+            {/* 수강신청 */}
+            <div className="col-lg-3 col-md-6">
+              <div
+                className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+                style={{
+                  backgroundColor: "#f1f2f4",      // ✅ 회색 계열
+                  border: "1px solid #e1e4ea",    // 살짝 테두리
+                }}
+              >
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3 me-3"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    backgroundColor: "#111827",
+                  }}
+                >
+                  <span className="text-white fs-5">📚</span>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark mb-1">수강신청</div>
+                  <div className="small text-muted">
+                    학기별 수강신청을 진행합니다.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 성적조회 */}
+            <div className="col-lg-3 col-md-6">
+              <div
+                className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+                style={{
+                  backgroundColor: "#f1f2f4",
+                  border: "1px solid #e1e4ea",
+                }}
+              >
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3 me-3"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    backgroundColor: "#111827",
+                  }}
+                >
+                  <span className="text-white fs-5">📊</span>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark mb-1">성적조회</div>
+                  <div className="small text-muted">
+                    나의 누적 성적을 확인해 보세요.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 장학제도 */}
+            <div className="col-lg-3 col-md-6">
+              <div
+                className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+                style={{
+                  backgroundColor: "#f1f2f4",
+                  border: "1px solid #e1e4ea",
+                }}
+              >
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3 me-3"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    backgroundColor: "#111827",
+                  }}
+                >
+                  <span className="text-white fs-5">🎓</span>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark mb-1">장학제도</div>
+                  <div className="small text-muted">
+                    다양한 장학금 혜택을 확인하세요.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 학사일정 */}
+            <div className="col-lg-3 col-md-6">
+              <div
+                className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
+                style={{
+                  backgroundColor: "#f1f2f4",
+                  border: "1px solid #e1e4ea",
+                }}
+              >
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3 me-3"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    backgroundColor: "#111827",
+                  }}
+                >
+                  <span className="text-white fs-5">📅</span>
+                </div>
+                <div>
+                  <div className="fw-semibold text-dark mb-1">학사일정</div>
+                  <div className="small text-muted">
+                    중요한 학사 일정을 한눈에 확인하세요.
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 성적조회 */}
-      <div className="col-lg-3 col-md-6">
-        <div
-          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
-          style={{
-            backgroundColor: "#f1f2f4",
-            border: "1px solid #e1e4ea",
-          }}
-        >
-          <div
-            className="d-flex align-items-center justify-content-center rounded-3 me-3"
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#111827",
-            }}
-          >
-            <span className="text-white fs-5">📊</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark mb-1">성적조회</div>
-            <div className="small text-muted">
-              나의 누적 성적을 확인해 보세요.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 장학제도 */}
-      <div className="col-lg-3 col-md-6">
-        <div
-          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
-          style={{
-            backgroundColor: "#f1f2f4",
-            border: "1px solid #e1e4ea",
-          }}
-        >
-          <div
-            className="d-flex align-items-center justify-content-center rounded-3 me-3"
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#111827",
-            }}
-          >
-            <span className="text-white fs-5">🎓</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark mb-1">장학제도</div>
-            <div className="small text-muted">
-              다양한 장학금 혜택을 확인하세요.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 학사일정 */}
-      <div className="col-lg-3 col-md-6">
-        <div
-          className="d-flex align-items-center rounded-4 px-4 py-3 shadow-sm h-100"
-          style={{
-            backgroundColor: "#f1f2f4",
-            border: "1px solid #e1e4ea",
-          }}
-        >
-          <div
-            className="d-flex align-items-center justify-content-center rounded-3 me-3"
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: "#111827",
-            }}
-          >
-            <span className="text-white fs-5">📅</span>
-          </div>
-          <div>
-            <div className="fw-semibold text-dark mb-1">학사일정</div>
-            <div className="small text-muted">
-              중요한 학사 일정을 한눈에 확인하세요.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
 
       {/* Main content */}

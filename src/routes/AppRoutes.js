@@ -15,7 +15,6 @@ import ChangeStatusDetail from '../_student/pages/Integrated_Info/ChangeStatusDe
 import Academic_Schedule from '../public/pages/Schedule/Academic_Schedule';
 import Academic_ScheduleMod from '../public/pages/Schedule/Academic_ScheduleMod';
 import Lecture_RoomAd from '../_admin/pages/Lecture_Room/Lecture_RoomAd';
-import Lecture_Room from '../_student/pages/LectureRoom/Lecture_Room';
 
 
 
@@ -66,12 +65,13 @@ import LectureInsert from '../_lecturePS/LectureRoomSpec/LectureInsert';
 
 import Unauthorizedpage from '../public/Unauthorizedpage';
 
-import HomeStudent from '../_student/pages/HomeStudent';
+import HomeStudentpage from '../_student/pages/HomeStudentpage';
 import HomeAdmin from '../_admin/ui/Home/HomeAdmin';
 import HomePRO from '../_professor/ui/HomePRO';
 
+
+import Home from '../public/Home';
 import LecRegisterPro from '../_professor/Lecture_Room/LecRegisterPro';
-import Lecture_HomePro from '../_professor/Lecture_Room/Lecture_HomePro';
 import Lecture_RoomPro from '../_professor/Lecture_Room/Lecture_RoomPro';
 import LectureSession from '../_professor/Lecture_Room/LectureSession';
 import GradeCalculation from '../_professor/Lecture_Room/GradeCalculation';
@@ -89,16 +89,6 @@ import ProPage from "../_professor/ui/ProPage";
 import EnPage from "../public/pages/EntireNotice/EntireNoticePage";
 import ProSpecPage from "../_lecturePS/ui/ProSpecPage";
 
-
-import { LayoutStLec } from "../_admin/ui/Layout/Layout_lecAd.js";
-import { LayoutStInfo } from "../_admin/ui/Layout/Layout_InfoAd.js";
-import { LayoutStCon } from "../_admin/ui/Layout/Layout_StCon.js";
-
-import { LayoutStLecst } from "../_student/ui/Layout/Layout_lecSt";
-import { LayoutStInfost } from "../_student/ui/Layout/Layout_InfoSt";
-
-
-import { Layout_lecP } from "../_professor/ui/Layout/Layout_lecP";
 import { Layout_lecRoomP } from '../_lecturePS/ui/Layout_lecRoomP';
 
 import FindPW from "../public/FindPW";
@@ -128,7 +118,9 @@ function App() {
 
         <Routes>
             {/* Home */}
+
             <Route path='/' element={<LoginPage />} ></Route>
+            <Route path="/home" element={<Home />} />
             <Route path='/findPw' element={<FindPW />} ></Route>
             <Route path='/setPw' element={<SetPW />} ></Route>
             <Route path='/Unauthorizedpage' element={<Unauthorizedpage />} ></Route>
@@ -146,24 +138,18 @@ function App() {
                     <Route path='/acsche' element={<Academic_Schedule />} />
 
 
-                    <Route element={<LayoutStInfoPublic />}>
-                        <Route path='/inquiryBoard' element={<InquiryBoard />} />
-                        <Route path='/createPost' element={<CreatePost />} />
-                        <Route path='/inquiryPage/:id' element={<InquiryPage />} />
-                        <Route path='/updatePost/:id' element={<UpdatePost />} />
-                    </Route>
+                    {/* <Route element={<LayoutStInfoPublic />}>  </Route> */}
+                    <Route path='/inquiryBoard' element={<InquiryBoard />} />
+                    <Route path='/createPost' element={<CreatePost />} />
+                    <Route path='/inquiryPage/:id' element={<InquiryPage />} />
+                    <Route path='/updatePost/:id' element={<UpdatePost />} />
+
 
                 </Route>
             </Route>
 
 
 
-
-
-
-            {/* <Route path='/CollegeUpdate/:id' element={<MajorList />} ></Route>
-                <Route path='/CollegeUpdate/:id' element={<MajorRegister />} ></Route>
-                <Route path='/CollegeUpdate/:id' element={<MajorUpdate />} ></Route> */}
 
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR', 'STUDENT']} />}>
                 <Route element={<ProSpecPage />}>
@@ -187,6 +173,7 @@ function App() {
                         {/* 교수 전용 */}
                         <Route path='/LectureSession/:id' element={<LectureSession />} ></Route>
                         <Route path='/GradeCalculation/:id' element={<GradeCalculation />} ></Route>
+                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
 
                     </Route>
                 </Route>
@@ -209,32 +196,28 @@ function App() {
                     <Route path='/ha' element={<HomeAdmin />}></Route>
 
                     {/* Student Apply */}
-                    <Route element={<LayoutStCon />}>
 
-                        <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
-                        <Route path='/user/insert_user' element={<Insert_User />}></Route>
-                        <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
-                        <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
-                        <Route path='/user/UserList' element={<UserList />}></Route>
-                        <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
-                        <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
-                    </Route>
+                    <Route path='/sthm/ad' element={<StHomeAD />} ></Route>
+                    <Route path='/user/insert_user' element={<Insert_User />}></Route>
+                    <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
+                    <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
+                    <Route path='/user/UserList' element={<UserList />}></Route>
+                    <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
+                    <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     {/* Integrated_Info Tab */}
-                    <Route element={<LayoutStInfo />}>
 
 
-                        <Route path='/infohome/ad' element={<InfohomeAD />} ></Route>
+                    <Route path='/infohome/ad' element={<InfohomeAD />} ></Route>
 
-                        <Route path='/collist' element={<CollegeList />} ></Route>
-                        <Route path='/colreg' element={<ColRegister />} ></Route>
-                        <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
+                    <Route path='/collist' element={<CollegeList />} ></Route>
+                    <Route path='/colreg' element={<ColRegister />} ></Route>
+                    <Route path='/colup/:id' element={<CollegeUpdate />} ></Route>
 
-                        <Route path='/majorReg' element={<MajorRegister />} ></Route>
-                        <Route path='/majorList' element={<MajorList />} ></Route>
-                        <Route path='/majorUp/:id' element={<MajorUpdate />} ></Route>
-                    </Route>
+                    <Route path='/majorReg' element={<MajorRegister />} ></Route>
+                    <Route path='/majorList' element={<MajorList />} ></Route>
+                    <Route path='/majorUp/:id' element={<MajorUpdate />} ></Route>
 
 
                     {/* Integrated_Info Tab */}
@@ -244,18 +227,15 @@ function App() {
 
                     {/* Lecture Tab */}
                     {/*Route 묶은 부분 LayoutStLec 적용*/}
-                    <Route element={< LayoutStLec />}>
-                        <Route path='/LHomeAD' element={<LHomeAD />} ></Route>
-                        <Route path='/LRoomAd' element={<Lecture_RoomAd />} ></Route>
-                        <Route path='/ToDoList' element={<ToDoList />} ></Route>
-                        <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
-                        <Route path='/lectureList' element={<LectureList />} ></Route>
-                        <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
-                        <Route path='/lecUpdateAd/:id' element={<LecUpdateAd />} ></Route>
+                    <Route path='/LHomeAD' element={<LHomeAD />} ></Route>
+                    <Route path='/LRoomAd' element={<Lecture_RoomAd />} ></Route>
+                    <Route path='/lectureRegister' element={<LectureRegister />} ></Route>
+                    <Route path='/lectureList' element={<LectureList />} ></Route>
+                    <Route path='/lectureRequest' element={<LectureRequest />} ></Route>
+                    <Route path='/lecUpdateAd/:id' element={<LecUpdateAd />} ></Route>
 
 
 
-                    </Route>
 
 
                     {/* Schedule Tab */}
@@ -269,76 +249,65 @@ function App() {
 
 
 
-
-
-
-
-
             </Route>
 
-                    {/* STUDENT */}
-                    <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
-                    {/* 1) 학생 메인 홈: StPage 레이아웃 없이 단독으로 전체 화면 사용 */}
-                    <Route path="/hs" element={<HomeStudent />} />
+            {/* STUDENT */}
+            <Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>
+                {/* 1) 학생 메인 홈: StPage 레이아웃 없이 단독으로 전체 화면 사용 */}
 
-                    {/* 2) 나머지 학생 페이지들은 기존처럼 StPage + 탭 레이아웃 사용 */}
-                    <Route element={<StPage />}>
-                        {/* Integrated_Info Tab */}
-                        <Route element={<LayoutStInfost />}>
-                        <Route path="/InfoHome" element={<InfoHome />} />
-                        <Route path="/Student_Credit" element={<This_Credit />} />
-                        <Route
-                            path="/CreditAppeal/:lectureId"
-                            element={<CreditAppeal />}
-                        />
-                        <Route path="/CreditAppealList" element={<CreditAppealList />} />
-                        <Route path="/Change_Status" element={<Change_Status />} />
-                        <Route path="/ChangeStatusList" element={<ChangeStatusList />} />
-                        <Route path="/CheckAttendance" element={<CheckAttendance />} />
-                        <Route
-                            path="/ChangeStatusDetail/:recordId"
-                            element={<ChangeStatusDetail />}
-                        />
-                        </Route>
 
-                        {/* Lecture Tab */}
-                        <Route element={<LayoutStLecst />}>
-                        <Route path="/LHome" element={<Lecture_Home />} />
-                        <Route path="/ToDoList" element={<ToDoList />} />
-                        <Route
-                            path="/courseRegistration"
-                            element={<CourseRegistration />}
-                        />
-                        </Route>
-                    </Route>
-                    </Route>
+                {/* 2) 나머지 학생 페이지들은 기존처럼 StPage + 탭 레이아웃 사용 */}
+                <Route element={<StPage />}>
+                    {/* Integrated_Info Tab */}
+                    {/* <Route element={<LayoutStInfost />}> */}
+
+                    <Route path="/hs" element={<HomeStudentpage />} />
+                    <Route path="/InfoHome" element={<InfoHome />} />
+                    <Route path="/Student_Credit" element={<This_Credit />} />
+                    <Route
+                        path="/CreditAppeal/:lectureId"
+                        element={<CreditAppeal />}
+                    />
+                    <Route path="/CreditAppealList" element={<CreditAppealList />} />
+                    <Route path="/Change_Status" element={<Change_Status />} />
+                    <Route path="/ChangeStatusList" element={<ChangeStatusList />} />
+                    <Route path="/CheckAttendance" element={<CheckAttendance />} />
+                    <Route
+                        path="/ChangeStatusDetail/:recordId"
+                        element={<ChangeStatusDetail />}
+                    />
+
+
+                    {/* Lecture Tab */}
+                    {/* <Route element={<LayoutStLecst />}> */}
+                    <Route path="/LHome" element={<Lecture_Home />} />
+                    <Route path="/ToDoList" element={<ToDoList />} />
+                    <Route
+                        path="/courseRegistration"
+                        element={<CourseRegistration />}
+                    />
+
+
+                </Route>
+
+            </Route>
 
             {/* PROFESSOR */}
             <Route element={<PrivateRoute allowedRoles={['PROFESSOR']} />}>
                 <Route element={<ProPage />}>
                     <Route path='/hp' element={<HomePRO />}></Route>
-                    <Route element={<Layout_lecP />}>
 
-
-                        <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
-                        <Route path='/Lecture_HomePro' element={<Lecture_HomePro />} ></Route>
-                        <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
-
-
-                        <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
-                        <Route path='/LectureDetail/:id' element={<LectureDetail />} ></Route>
-
-                    </Route>
-
-
+                    <Route path='/LecRegisterPro' element={<LecRegisterPro />} ></Route>
+                    <Route path='/LRoomPro' element={<Lecture_RoomPro />} ></Route>
+                    <Route path='/LectureListPro' element={<LectureListPro />} ></Route>
 
                 </Route>
+
+
+
             </Route>
 
-
-
-        </Routes>
-
+        </Routes >
     )
 }
 export default App;
