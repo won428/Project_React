@@ -18,6 +18,27 @@ function Home() {
   const [pageInfo, setPageInfo] = useState(null);
   const [page, setPage] = useState(1);
   const pageRange = 5;
+    const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+   useEffect(() => {
+    // Open-Meteo API를 통해 서울 날씨 정보 가져오기
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9783&current_weather=true&timezone=Asia%2FSeoul`;
+
+    axios
+      .get(url)
+      .then((response) => {
+        setWeather(response.data.current_weather);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("날씨 정보 불러오기 오류", error);
+        setError("날씨 정보를 불러오는 데 실패했습니다.");
+        setLoading(false);
+      });
+  }, []);
+
 
   const logoutAction = () => {
     logout();
@@ -76,13 +97,13 @@ function Home() {
   const cardItems = [
     {
       roles: ["ADMIN"],
-      title: "사용자 관리",
+      title: "사용자 목록",
       description: "전체 사용자 권한을 설정합니다.",
       icon: "⚙️",
-      path: "/user/insert_user"
+      path: "/user/UserList"
     }, {
       roles: ["ADMIN"],
-      title: "사용자 관리",
+      title: "사용자 등록",
       description: "전체 통합 정보를 설정합니다.",
       icon: "⚙️",
       path: "/user/insert_user"
@@ -160,6 +181,14 @@ function Home() {
 
   const visibleCards = cardItems.filter(item => item.roles.includes(role));
 
+  const inquiryNavigate = ()=>{
+    if( role === 'ADMIN'){
+      navigate('/inquiry/admin')
+    }else{
+      navigate("/inquiryBoard")
+    }
+  }
+
 
   return (
     // 🔹 text-light 제거
@@ -178,7 +207,7 @@ function Home() {
               style={{ cursor: "pointer" }}
             >
               <span className="fw-semibold text-light">
-                <img src="/logogray.png" height="30" alt="LMS Logo" />
+                <img src="/logo22.png" height="30" alt="LMS Logo" />
               </span>
             </div>
 
@@ -193,7 +222,7 @@ function Home() {
               <a onClick={() => navigate("/EnNotList")} className="text-muted text-decoration-none">
                 공지사항
               </a>
-              <a onClick={() => navigate("/inquiryBoard")} className="text-muted text-decoration-none">
+              <a onClick={() => inquiryNavigate()} className="text-muted text-decoration-none">
                 문의
               </a>
               <a onClick={() => navigate("/acsche")} className="text-muted text-decoration-none">
@@ -297,7 +326,7 @@ function Home() {
           </div>
 
 
-          <div className="row g-3 align-items-stretch">
+          <div className="row g-3 align-items-stretch card-clickable">
             {visibleCards.map((item, index) => (
               <div className="col-lg-3 col-md-6" key={index}>
                 <div
@@ -307,6 +336,7 @@ function Home() {
                     border: "1px solid #e1e4ea"
                   }}
                   onClick={() => navigate(item.path)}
+                  
                 >
                   <div
                     className="d-flex align-items-center justify-content-center rounded-3 me-3"
@@ -413,73 +443,89 @@ function Home() {
             {/* Right column: 학사일정 + 날씨 */}
             <div className="col-lg-4">
               {/* 학사일정 카드 */}
-              <section id="admission" className="mb-4">
-                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+<section id="admission" className="mb-4">
+  <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+    <h2 className="h6 mb-2 text-dark">{month}월 학사일정</h2>
+    <ul className="list-unstyled mb-0">
+      {post.length > 0 ? (
+        post.slice(0, 5).map((item, index) => (
+          <li key={item.id || index} className="d-flex justify-content-between py-1">
+            <span>{item.title || `일정 항목 ${item.id}`}</span>
+            <span className="text-muted">{item.calStartDate ? new Date(item.calStartDate).toLocaleDateString() : '날짜 없음'}</span>
+          </li>
+        ))
+      ) : (
+        <div className="text-center text-muted">
+          해당 월에 일정이 없습니다.
+        </div>
+      )}
+    </ul>
+    
+    {/* "더 보기" 버튼 추가 */}
+    {post.length > 5 && (
+      <button
+        className="btn btn-link text-muted p-0 mt-3"
+        onClick={() => navigate("/acsche")}  // "/acsche"로 네비게이트
+      >
+        더 보기
+      </button>
+    )}
+  </div>
+</section>
 
-                  {post.length > 0 ? (
-                    <>
-                      <h2 className="h6 mb-2 text-dark">{month}월 학사일정</h2>
-                      <ul className="list-unstyled mb-0">
-                        {post.map((item, index) => (
-                          <li key={item.id || index} className="d-flex justify-content-between py-1">
-                            <span>{item.title || `일정 항목 ${item.id}`}</span>
-                            <span className="text-muted">{item.calStartDate ? new Date(item.calStartDate).toLocaleDateString() : '날짜 없음'}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : (
-                    <div className="text-center text-muted">
-                      해당 월에 일정이 없습니다.
-                    </div>
-                  )
-                  }
+{/* 날씨 위젯 */}
+<section className="mb-4">
+  <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+    <h2 className="h6 mb-2 text-dark">오늘의 캠퍼스 날씨</h2>
 
-                  {/* <h2 className="h6 mb-2 text-dark">주요 학사일정</h2>
-                  <ul className="list-unstyled mb-0">
-                    <li className="d-flex justify-content-between py-1">
-                      <span>2학기 수강신청</span>
-                      <span className="text-muted">8.5 ~ 8.9</span>
-                    </li>
-                    <li className="d-flex justify-content-between py-1">
-                      <span>수업일수 1/4선</span>
-                      <span className="text-muted">9.23</span>
-                    </li>
-                    <li className="d-flex justify-content-between py-1">
-                      <span>중간고사 기간</span>
-                      <span className="text-muted">10.14 ~ 10.18</span>
-                    </li>
-                    <li className="d-flex justify-content-between py-1">
-                      <span>기말고사 기간</span>
-                      <span className="text-muted">12.16 ~ 12.20</span>
-                    </li>
-                  </ul> */}
-                </div>
-              </section>
+    {/* 로딩 중일 때 */}
+    {loading && (
+      <div className="text-muted small">날씨 정보를 불러오는 중입니다...</div>
+    )}
 
-              {/* 날씨 위젯 */}
-              <section className="mb-4">
-                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
-                  <h2 className="h6 mb-2 text-dark">오늘의 캠퍼스 날씨</h2>
-                  <div className="d-flex align-items-center mb-2">
-                    <div className="display-6 me-3">☀️</div>
-                    <div>
-                      <div className="fw-semibold text-dark">맑음</div>
-                      <div className="text-muted small">서울 캠퍼스 기준</div>
-                    </div>
-                    <div className="ms-auto text-end">
-                      <div className="fw-semibold text-dark">23°C</div>
-                      <div className="text-muted small">
-                        최고 25° / 최저 15°
-                      </div>
-                    </div>
-                  </div>
-                  <div className="d-flex justify-content-between text-muted small">
-                    <span>미세먼지 보통</span>
-                    <span>습도 40%</span>
-                  </div>
-                </div>
-              </section>
+    {/* 에러일 때 */}
+    {error && (
+      <div className="text-danger small">{error}</div>
+    )}
+
+    {/* 데이터가 있을 때만 출력 */}
+    {!loading && !error && weather && (
+      <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center">
+          <div className="display-6 me-3">☀️</div>
+          <div>
+            <div className="fw-semibold text-dark">
+              현재 기온 {weather.temperature}°C
+            </div>
+            <div className="text-muted small">서울 캠퍼스 기준</div>
+          </div>
+        </div>
+
+        <div className="text-end">
+          <div className="fw-semibold text-dark">
+            풍속 {weather.windspeed} m/s
+          </div>
+          <div className="text-muted small">
+            {new Date(weather.time).toLocaleTimeString("ko-KR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })} 기준
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* 추가 정보 */}
+    {!loading && !error && weather && (
+      <div className="d-flex justify-content-between text-muted small mt-3">
+        <span>날씨 코드: {weather.weathercode}</span>
+        <span>낮/밤: {weather.is_day ? "낮" : "밤"}</span>
+      </div>
+    )}
+  </div>
+</section>
+
+
             </div>
           </div>
         </div>

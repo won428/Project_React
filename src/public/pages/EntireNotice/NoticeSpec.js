@@ -23,6 +23,7 @@ function App() {
         const parameter = { params: { id: data } }
         axios.get(url, parameter)
             .then((res) => {
+                console.log(res.data)
                 setResData(res.data)
 
             })
@@ -219,7 +220,7 @@ function App() {
                     <Card className="shadow-sm">
                         <CardBody>
                             <CardTitle>
-                                <h3 className="fw-bold mb-3">title</h3>
+                                <h3 className="fw-bold mb-3">{resdata.title}</h3>
                                 <div className="text-muted mb-3" style={{ fontSize: "14px" }}>
                                     작성자: {resdata.username} |
                                     등록일: {new Date(resdata.createdAt).toLocaleDateString()}

@@ -39,7 +39,7 @@ function MenuPro() {
                             style={{ cursor: "pointer" }}
                         >
                             <span className="fw-semibold text-light">
-                                <img src="/logo.png" height="30" alt="LMS Logo" />
+                               <img src="/logo22.png" height="30" alt="LMS Logo" />
                             </span>
                         </div>
                     </Navbar.Brand>
