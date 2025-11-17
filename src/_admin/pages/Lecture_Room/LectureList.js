@@ -12,12 +12,12 @@ function App() {
   const [rejectedLec, setRejectedLec] = useState([]);
   const [pendingLec, setPendingLec] = useState([]);
 
-  // ▼▼ 개강/종강 탭에서 쓰는 상태 (필요한 부분만 추가)
+  // 개강/종강 탭에서 쓰는 상태 (필요한 부분만 추가)
   const [inprogressLec, setInprogressLec] = useState([]);
   const [completedLec, setCompletedLec] = useState([]);
   const [compleSelected, setCompleSelected] = useState([]);
   const [rejecSelected, setrejecSelected] = useState([]);
-  // ▲▲
+  
 
   const [inproSelected, setInproSelected] = useState([]);   // 승인목록 → 개강용 선택
   const [approveSelected, setApproveSelected] = useState([]); // 승인대기 → 일괄승인용
@@ -213,13 +213,13 @@ function App() {
     setPendingLec(lectureList.filter((lec) => lec.status === "PENDING"));
   }, [lectureList]);
 
-  // ▼▼ 개강/종강 분류 (필요한 부분만 추가)
+
   useEffect(() => {
     if (!Array.isArray(lectureList)) return;
     setInprogressLec(lectureList.filter((lec) => lec.status === "INPROGRESS"));
     setCompletedLec(lectureList.filter((lec) => lec.status === "COMPLETED"));
   }, [lectureList]);
-  // ▲▲
+
 
   useEffect(() => {
     // 선택한 학과의 교수 목록 세팅

@@ -277,7 +277,7 @@ function UsersSkeleton() {
                   <th style={{ width: 120 }}>단과대학</th>
                   <th style={{ width: 180 }}>학과</th>
                   <th style={{ width: 85 }}>역할구분</th>
-                  <th style={{ width: 120 }}>액션</th>
+                  <th style={{ width: 60 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -299,9 +299,6 @@ function UsersSkeleton() {
                       <div className="d-flex gap-2">
                         <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
                           수정
-                        </Button>
-                        <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭")}>
-                          삭제
                         </Button>
                       </div>
                     </td>
@@ -326,7 +323,7 @@ function UsersSkeleton() {
                   <th style={{ width: 120 }}>단과대학</th>
                   <th style={{ width: 180 }}>학과</th>
                   <th style={{ width: 85 }}>역할구분</th>
-                  <th style={{ width: 120 }}>액션</th>
+                  <th style={{ width: 60 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -348,9 +345,7 @@ function UsersSkeleton() {
                         <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
                           수정
                         </Button>
-                        <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭")}>
-                          삭제
-                        </Button>
+                  
                       </div>
                     </td>
                   </tr>
@@ -374,7 +369,7 @@ function UsersSkeleton() {
                   <th style={{ width: 120 }}>단과대학</th>
                   <th style={{ width: 180 }}>학과</th>
                   <th style={{ width: 85 }}>역할구분</th>
-                  <th style={{ width: 120 }}>액션</th>
+                  <th style={{ width: 60 }}>액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -395,9 +390,6 @@ function UsersSkeleton() {
                       <div className="d-flex gap-2">
                         <Button size="sm" variant="outline-primary" onClick={() => navigate(`/user/${user.user_code}/update`)}>
                           수정
-                        </Button>
-                        <Button size="sm" variant="outline-danger" onClick={() => console.log("삭제 클릭")}>
-                          삭제
                         </Button>
                       </div>
                     </td>

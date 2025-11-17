@@ -15,7 +15,7 @@ function InquiryWrite() {
     content:'',
     isPrivate:true,
     board:'',
-    tag:''
+    tag:''  
   });
   const navigate = useNavigate();
 
