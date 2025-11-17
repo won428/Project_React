@@ -17,7 +17,7 @@ function Home() {
   const [post, setPost] = useState([]);
   const [pageInfo, setPageInfo] = useState(null);
   const [page, setPage] = useState(1);
-  const pageRange = 5;
+  const pageRange = 3;
 
   const logoutAction = () => {
     logout();
@@ -413,6 +413,15 @@ function Home() {
             {/* Right column: 학사일정 + 날씨 */}
             <div className="col-lg-4">
               {/* 학사일정 카드 */}
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h2 className="h5 mb-0 text-dark">학사일정</h2>
+                <a
+                  onClick={() => navigate("/acsche")}
+                  className="small text-muted text-decoration-none"
+                >
+                  더보기
+                </a>
+              </div>
               <section id="admission" className="mb-4">
                 <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
 
