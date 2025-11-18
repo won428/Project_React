@@ -17,28 +17,19 @@ function StudentListPage() {
                 const res = await axios.get(`${API_BASE_URL}/user/manageList`);
                 const allStudents = res.data.filter(u => u.type === 'STUDENT');
 
-                // 2) 신청 기록 조회
+                // 2) 학적변경 신청 목록 조회 (상태는 PENDING만)
                 const applyRes = await axios.get(`${API_BASE_URL}/user/student/record/all`, {
                     params: { status: "PENDING" }
                 });
+                const pendingRecords = applyRes.data;
 
-                console.log("🔥 백엔드에서 받은 applyRes.data =", applyRes.data);
-
-                // 여기서 배열인지 체크
-                const pendingRecords = Array.isArray(applyRes.data) ? applyRes.data : [];
-
-                if (!Array.isArray(applyRes.data)) {
-                    console.warn("⚠ applyRes.data가 배열이 아닙니다. 데이터:", applyRes.data);
-                }
-
-                // 3) 학생에 기록 매핑
+                // 3) 학생별 신청 기록 연결
                 const studentsWithRecords = allStudents
                     .map(student => ({
                         ...student,
-                        records: pendingRecords.filter(record =>
-                            Number(record.userId) === Number(student.id)
-                        )
+                        records: pendingRecords.filter(record => Number(record.userId) === Number(student.id))
                     }))
+                    // 신청 기록 없는 학생 제거
                     .filter(student => student.records.length > 0);
 
                 setStudents(studentsWithRecords);

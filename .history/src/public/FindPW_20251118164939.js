@@ -60,6 +60,16 @@ function FindPW() {
                                 <div className="d-flex justify-content-between mt-4">
                                     <Button type="submit" className="w-50">
                                         Submit
+<<<<<<< HEAD
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        className="w-50 ms-2"
+                                        onClick={() => navigate("/")}
+                                    >
+                                        Cancel
+=======
+>>>>>>> origin/won2
                                     </Button>
                                     <Button
                                         variant="secondary"

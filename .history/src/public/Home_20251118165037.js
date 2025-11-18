@@ -336,7 +336,10 @@ function Home() {
                     border: "1px solid #e1e4ea"
                   }}
                   onClick={() => navigate(item.path)}
+<<<<<<< HEAD
+=======
                   
+>>>>>>> origin/won2
                 >
                   <div
                     className="d-flex align-items-center justify-content-center rounded-3 me-3"
@@ -443,6 +446,84 @@ function Home() {
             {/* Right column: 학사일정 + 날씨 */}
             <div className="col-lg-4">
               {/* 학사일정 카드 */}
+<<<<<<< HEAD
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h2 className="h5 mb-0 text-dark">학사일정</h2>
+                <a
+                  onClick={() => navigate("/acsche")}
+                  className="small text-muted text-decoration-none"
+                >
+                  더보기
+                </a>
+              </div>
+              <section id="admission" className="mb-4">
+                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+
+                  {post.length > 0 ? (
+                    <>
+                      <h2 className="h6 mb-2 text-dark">{month}월 학사일정</h2>
+                      <ul className="list-unstyled mb-0">
+                        {post.map((item, index) => (
+                          <li key={item.id || index} className="d-flex justify-content-between py-1">
+                            <span>{item.title || `일정 항목 ${item.id}`}</span>
+                            <span className="text-muted">{item.calStartDate ? new Date(item.calStartDate).toLocaleDateString() : '날짜 없음'}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <div className="text-center text-muted">
+                      해당 월에 일정이 없습니다.
+                    </div>
+                  )
+                  }
+
+                  {/* <h2 className="h6 mb-2 text-dark">주요 학사일정</h2>
+                  <ul className="list-unstyled mb-0">
+                    <li className="d-flex justify-content-between py-1">
+                      <span>2학기 수강신청</span>
+                      <span className="text-muted">8.5 ~ 8.9</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>수업일수 1/4선</span>
+                      <span className="text-muted">9.23</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>중간고사 기간</span>
+                      <span className="text-muted">10.14 ~ 10.18</span>
+                    </li>
+                    <li className="d-flex justify-content-between py-1">
+                      <span>기말고사 기간</span>
+                      <span className="text-muted">12.16 ~ 12.20</span>
+                    </li>
+                  </ul> */}
+                </div>
+              </section>
+
+              {/* 날씨 위젯 */}
+              <section className="mb-4">
+                <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
+                  <h2 className="h6 mb-2 text-dark">오늘의 캠퍼스 날씨</h2>
+                  <div className="d-flex align-items-center mb-2">
+                    <div className="display-6 me-3">☀️</div>
+                    <div>
+                      <div className="fw-semibold text-dark">맑음</div>
+                      <div className="text-muted small">서울 캠퍼스 기준</div>
+                    </div>
+                    <div className="ms-auto text-end">
+                      <div className="fw-semibold text-dark">23°C</div>
+                      <div className="text-muted small">
+                        최고 25° / 최저 15°
+                      </div>
+                    </div>
+                  </div>
+                  <div className="d-flex justify-content-between text-muted small">
+                    <span>미세먼지 보통</span>
+                    <span>습도 40%</span>
+                  </div>
+                </div>
+              </section>
+=======
 <section id="admission" className="mb-4">
   <div className="bg-white rounded-4 shadow-sm p-3 small text-dark">
     <h2 className="h6 mb-2 text-dark">{month}월 학사일정</h2>
@@ -526,6 +607,7 @@ function Home() {
 </section>
 
 
+>>>>>>> origin/won2
             </div>
           </div>
         </div>

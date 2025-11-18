@@ -208,11 +208,16 @@ function App() {
                     <Route path='/user/UserBatchReg' element={<UserBatchReg />}></Route>
                     <Route path='/user/:id/update' element={<UserUpdateByAdmin />}></Route>
                     <Route path='/user/UserList' element={<UserList />}></Route>
+<<<<<<< HEAD
                     <Route path='/user/StMList' element={<StMList />}></Route>
                     <Route path='/user/StatusManage/:recordId' element={<StatusManage />}></Route>
                     <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
                     <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
 
+=======
+                    <Route path='/inquiry/admin' element={<InquiryForAd />}></Route>
+                    <Route path='/inquiryPage/admin/:id' element={<InquiryPageAd />}></Route>
+>>>>>>> origin/won2
 
                     {/*Route 묶은 부분 LayoutStInfo 적용*/}
                     {/* Integrated_Info Tab */}

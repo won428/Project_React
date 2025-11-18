@@ -82,6 +82,7 @@
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease,
     background-color 0.15s ease;
+  margin-bottom: 1rem; /* 카드들 간의 간격 */
 }
 
 .hs-quick-card:hover {
@@ -104,6 +105,7 @@
   background-color: #ffffff;
   padding: 1rem 1.25rem;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+<<<<<<< HEAD
 }
 
 .hs-notice-list li {
@@ -135,6 +137,30 @@
   color: #1d4ed8;
 }
 
+=======
+  margin-bottom: 1rem; /* 카드들 간의 간격 */
+}
+
+/* 날씨 위젯 스타일 */
+.hs-weather-widget {
+  padding: 1rem 1.25rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+}
+
+.hs-weather-widget .weather-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.hs-weather-widget .weather-info .temp {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* 학사 일정 스타일 */
+>>>>>>> origin/won2
 .hs-schedule-list li {
   font-size: 0.8rem;
 }
@@ -160,4 +186,21 @@
   .hs-quick-card {
     padding: 0.9rem 1rem;
   }
+<<<<<<< HEAD
 }
+=======
+<<<<<<<< HEAD:src/_student/pages/HomeStudent.css
+========
+
+  .hs-weather-widget .weather-info .temp {
+    font-size: 1.5rem;
+  }
+}
+nav a {
+  cursor: pointer;
+}
+.card-clickable {
+  cursor: pointer;
+>>>>>>>> origin/won2:src/ui/Home.css
+}
+>>>>>>> origin/won2

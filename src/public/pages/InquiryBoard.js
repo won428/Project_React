@@ -87,7 +87,7 @@ function InquiryBoardUI() {
               <col style={{ width: 80 }} />
               <col style={{ width: 70 }} />
               <col style={{ width: 90 }} />
-              <col />
+              <col style={{ width: 400 }} />
               <col style={{ width: 110 }} />
               <col style={{ width: 140 }} />
               <col style={{ width: 70 }} />
