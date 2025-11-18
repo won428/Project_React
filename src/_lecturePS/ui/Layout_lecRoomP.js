@@ -1,20 +1,29 @@
 import { Col, Container, Nav, Row } from "react-bootstrap";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useLectureStore } from "../LectureRoomSpec/store/lectureStore";
 import { useAuth } from "../../public/context/UserContext";
 import "../../ui/Layout.css";
+import { useEffect } from "react";
 
 
 export const Layout_lecRoomP = () => {
     const navigate = useNavigate();
-    const { lectureId } = useLectureStore();
+    const { lectureId, setLectureId } = useLectureStore();
     const { user } = useAuth();
+    const { id } = useParams();                // "/roomspec/:id"의 id
+       useEffect(() => {
+    if (id && id !== String(lectureId)) {
+      setLectureId(Number(id));              // store에 동기화
+    }
+  }, [id, lectureId, setLectureId]);
+  
 
     const navItems = [
-        // { label: "상세 페이지", path: `/roomspec/${lectureId}` },
-        { label: "공지", path: "/notionlist" },
-        { label: "과제", path: "/asnlst" },
-        { label: "강의", path: "/Lec" },
+      { label: "상세 페이지", path: `/roomspec/${lectureId}` },
+    
+        { label: "공지", path: `/notionList` },
+        { label: "과제", path: `/asnlst`  },
+        { label: "강의", path: `/Lec` },
     ];
 
     if (user.roles.includes('PROFESSOR')) {

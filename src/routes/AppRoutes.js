@@ -155,7 +155,7 @@ function App() {
                 <Route element={<ProSpecPage />}>
                     <Route path='/leclist' element={<Lecture_RoomSP />} ></Route>
                     <Route element={<Layout_lecRoomP />}>
-                        <Route path='/roomspec' element={<SpecificRoom />} ></Route>
+                        <Route path='/roomspec/:id' element={<SpecificRoom />} ></Route>
 
                         <Route path='/Lpro' element={<LecturePRO />} ></Route>
                         <Route path='/Npro' element={<NoticePRO />} ></Route>

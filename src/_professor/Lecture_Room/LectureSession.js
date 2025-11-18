@@ -17,6 +17,8 @@ function LectureSession() {
         return Number.isFinite(n) ? n : undefined;
     })();
 
+    console.log("Layout_lecRoomP lectureId = ", lectureId);
+
     const [meta, setMeta] = useState(null);
     const [schedule, setSchedule] = useState([]);
     const [preview, setPreview] = useState([]);
