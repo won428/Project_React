@@ -152,4 +152,21 @@
   .hs-quick-card {
     padding: 0.9rem 1rem;
   }
+<<<<<<< HEAD
 }
+=======
+<<<<<<<< HEAD:src/_student/pages/HomeStudent.css
+========
+
+  .hs-weather-widget .weather-info .temp {
+    font-size: 1.5rem;
+  }
+}
+nav a {
+  cursor: pointer;
+}
+.card-clickable {
+  cursor: pointer;
+>>>>>>>> origin/won2:src/ui/Home.css
+}
+>>>>>>> origin/won2
