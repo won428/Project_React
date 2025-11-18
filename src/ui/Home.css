@@ -163,3 +163,26 @@ nav a {
 .card-clickable {
   cursor: pointer;
 }
+/* 뉴스 카드 높이 & 글자수 조절 */
+.news-card {
+  min-height: 190px;             /* 옆 날씨 카드랑 비슷한 높이로 */
+}
+
+/* 제목: 최대 2줄, 굵게는 JSX에서 fw-bold로 처리 */
+.news-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;         /* 크롬 등 */
+  line-clamp: 2;                 /* VSCode 경고용 표준 속성 */
+  overflow: hidden;
+}
+
+/* 내용: 최대 2줄만 보이게 */
+.news-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.85rem;
+}

@@ -36,6 +36,7 @@ function NoticeList() {
             .then((res) => {
                 setPost(res.data.content);
                 setPageInfo(res.data);
+                console.log(res.data)
             })
             .catch(console.error);
 
@@ -47,6 +48,30 @@ function NoticeList() {
     };
 
     const clickPost = (item) => navigate("/EnNotSpec", { state: item.id });
+
+    const newClick = async(e, id, item) => {
+         try {
+      e.preventDefault();
+        const url = `${API_BASE_URL}/Entire/clickTitle/${id}`;
+        const res = await axios.patch(url)
+
+      if (res.status === 200) {
+        clickPost(item)
+      }
+
+    } catch (error) {
+      const err = error.response;
+      console.log(error)
+      if (!err) {
+        alert('네트워크 오류가 발생하였습니다');
+        return;
+      }
+      const message = err.data?.message ?? '오류 발생';
+      alert(message);
+
+    }
+        
+    }
 
     if (!pageInfo) {
         return (
@@ -80,7 +105,7 @@ function NoticeList() {
                             variant="primary" 
                             onClick={() => navigate("/EnNot")}
                         >
-                            + 공지 작성
+                            공지 작성
                         </Button>
                     )}
                 </div>
@@ -115,12 +140,12 @@ function NoticeList() {
                                 {post.length > 0 ? (
                                     post.map((item, index) => {
                                         const isNotice = item.isNotice || item.pinned; // 중요 공지
-                                        const isNew = (new Date() - new Date(item.createdAt)) / (1000 * 60 * 60 * 24) < 3; // 3일 이내
+                                        const isNew = (new Date() - new Date(item.createdAt)) / (1000 * 60 * 60 * 24) < 1; // 3일 이내
 
                                         return (
                                             <tr 
                                                 key={item.id} 
-                                                onClick={() => clickPost(item)} 
+                                                onClick={(e) => newClick(e,item.id, item)} 
                                                 style={{ 
                                                     cursor: "pointer",
                                                     backgroundColor: isNotice ? "#fff9e6" : "transparent"
@@ -165,7 +190,7 @@ function NoticeList() {
                                                 <td className="text-center py-3">
                                                     <div className="d-flex align-items-center justify-content-center gap-1">
                                                         <Eye size={14} className="text-muted" />
-                                                        <span>{item.views || 0}</span>
+                                                        <span>{item.viewCount || 0}</span>
                                                     </div>
                                                 </td>
                                                 <td className="text-center py-3 text-muted" style={{ fontSize: "0.9rem" }}>

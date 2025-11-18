@@ -227,7 +227,7 @@ function App() {
                                 </div>
                             </CardTitle>
                             <div className="p-3 border rounded mb-4"
-                                style={{ whiteSpace: 'pre-wrap', minHeight: '200px' }}>
+                                style={{ whiteSpace: 'pre-wrap', height: '450px',overflowY: 'auto' }}>
                                 {resdata.content}
                             </div>
                             {resdata.attachmentDto && resdata.attachmentDto.length > 0 && (

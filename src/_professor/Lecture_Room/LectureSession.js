@@ -104,7 +104,7 @@ function LectureSession() {
 
     return (
         <Container className="mt-3">
-            <div className="mb-2" ><h3>강의명 : <strong>{meta.name}</strong></h3></div>
+            <div className="mb-2" ><h3>강의명 : <strong>{meta?.name}</strong></h3></div>
             <div className="mb-2" ><h4>총 차시 : <strong>{preview.length} 차시</strong></h4></div>
             <Row xs={1} md={2} lg={12} className="g-3">
                 {preview.map((s) => {

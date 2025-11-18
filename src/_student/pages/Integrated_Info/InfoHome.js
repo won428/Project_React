@@ -189,6 +189,27 @@ export default function StudentDetailPage() {
     COMPLETED: "종강",
   };
 
+  const semesterAvgGrade = useMemo(() => {
+  const list = student?.gradeInfoList?.content ?? [];
+
+  // 숫자인 lectureGrade만 추출
+  const grades = list
+    .map((g) => g.lectureGrade)
+    .filter(
+      (v) => typeof v === "number" && !Number.isNaN(v)
+    );
+
+  if (!grades.length) return null;
+
+  const sum = grades.reduce((acc, v) => acc + v, 0);
+  const avg = sum / grades.length;
+
+  // ★ 소수 둘째 자리까지 '버림'
+  const truncated = Math.trunc(avg * 100) / 100;
+
+  return truncated.toFixed(2);   // "3.45" 이런 형식으로 표시
+}, [student.gradeInfoList]);
+
   return (
     <>
       <Container className="py-4">
@@ -337,9 +358,9 @@ export default function StudentDetailPage() {
               </Tab>
 
               {/* === 성적 탭 === */}
-              <Tab eventKey="grades" title="성적">
+                            <Tab eventKey="grades" title="성적">
                 <div className="pt-3">
-                  {/* 학기 콤보박스 */}
+                  {/* 학기 콤보박스 + 평균 */}
                   <Row className="mb-3 g-2 align-items-center">
                     {/* 년도 */}
                     <Col xs={12} md={3}>
@@ -370,7 +391,10 @@ export default function StudentDetailPage() {
                         style={{ minWidth: 120 }}
                         value={page.semester}
                         onChange={(e) => {
-                          setPage((pre) => ({ ...pre, semester: e.target.value }));
+                          setPage((pre) => ({
+                            ...pre,
+                            semester: e.target.value,
+                          }));
                         }}
                       >
                         <option value="">학기</option>
@@ -379,6 +403,18 @@ export default function StudentDetailPage() {
                         <option value="6">여름 계절</option>
                         <option value="12">겨울 계절</option>
                       </Form.Select>
+                    </Col>
+
+                    {/* ★ 선택 학기 평균 표시 */}
+                    <Col xs="12" md="auto" className="ms-md-auto text-md-end">
+                      {semesterAvgGrade !== null && (
+                        <small className="text-muted">
+                          선택 학기 평균 평점{" "}
+                          <span className="fw-semibold text-dark">
+                            {semesterAvgGrade}
+                          </span>
+                        </small>
+                      )}
                     </Col>
                   </Row>
 

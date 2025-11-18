@@ -35,6 +35,7 @@ export const Layout_lecP = () => {
                         <Outlet />
                     </Col>
                 </Row>
+                
             </Container>
         </div>
     );

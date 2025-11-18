@@ -11,6 +11,7 @@ export const Layout_lecRoomP = () => {
     const { user } = useAuth();
 
     const navItems = [
+        // { label: "상세 페이지", path: `/roomspec/${lectureId}` },
         { label: "공지", path: "/notionlist" },
         { label: "과제", path: "/asnlst" },
         { label: "강의", path: "/Lec" },

@@ -86,7 +86,7 @@ function App() {
                         post.map((item) => (
                             <Card
                                 key={item.id}
-                                onClick={() => specificPage(item)}
+                                onClick={() => specificPage(item?.id)}
                                 className="mb-3 shadow-sm"
                                 style={{ cursor: "pointer" }}
 

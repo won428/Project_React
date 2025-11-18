@@ -90,7 +90,7 @@ function MenuAd() {
                             ))}
                         </NavDropdown>
                         &nbsp;  &nbsp;
-                        <NavDropdown title="통합 정보" id="lecture-nav-dropdown"
+                        <NavDropdown title="통합 정보 관리" id="lecture-nav-dropdown"
                             menuVariant="dark"
                             className="text-white custom-nav-dropdown"
                         >
@@ -106,7 +106,7 @@ function MenuAd() {
                         &nbsp; &nbsp;
 
                         <NavDropdown
-                            title="강의" id="student-nav-dropdown"
+                            title="강의 관리" id="student-nav-dropdown"
                             menuVariant="dark"
                             className="text-white custom-dropdown"
                         >
@@ -121,7 +121,7 @@ function MenuAd() {
                         </NavDropdown>
                         &nbsp; &nbsp;
                          <NavDropdown
-                            title="공지" id="student-nav-dropdown"
+                            title="공지 관리" id="student-nav-dropdown"
                             menuVariant="dark"
                             className="text-white custom-dropdown"
                         >
@@ -136,7 +136,7 @@ function MenuAd() {
                         </NavDropdown>
                         &nbsp;  &nbsp;
                         <NavDropdown
-                            title="학사" id="student-nav-dropdown"
+                            title="학사 일정 관리" id="student-nav-dropdown"
                             menuVariant="dark"
                             className="text-white custom-dropdown"
                         >

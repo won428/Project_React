@@ -185,7 +185,7 @@ function App() {
     return (
         <div className="container mt-4" style={{ maxWidth: 960 }}>
             <Stack direction="horizontal" className="mb-3">
-                <h3 className="mb-0">단과대학 목록</h3>
+                <h3 className="mb-0">학과 목록</h3>
                 <Form>
                     <Row className="mb-3">
                         검색 조건

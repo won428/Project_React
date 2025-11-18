@@ -23,6 +23,8 @@ function App() {
     const filePath = `${API_BASE_URL}/vid/${resdata?.path}`;
     const [rate, setRate] = useState(0);
 
+    console.log(data);
+    
     useEffect(() => {
         const url = `${API_BASE_URL}/online/Spec`;
         const parameter = {

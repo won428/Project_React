@@ -22,6 +22,37 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+   const [news, setNews] = useState([]);
+
+   // 네이버 IT 뉴스 API
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/news`, {
+          params: {
+            query: "AI",  // 🔹 IT 관련 키워드
+            size: 4       // 🔹 가져올 개수
+          },
+        });
+
+        // 컨트롤러가 ResponseEntity<String> 을 리턴하니까
+        // 문자열이면 JSON.parse 한 번 해줌
+        const data = typeof res.data === "string"
+          ? JSON.parse(res.data)
+            
+          : res.data;
+        console.log(res.data)
+        
+        setNews(data.items || []);
+      } catch (e) {
+        console.error("뉴스 가져오기 실패", e);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+
    useEffect(() => {
     // Open-Meteo API를 통해 서울 날씨 정보 가져오기
     const url = `https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9783&current_weather=true&timezone=Asia%2FSeoul`;
@@ -29,6 +60,7 @@ function Home() {
     axios
       .get(url)
       .then((response) => {
+        console.log(response.data)
         setWeather(response.data.current_weather);
         setLoading(false);
       })
@@ -98,22 +130,22 @@ function Home() {
     {
       roles: ["ADMIN"],
       title: "사용자 목록",
-      description: "전체 사용자 권한을 설정합니다.",
+      description: "전체 사용자 조회 및 설정",
       icon: "⚙️",
       path: "/user/UserList"
     }, {
       roles: ["ADMIN"],
       title: "사용자 등록",
-      description: "전체 통합 정보를 설정합니다.",
+      description: "시용자 등록",
       icon: "⚙️",
       path: "/user/insert_user"
     },
     {
       roles: ["ADMIN"],
-      title: "사용자 관리",
+      title: "강의 관리",
       description: "강의를 설정합니다.",
       icon: "⚙️",
-      path: "/user/insert_user"
+      path: "/lectureList"
     },
     {
       roles: ["ADMIN"],
@@ -189,6 +221,22 @@ function Home() {
     }
   }
 
+    const cleanText = (html) =>
+    html
+      ? html
+          .replace(/<\/?b>/g, "")
+          .replace(/&quot;/g, '"')
+          .replace(/&apos;/g, "'")
+          .replace(/&amp;/g, "&")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+      : "";
+
+  // 글자 수 제한용 함수 (설명은 더 짧게)
+  const truncateText = (text, maxLen) => {
+    if (!text) return "";
+    return text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
+  };
 
   return (
     // 🔹 text-light 제거
@@ -373,6 +421,7 @@ function Home() {
                   <a
                     href="#"
                     className="small text-muted text-decoration-none"
+                    onClick={()=> navigate('/EnNotList')}
                   >
                     더보기
                   </a>
@@ -402,42 +451,47 @@ function Home() {
                 </div>
               </section>
 
-              {/* News section */}
-              <section id="academic" className="mt-4">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h2 className="h5 mb-0 text-dark">뉴스 &amp; 대학소식</h2>
-                  <a
-                    href="#"
-                    className="small text-muted text-decoration-none"
-                  >
-                    더보기
-                  </a>
-                </div>
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <div className="bg-white rounded-4 shadow-sm h-100 p-3 small text-dark">
-                      <h3 className="h6 mb-2 text-dark">
-                        한국대학교, 2024 THE 세계대학평가 상위 1% 선정
-                      </h3>
-                      <p className="text-muted mb-0">
-                        우수한 연구력과 교육역량을 인정받아 세계대학평가 상위
-                        1% 대학에 선정되었습니다.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="bg-white rounded-4 shadow-sm h-100 p-3 small text-dark">
-                      <h3 className="h6 mb-2 text-dark">
-                        AI 융합대학, 글로벌 산학 협력 프로그램 운영
-                      </h3>
-                      <p className="text-muted mb-0">
-                        해외 유수 기업과의 공동 연구 및 인턴십 프로그램을 통해
-                        실무 중심의 AI 교육을 제공합니다.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
+<section id="academic" className="mt-4">
+  <div className="d-flex justify-content-between align-items-center mb-2">
+    <h2 className="h5 mb-0 text-dark">IT뉴스</h2>
+    <a
+      href="https://news.naver.com/section/105"
+      className="small text-muted text-decoration-none"
+      target="_blank"
+      rel="noreferrer"
+    >
+      더보기
+    </a>
+  </div>
+
+  <div className="row g-3">
+    {news.length === 0 ? (
+      <div className="col-12 small text-muted">
+        표시할 뉴스가 없습니다.
+      </div>
+    ) : (
+      news.slice(0, 2).map((item, idx) => (
+        <div className="col-md-6" key={idx}>
+          <div className="bg-white rounded-4 shadow-sm h-100 p-3 small text-dark news-card">
+            <h3 className="h6 mb-2 text-dark news-title">
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noreferrer"
+                className="text-decoration-none text-dark fw-bold"
+              >
+                {cleanText(item.title)}
+              </a>
+            </h3>
+            <p className="text-muted mb-0 news-desc">
+              {truncateText(cleanText(item.description), 70)}
+            </p>
+          </div>
+        </div>
+      ))
+    )}
+  </div>
+</section>
             </div>
 
             {/* Right column: 학사일정 + 날씨 */}
@@ -448,7 +502,7 @@ function Home() {
     <h2 className="h6 mb-2 text-dark">{month}월 학사일정</h2>
     <ul className="list-unstyled mb-0">
       {post.length > 0 ? (
-        post.slice(0, 5).map((item, index) => (
+        post.slice(0, 4).map((item, index) => (
           <li key={item.id || index} className="d-flex justify-content-between py-1">
             <span>{item.title || `일정 항목 ${item.id}`}</span>
             <span className="text-muted">{item.calStartDate ? new Date(item.calStartDate).toLocaleDateString() : '날짜 없음'}</span>

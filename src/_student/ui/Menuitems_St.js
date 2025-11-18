@@ -24,10 +24,12 @@ function MenuSt() {
         }
     };
     const navItems = [
+        { label: "통합 정보 홈", path: "/hs" },
         { label: "학생 정보", path: "/InfoHome" },
         { label: "성적 조회", path: "/Student_Credit" },
         { label: "출결 조회", path: "/CheckAttendance" },
         { label: "학적 변경", path: "/Change_Status" },
+        { label: "1:1 문의", path: "/inquiryBoard" },
     ];
 
     const navLecItems = [
@@ -87,21 +89,12 @@ function MenuSt() {
                         &nbsp;
                         <Nav className="me-auto">
                             <Nav.Link onClick={() => {
-                                if (user?.IsAuthenticated) {
-                                    window.open("http://localhost:3000/EnNotList", "_blank", "noopener,noreferrer");
-                                } else {
-                                    alert("로그인 정보가 없습니다. 다시 로그인하세요.");
-                                    navigate("/");
-                                }
+                                 navigate("/EnNotList");
                             }} className="text-white">전체 공지</Nav.Link>
                             <Nav.Link onClick={() => {
-                                if (user?.IsAuthenticated) {
-                                    window.open("http://localhost:3000/acsche", "_blank", "noopener,noreferrer");
-                                } else {
-                                    alert("로그인 정보가 없습니다. 다시 로그인하세요.");
-                                    navigate("/");
-                                }
-                            }} className="text-white">성적 조회</Nav.Link>
+                                navigate("/acsche");
+                            }} className="text-white">학사 일정</Nav.Link>
+
 
                         </Nav>
 

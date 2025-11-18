@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardBody, Col, Container, Row, Button, Pagination, Table } from "react-bootstrap";
 import { API_BASE_URL } from "../../../public/config/config";
 import { useAuth } from "../../../public/context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useLectureStore } from "../store/lectureStore";
 
@@ -14,8 +14,9 @@ function App() {
     const { lectureId } = useLectureStore();
     const navigate = useNavigate();
     const pageRange = 10; // 한 번에 표시할 페이지 수
-
+    
     useEffect(() => {
+        if(lectureId.length>0)return;
         const url = `${API_BASE_URL}/notice/List`;
         const parameter = {
             id: lectureId,
