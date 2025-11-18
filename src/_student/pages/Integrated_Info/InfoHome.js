@@ -57,13 +57,17 @@ export default function StudentDetailPage() {
     semester: "",
   });
 
-  // setSelectedFile(file);
+  // try {
+  //   const response = await axios.post(
+  //     `${API_BASE_URL}/student/status/upload-image`,
+  //     formData,
+  //     { headers: { "Content-Type": "multipart/form-data" } }
+  //   );
 
   const [open, setOpen] = useState(false);
   const [modalId, setModalId] = useState(null);
   const [modalLec, setModalLec] = useState({});
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState("");
 
   const typeMapDay = {
     MONDAY: "월",
@@ -124,18 +128,6 @@ export default function StudentDetailPage() {
       });
   };
 
-  // try {
-  //   const response = await axios.post(
-  //     `${API_BASE_URL}/student/status/upload-image`,
-  //     formData,
-  //     { headers: { "Content-Type": "multipart/form-data" } }
-  //   );
-
-  const years = useMemo(() => {
-    const end = new Date().getFullYear() + 1;
-    return Array.from({ length: end - yearStart + 1 }, (_, i) => yearStart + i);
-  }, [yearStart]);
-
   useEffect(() => {
     if (!user?.id) return;
 
@@ -176,6 +168,47 @@ export default function StudentDetailPage() {
             }
           })
           .catch(() => setProfileImageUrl(null)); // 이미지 가져오기에 실패하면 상태 초기화
+      })
+      .catch((error) => {
+        console.error("status:", error.response?.status);
+        console.error("data:", error.response?.data);
+      });
+  }, [page.semester, page.year, user?.id]);
+
+  useEffect(() => {
+    if (!modalId) return;
+    const url = `${API_BASE_URL}/lecture/info`;
+    axios
+      .get(url, { params: { modalId: Number(modalId) } })
+      .then((res) => setModalLec(res.data))
+      .catch((err) => {
+        console.error(err.response?.data);
+        alert("오류");
+      });
+  }, [modalId]);
+
+  const years = useMemo(() => {
+    const end = new Date().getFullYear() + 1;
+    return Array.from({ length: end - yearStart + 1 }, (_, i) => yearStart + i);
+  }, [yearStart]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const id = user.id;
+    const url = `${API_BASE_URL}/user/detailAll/${id}`;
+    axios
+      .get(url, {
+        params: {
+          year: page.year,
+          semester: page.semester,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setStudent(res.data);
+        const admission = res.data.admissionDate; // "2025-11-03"
+        const sliceYear = String(admission).slice(0, 4); // "2025"
+        setYearStart(Number(sliceYear)); // 2025
       })
       .catch((error) => {
         console.error("status:", error.response?.status);
@@ -501,7 +534,7 @@ export default function StudentDetailPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {student.gradeInfoList.content?.map((grade) => (
+                      {student.gradeInfoList.content.map((grade) => (
                         <tr key={grade.lecId}>
                           <td>{grade.startDate}</td>
                           <td>{grade.name}</td>
@@ -724,4 +757,3 @@ export default function StudentDetailPage() {
     </>
   );
 }
-

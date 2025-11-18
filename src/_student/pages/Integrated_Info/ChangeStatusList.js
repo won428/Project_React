@@ -70,7 +70,7 @@ function App() {
             <Row className="align-items-center mb-3">
                 <Col md={6}>
                     <h4 className="mb-0">학적 변경 신청 목록</h4>
-                    <div className="text-muted small">엑셀 스타일 표 UI</div>
+                    
                 </Col>
                 <Col md={6} className="text-end">
                     <Button variant="primary" onClick={handleAdd}>학적변경신청</Button>
@@ -83,56 +83,44 @@ function App() {
                 <Table bordered hover size="sm" className="align-middle w-100" style={{ tableLayout: "fixed" }}>
                     <thead style={{ position: "sticky", top: 0, background: "#f8f9fa", zIndex: 1 }}>
                         <tr>
-                            <th style={{ minWidth: 100 }}>제목</th>
-                            <th style={{ width: 100 }}>신청일</th>
-                            <th style={{ width: 100 }}>처리일</th>
-                            <th style={{ width: 140 }}>변경 신청 학적</th>
-                            <th style={{ minWidth: 300 }}>처리상태</th>
-
+                            <th style={{ width: '25%' }}>제목</th>
+                            <th style={{ width: '15%' }}>신청일</th>
+                            {/* <th style={{ width: '15%' }}>처리일</th> */}
+                            <th style={{ width: '20%' }}>변경 신청 학적</th>
+                            <th style={{ width: '40%' }}>처리상태</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {/* 나중에 데이터 연결 시, 아래 샘플 <tr>을 map으로 대체하세요.
-                예: data.map((u) => (
-                      <tr key={u.id}> ... </tr>
-                    ))
-            */}
                         {applyList.map((record) => (
                             <tr key={record.recordId}>
-                                <td style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                                <td style={{ width: '25%', cursor: 'pointer', color: 'blue' }}
                                     onClick={() => handleView(record.recordId)}>
                                     {record.title}
                                 </td>
-                                <td>{record.appliedDate}</td>
-                                <td>{record.processedDate}</td>
-                                <td>{typeMapTwo[record.studentStatus]}</td>
-                                <td>
-                                    <span style={{ marginRight: '12px' }}>
-                                        {typeMap[record.status]}
-                                    </span>
-                                    <Button
-                                        variant="danger"
-                                        size="sm"
-                                        className="ms-2"
-                                        onClick={() => handleDelete(record.recordId)}
-                                    >
-                                        삭제
-                                    </Button>
-                                    {/* 수정 버튼 */}
-                                    <Button
-                                        variant="primary"
-                                        size="sm"
-                                        className="ms-2"
-                                        onClick={() => handleEdit(record.recordId)}
-                                    >
-                                        수정
-                                    </Button>
+                                <td style={{ width: '15%' }}>{record.appliedDate}</td>
+                                {/* <td style={{ width: '15%' }}>{record.processedDate}</td> */}
+                                <td style={{ width: '20%' }}>{typeMapTwo[record.studentStatus]}</td>
+                                <td style={{ width: '40%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ minWidth: 60 }}>{typeMap[record.status]}</span>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => handleDelete(record.recordId)}
+                                        >
+                                            삭제
+                                        </Button>
+                                        <Button
+                                            variant="primary"
+                                            size="sm"
+                                            onClick={() => handleEdit(record.recordId)}
+                                        >
+                                            수정
+                                        </Button>
+                                    </div>
                                 </td>
-
-
                             </tr>
                         ))}
-
                     </tbody>
                 </Table>
             </div>

@@ -51,7 +51,7 @@ export const requestTokenRefresh = async () => {
 
 
 
-//응답 인터셉터 Access 만료시 Refresh 토큰 재발급
+//응답 인터셉터 Access 만료시 강제 로그아웃 
 API.interceptors.response.use(
     (res) => res, async (error) => {
         const originalRequest = error.config;

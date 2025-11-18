@@ -6,9 +6,14 @@ import { useAuth } from "../../public/context/UserContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 function ManageAppeal() {
+    
     const { user } = useAuth();
     const { lectureId } = useParams();
     const navigate = useNavigate();
+    console.log("📌 ManageAppeal 렌더링됨");
+    console.log("📌 lectureId:", lectureId);
+    console.log("📌 user:", user);
+
 
     const STATUS_MAP = { PENDING: "처리중", APPROVED: "승인", REJECTED: "반려" };
     const WEIGHTS = { ascore: 20, asScore: 20, tscore: 30, ftScore: 30 };
@@ -79,9 +84,18 @@ function ManageAppeal() {
 
     const fetchAppeals = () => {
         if (!lectureId || !user?.id) return;
+        console.log("📌 fetchAppeals 호출됨");
+        console.log("➡️ 요청 URL:", `${API_BASE_URL}/api/appeals/lectureAppeals/${lectureId}`);
+        console.log("➡️ receiverId:", user.id);
         axios.get(`${API_BASE_URL}/api/appeals/lectureAppeals/${lectureId}`, { params: { receiverId: user.id } })
-            .then(res => setAppeals(res.data))
-            .catch(err => console.error(err));
+            .then(res => {
+                console.log("📌 서버 응답 데이터:", res.data);
+                setAppeals(res.data)
+            })
+            .catch(err => {
+                console.error(err)
+            });
+        console.log("프론트 user.id =", user.id);
     };
 
     useEffect(() => { fetchAppeals(); }, [lectureId, user]);
@@ -296,7 +310,7 @@ function ManageAppeal() {
                                 <Table bordered size="sm" className="mb-3 text-center">
                                     <thead>
                                         <tr>
-                                            
+
                                             <th>과제 점수</th>
                                             <th>중간 점수</th>
                                             <th>기말 점수</th>

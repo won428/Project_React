@@ -38,6 +38,8 @@ function App() {
     });
 
     const [showCalendar, setShowCalendar] = useState(false);
+    const [existingFiles, setExistingFiles] = useState([]); // 기존 업로드된 파일(JSON)
+    const [newFiles, setNewFiles] = useState([]);           // 새로 선택한 파일
 
     useEffect(() => {
         if (!user?.id) {
@@ -56,6 +58,7 @@ function App() {
         }
     };
 
+    // 기존 신청 데이터 불러오기
     useEffect(() => {
         if (!recordId) return;
         axios.get(`${API_BASE_URL}/api/student/record/${recordId}`)
@@ -71,6 +74,7 @@ function App() {
                     endDate: data.targetEndDate ? data.targetEndDate.slice(0, 10) : today
                 });
                 setShowCalendar(CALENDAR_REQUIRED.includes(data.studentStatus));
+                setExistingFiles(data.attachments || []); // 기존 첨부파일
             })
             .catch(err => {
                 console.error('기존 신청 데이터 불러오기 실패:', err);
@@ -78,6 +82,19 @@ function App() {
                 navigate(-1);
             });
     }, [recordId, user, navigate, today]);
+
+    // --- 첨부파일 이벤트 ---
+    const handleNewFileChange = (e) => {
+        setNewFiles(Array.from(e.target.files));
+    };
+
+    const handleDeleteExistingFile = (idx) => {
+        setExistingFiles(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    const handleDeleteNewFile = (idx) => {
+        setNewFiles(prev => prev.filter((_, i) => i !== idx));
+    };
 
     const submitForm = () => {
         const body = {
@@ -147,59 +164,30 @@ function App() {
                     </Col>
                 </Row>
 
-                {/* 🔥 조건부 캘린더 */}
                 {showCalendar && (
                     <Row className="mb-3">
                         {(form.studentStatus === 'MILITARY_LEAVE' || form.studentStatus === 'MEDICAL_LEAVE') && (
                             <>
                                 <Col md={6}>
                                     <Form.Label>시작일</Form.Label>
-                                    <Form.Control
-                                        type="date"
-                                        name="startDate"
-                                        value={form.startDate}
-                                        onChange={onChange}
-                                        required
-                                        disabled={readonly}
-                                    />
+                                    <Form.Control type="date" name="startDate" value={form.startDate} onChange={onChange} required disabled={readonly} />
                                 </Col>
                                 <Col md={6}>
                                     <Form.Label>종료일</Form.Label>
-                                    <Form.Control
-                                        type="date"
-                                        name="endDate"
-                                        value={form.endDate}
-                                        onChange={onChange}
-                                        required
-                                        disabled={readonly}
-                                    />
+                                    <Form.Control type="date" name="endDate" value={form.endDate} onChange={onChange} required disabled={readonly} />
                                 </Col>
                             </>
                         )}
                         {form.studentStatus === 'ON_LEAVE' && (
                             <Col md={6}>
                                 <Form.Label>휴학일</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    name="startDate"
-                                    value={form.startDate}
-                                    onChange={onChange}
-                                    required
-                                    disabled={readonly}
-                                />
+                                <Form.Control type="date" name="startDate" value={form.startDate} onChange={onChange} required disabled={readonly} />
                             </Col>
                         )}
                         {form.studentStatus === 'REINSTATED' && (
                             <Col md={6}>
                                 <Form.Label>복학일</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    name="endDate"
-                                    value={form.endDate}
-                                    onChange={onChange}
-                                    required
-                                    disabled={readonly}
-                                />
+                                <Form.Control type="date" name="endDate" value={form.endDate} onChange={onChange} required disabled={readonly} />
                             </Col>
                         )}
                     </Row>
@@ -207,34 +195,38 @@ function App() {
 
                 <Form.Group className="mb-3">
                     <Form.Label>제목</Form.Label>
-                    <Form.Control
-                        name="title"
-                        value={form.title}
-                        onChange={onChange}
-                        placeholder="제목을 입력하세요"
-                        required
-                        disabled={readonly}
-                    />
+                    <Form.Control name="title" value={form.title} onChange={onChange} placeholder="제목을 입력하세요" required disabled={readonly} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>내용</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={5}
-                        name="content"
-                        value={form.content}
-                        onChange={onChange}
-                        placeholder="신청 내용을 입력하세요"
-                        required
-                        disabled={readonly}
-                    />
+                    <Form.Control as="textarea" rows={5} name="content" value={form.content} onChange={onChange} placeholder="신청 내용을 입력하세요" required disabled={readonly} />
+                </Form.Group>
+
+                {/* 첨부파일 영역 */}
+                <Form.Group className="mb-3">
+                    <Form.Label>첨부파일</Form.Label>
+                    <div className="mb-2">
+                        {existingFiles.map((file, idx) => (
+                            <div key={idx}>
+                                <span>{file.name}</span>
+                                <Button size="sm" variant="outline-danger" onClick={() => handleDeleteExistingFile(idx)}>삭제</Button>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mb-2">
+                        {newFiles.map((file, idx) => (
+                            <div key={idx}>
+                                <span>{file.name}</span>
+                                <Button size="sm" variant="outline-danger" onClick={() => handleDeleteNewFile(idx)}>삭제</Button>
+                            </div>
+                        ))}
+                    </div>
+                    <Form.Control type="file" multiple onChange={handleNewFileChange} disabled={readonly} />
                 </Form.Group>
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                    {!readonly && (
-                        <Button type="submit" variant="primary">신청 접수</Button>
-                    )}
+                    {!readonly && <Button type="submit" variant="primary">신청 접수</Button>}
                     <Button type="button" variant="secondary" onClick={() => navigate(-1)}>이전</Button>
                     <Button type="button" variant="outline-secondary" onClick={() => navigate('/ChangeStatusList')}>내 신청내역 보기</Button>
                 </div>

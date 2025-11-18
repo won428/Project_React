@@ -72,18 +72,29 @@ function AttendanceAppeal({ readOnly = false, appealData = null }) { // ✅ 추�
 
     // 학생 본인 출결 이의제기 최신화
     useEffect(() => {
-        if (readOnly) return; // 교수/상세보기 모드에서는 실행 X
-        if (!lectureId || !userId) return;
+    // readOnly 모드가 아니고, lectureId, userId가 있을 때만 체크
+    if (readOnly) return; 
+    if (!lectureId || !userId) return;
 
-        axios.get(`${API_BASE_URL}/lecture/attendanceAppeal/myAppeal`, {
-            params: { lectureId, studentId: userId }
-        })
-            .then(res => {
-                if (res.data) setAppealForm(res.data);
-            })
-            .catch(err => console.error(err));
-    }, [lectureId, userId, readOnly]);
-
+    axios.get(`${API_BASE_URL}/lecture/attendanceAppeal/myAppeal`, {
+        params: { lectureId, studentId: userId }
+    })
+    .then(res => {
+        if (res.data && state?.fromDetail !== true) {
+            // 이전 신청 데이터가 있을 때, 수정 모드가 아니라면 초기화
+            setAppealForm(prev => ({
+                ...prev,
+                // 새 신청이라면 제목, 내용, 출결 사유 공란
+                title: '',
+                content: '',
+                attendanceDetail: '',
+                attendanceType: 'ABSENT', // 기본값
+                lectureDate: lectureDateFromCheck
+            }));
+        }
+    })
+    .catch(err => console.error(err));
+}, [lectureId, userId, readOnly]);
     // ✅ readOnly 모드일 경우 lectureName, professorName을 appealData에서 세팅
     useEffect(() => {
         if (readOnly && appealData) {
